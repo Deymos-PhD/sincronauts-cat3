@@ -5,6 +5,7 @@
 <title>Ruta CAT3 · Biología Celular CBI111</title>
 
 <style>
+
 body{
 font-family: Arial;
 background:#f5f7fb;
@@ -14,19 +15,15 @@ padding:60px;
 
 .card{
 background:white;
-max-width:600px;
+max-width:700px;
 margin:auto;
 padding:40px;
 border-radius:14px;
 box-shadow:0px 6px 18px rgba(0,0,0,0.08);
 }
 
-h1{
-color:#2b4eff;
-}
-
 button{
-margin-top:25px;
+margin-top:20px;
 padding:14px 28px;
 font-size:18px;
 border:none;
@@ -35,28 +32,182 @@ background:#2b4eff;
 color:white;
 cursor:pointer;
 }
+
+button:hover{
+background:#1d34c4;
+}
+
+.question{
+margin-top:25px;
+font-size:20px;
+}
+
+.hidden{
+display:none;
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="card" id="landing">
 
 <h1>Ruta de preparación CAT3</h1>
-
-<p>
-Entorno voluntario de apoyo para estudiantes de Biología Celular CBI111.
-</p>
 
 <p>
 Participación voluntaria · Uso individual · No reemplaza evaluaciones oficiales del curso.
 </p>
 
-<button>
-Comenzar ruta
+<button onclick="startTest()">
+Iniciar diagnóstico de identidad
 </button>
 
 </div>
+
+
+<div class="card hidden" id="questionBox">
+
+<h2 id="questionText"></h2>
+
+<button onclick="answer('visual')">Prefiero esquemas o mapas</button><br>
+<button onclick="answer('lectura')">Prefiero leer y analizar texto</button><br>
+<button onclick="answer('auditivo')">Prefiero explicaciones habladas</button><br>
+<button onclick="answer('kinestesico')">Prefiero practicar con ejercicios</button>
+
+</div>
+
+
+<div class="card hidden" id="resultBox">
+
+<h2>Tu perfil de aprendizaje es:</h2>
+
+<h1 id="result"></h1>
+
+<p>
+pVANE ajustará tu ruta de preparación CAT3 según esta identidad.
+</p>
+
+</div>
+
+
+<script>
+
+
+const questions = [
+
+"Cuando estudias metabolismo celular por primera vez prefieres ver un esquema general antes de leer detalles",
+
+"Te ayuda más comparar procesos celulares con situaciones reales",
+
+"Prefieres construir el concepto paso a paso en lugar de memorizar definiciones",
+
+"Entiendes mejor cuando alguien explica el proceso en voz alta",
+
+"Te orientas mejor con mapas conceptuales",
+
+"Prefieres aplicar ejercicios antes que leer teoría extensa",
+
+"Relacionas estructuras celulares con su función",
+
+"Aprendes mejor discutiendo ideas con otros",
+
+"Prefieres reconstruir procesos desde componentes básicos",
+
+"Recuerdas mejor lo que dibujas",
+
+"Comprendes mejor cuando explicas a alguien más",
+
+"Te sirve imaginar la célula como sistema integrado",
+
+"Prefieres identificar patrones entre procesos celulares",
+
+"Aprendes mejor cuando practicas preguntas tipo prueba",
+
+"Te ayuda conectar conceptos nuevos con contenidos previos",
+
+"Prefieres entender el propósito del proceso antes del mecanismo"
+
+];
+
+
+let current = 0;
+
+let score = {
+visual:0,
+lectura:0,
+auditivo:0,
+kinestesico:0
+};
+
+
+function startTest(){
+
+document.getElementById("landing").classList.add("hidden");
+
+document.getElementById("questionBox").classList.remove("hidden");
+
+showQuestion();
+
+}
+
+
+function showQuestion(){
+
+if(current >= questions.length){
+
+showResult();
+
+return;
+
+}
+
+document.getElementById("questionText").innerText =
+"Pregunta " + (current+1) + " de 16:\n\n" + questions[current];
+
+}
+
+
+function answer(type){
+
+score[type]++;
+
+current++;
+
+showQuestion();
+
+}
+
+
+function showResult(){
+
+document.getElementById("questionBox").classList.add("hidden");
+
+document.getElementById("resultBox").classList.remove("hidden");
+
+
+let profile = Object.keys(score).reduce((a,b)=>score[a]>score[b]?a:b);
+
+
+let identity = {
+
+visual:"Cartógrafo celular",
+
+lectura:"Arqueólogo molecular",
+
+auditivo:"Diplomático celular",
+
+kinestesico:"Explorador experimental"
+
+};
+
+
+document.getElementById("result").innerText = identity[profile];
+
+}
+
+
+</script>
 
 </body>
 </html>
