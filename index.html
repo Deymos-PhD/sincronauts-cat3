@@ -93,7 +93,6 @@ pVANE ajustará tu ruta de preparación CAT3 según esta identidad.
 
 <script>
 
-
 const questions = [
 
 "Cuando estudias metabolismo celular por primera vez prefieres ver un esquema general antes de leer detalles",
@@ -202,7 +201,15 @@ kinestesico:"Explorador experimental"
 };
 
 
-document.getElementById("result").innerText = identity[profile];
+let finalIdentity = identity[profile];
+
+
+document.getElementById("result").innerText = finalIdentity;
+
+
+/* GUARDAR IDENTIDAD DEL ESTUDIANTE */
+
+localStorage.setItem("identidadCAT3", finalIdentity);
 
 }
 
