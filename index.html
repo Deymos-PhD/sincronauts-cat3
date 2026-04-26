@@ -5,7 +5,6 @@
 <title>Ruta CAT3 · Biología Celular CBI111</title>
 
 <style>
-
 body{
 font-family: Arial;
 background:#f5f7fb;
@@ -15,7 +14,7 @@ padding:60px;
 
 .card{
 background:white;
-max-width:700px;
+max-width:760px;
 margin:auto;
 padding:40px;
 border-radius:14px;
@@ -23,7 +22,7 @@ box-shadow:0px 6px 18px rgba(0,0,0,0.08);
 }
 
 button{
-margin-top:20px;
+margin-top:18px;
 padding:14px 28px;
 font-size:18px;
 border:none;
@@ -37,22 +36,26 @@ button:hover{
 background:#1d34c4;
 }
 
-.question{
-margin-top:25px;
-font-size:20px;
-}
-
 .hidden{
 display:none;
 }
 
+.small{
+font-size:14px;
+color:#555;
+}
+
+.option{
+display:block;
+margin:14px auto;
+max-width:520px;
+}
 </style>
 </head>
 
 <body>
 
 <div class="card" id="landing">
-
 <h1>Ruta de preparación CAT3</h1>
 
 <p>
@@ -62,73 +65,104 @@ Participación voluntaria · Uso individual · No reemplaza evaluaciones oficial
 <button onclick="startTest()">
 Iniciar diagnóstico de identidad
 </button>
-
 </div>
 
 
 <div class="card hidden" id="questionBox">
-
 <h2 id="questionText"></h2>
 
-<button onclick="answer('visual')">Prefiero esquemas o mapas</button><br>
-<button onclick="answer('lectura')">Prefiero leer y analizar texto</button><br>
-<button onclick="answer('auditivo')">Prefiero explicaciones habladas</button><br>
-<button onclick="answer('kinestesico')">Prefiero practicar con ejercicios</button>
-
+<button class="option" onclick="answer('visual')">Prefiero esquemas o mapas</button>
+<button class="option" onclick="answer('lectura')">Prefiero leer y analizar texto</button>
+<button class="option" onclick="answer('auditivo')">Prefiero explicaciones habladas</button>
+<button class="option" onclick="answer('kinestesico')">Prefiero practicar con ejercicios</button>
 </div>
 
 
 <div class="card hidden" id="resultBox">
-
 <h2>Tu perfil de aprendizaje es:</h2>
-
 <h1 id="result"></h1>
 
 <p>
 pVANE ajustará tu ruta de preparación CAT3 según esta identidad.
 </p>
 
+<button onclick="showBeforeStart()">
+Continuar
+</button>
+</div>
+
+
+<div class="card hidden" id="beforeStartBox">
+<h2>Antes de comenzar la ruta CAT3</h2>
+
+<p>
+Cuando estudias metabolismo celular por primera vez, ¿qué haces normalmente?
+</p>
+
+<button class="option" onclick="setStrategy('memorizo')">
+Intento memorizar rutas y nombres
+</button>
+
+<button class="option" onclick="setStrategy('relaciono')">
+Intento entender cómo se conectan los procesos
+</button>
+
+<button class="option" onclick="setStrategy('ejemplos')">
+Busco ejemplos o comparaciones concretas
+</button>
+
+<button class="option" onclick="setStrategy('preguntas')">
+Practico con preguntas tipo prueba
+</button>
+
+<p class="small">
+Esta respuesta no es una evaluación. Solo ayuda a pVANE a ajustar el acompañamiento.
+</p>
+</div>
+
+
+<div class="card hidden" id="routeBox">
+<h2>Ruta CAT3 activada</h2>
+
+<h1 id="routeIdentity"></h1>
+
+<p id="routeMessage"></p>
+
+<hr>
+
+<h3>Hitos de preparación</h3>
+
+<p>① Energía celular</p>
+<p>② ATP y energía utilizable</p>
+<p>③ Enzimas</p>
+<p>④ Respiración celular</p>
+
+<button onclick="alert('Próximo módulo: Hito 1 · Energía celular')">
+Comenzar Hito 1
+</button>
 </div>
 
 
 <script>
 
 const questions = [
-
 "Cuando estudias metabolismo celular por primera vez prefieres ver un esquema general antes de leer detalles",
-
 "Te ayuda más comparar procesos celulares con situaciones reales",
-
 "Prefieres construir el concepto paso a paso en lugar de memorizar definiciones",
-
 "Entiendes mejor cuando alguien explica el proceso en voz alta",
-
 "Te orientas mejor con mapas conceptuales",
-
 "Prefieres aplicar ejercicios antes que leer teoría extensa",
-
 "Relacionas estructuras celulares con su función",
-
 "Aprendes mejor discutiendo ideas con otros",
-
 "Prefieres reconstruir procesos desde componentes básicos",
-
 "Recuerdas mejor lo que dibujas",
-
 "Comprendes mejor cuando explicas a alguien más",
-
 "Te sirve imaginar la célula como sistema integrado",
-
 "Prefieres identificar patrones entre procesos celulares",
-
 "Aprendes mejor cuando practicas preguntas tipo prueba",
-
 "Te ayuda conectar conceptos nuevos con contenidos previos",
-
 "Prefieres entender el propósito del proceso antes del mecanismo"
-
 ];
-
 
 let current = 0;
 
@@ -139,80 +173,74 @@ auditivo:0,
 kinestesico:0
 };
 
-
 function startTest(){
-
 document.getElementById("landing").classList.add("hidden");
-
 document.getElementById("questionBox").classList.remove("hidden");
-
 showQuestion();
-
 }
 
-
 function showQuestion(){
-
 if(current >= questions.length){
-
 showResult();
-
 return;
-
 }
 
 document.getElementById("questionText").innerText =
 "Pregunta " + (current+1) + " de 16:\n\n" + questions[current];
-
 }
-
 
 function answer(type){
-
 score[type]++;
-
 current++;
-
 showQuestion();
-
 }
 
-
 function showResult(){
-
 document.getElementById("questionBox").classList.add("hidden");
-
 document.getElementById("resultBox").classList.remove("hidden");
-
 
 let profile = Object.keys(score).reduce((a,b)=>score[a]>score[b]?a:b);
 
-
 let identity = {
-
 visual:"Cartógrafo celular",
-
 lectura:"Arqueólogo molecular",
-
 auditivo:"Diplomático celular",
-
 kinestesico:"Explorador experimental"
-
 };
-
 
 let finalIdentity = identity[profile];
 
-
 document.getElementById("result").innerText = finalIdentity;
 
-
-/* GUARDAR IDENTIDAD DEL ESTUDIANTE */
-
 localStorage.setItem("identidadCAT3", finalIdentity);
-
+localStorage.setItem("perfilDominanteCAT3", profile);
 }
 
+function showBeforeStart(){
+document.getElementById("resultBox").classList.add("hidden");
+document.getElementById("beforeStartBox").classList.remove("hidden");
+}
+
+function setStrategy(strategy){
+localStorage.setItem("estrategiaInicialCAT3", strategy);
+
+document.getElementById("beforeStartBox").classList.add("hidden");
+document.getElementById("routeBox").classList.remove("hidden");
+
+let identity = localStorage.getItem("identidadCAT3");
+let profile = localStorage.getItem("perfilDominanteCAT3");
+
+document.getElementById("routeIdentity").innerText = identity;
+
+let messages = {
+visual:"pVANE usará mapas, esquemas y relaciones visuales para guiar tu ruta.",
+lectura:"pVANE usará definiciones breves, precisión conceptual y síntesis escritas.",
+auditivo:"pVANE usará explicaciones conversadas y preguntas guiadas.",
+kinestesico:"pVANE usará casos, ejemplos aplicados y predicción de efectos celulares."
+};
+
+document.getElementById("routeMessage").innerText = messages[profile];
+}
 
 </script>
 
