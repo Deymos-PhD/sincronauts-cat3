@@ -2,247 +2,343 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ruta CAT3 · Biología Celular CBI111</title>
-
 <style>
-body{
-font-family: Arial;
-background:#f5f7fb;
-text-align:center;
-padding:60px;
-}
-
-.card{
-background:white;
-max-width:760px;
-margin:auto;
-padding:40px;
-border-radius:14px;
-box-shadow:0px 6px 18px rgba(0,0,0,0.08);
-}
-
-button{
-margin-top:18px;
-padding:14px 28px;
-font-size:18px;
-border:none;
-border-radius:8px;
-background:#2b4eff;
-color:white;
-cursor:pointer;
-}
-
-button:hover{
-background:#1d34c4;
-}
-
-.hidden{
-display:none;
-}
-
-.small{
-font-size:14px;
-color:#555;
-}
-
-.option{
-display:block;
-margin:14px auto;
-max-width:520px;
-}
+:root{--blue:#2b4eff;--blue-dark:#1d34c4;--bg:#f4f6fb;--text:#172033;--muted:#667085;--line:#e6e9f2;--amber:#f4b400;}
+body{font-family:Arial,sans-serif;background:var(--bg);margin:0;padding:40px 18px;text-align:center;color:var(--text);}
+.card{background:white;max-width:820px;margin:auto;padding:42px;border-radius:18px;box-shadow:0 8px 24px rgba(0,0,0,.08);}
+button{margin-top:16px;padding:14px 26px;font-size:17px;border:none;border-radius:10px;background:var(--blue);color:white;cursor:pointer;}
+button:hover{background:var(--blue-dark);}
+button.secondary{background:#eef1ff;color:var(--blue);}
+button.secondary:hover{background:#dfe5ff;}
+.option{display:block;margin:12px auto;max-width:560px;width:100%;}
+.small{font-size:14px;color:var(--muted);}
+.progress{font-size:14px;color:var(--muted);margin-bottom:18px;}
+.badge{display:inline-block;padding:6px 12px;border-radius:999px;background:#eef1ff;color:var(--blue);font-weight:bold;font-size:14px;}
+.star{font-size:28px;color:var(--amber);}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:20px;}
+.hito{border:1px solid var(--line);border-radius:14px;padding:18px;text-align:left;background:#fbfcff;}
+.hito strong{display:block;margin-bottom:8px;}
+hr{border:none;border-top:1px solid var(--line);margin:26px 0;}
+.torpedo{text-align:left;background:#fbfcff;border:1px solid var(--line);padding:24px;border-radius:14px;margin-top:20px;white-space:pre-wrap;}
+.footer-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:24px;}
+.warning{background:#fff7e6;border:1px solid #ffd88a;color:#7a4b00;padding:14px;border-radius:12px;margin-top:18px;}
 </style>
 </head>
-
 <body>
-
-<div class="card" id="landing">
-<h1>Ruta de preparación CAT3</h1>
-
-<p>
-Participación voluntaria · Uso individual · No reemplaza evaluaciones oficiales del curso.
-</p>
-
-<button onclick="startTest()">
-Iniciar diagnóstico de identidad
-</button>
-</div>
-
-
-<div class="card hidden" id="questionBox">
-<h2 id="questionText"></h2>
-
-<button class="option" onclick="answer('visual')">Prefiero esquemas o mapas</button>
-<button class="option" onclick="answer('lectura')">Prefiero leer y analizar texto</button>
-<button class="option" onclick="answer('auditivo')">Prefiero explicaciones habladas</button>
-<button class="option" onclick="answer('kinestesico')">Prefiero practicar con ejercicios</button>
-</div>
-
-
-<div class="card hidden" id="resultBox">
-<h2>Tu perfil de aprendizaje es:</h2>
-<h1 id="result"></h1>
-
-<p>
-pVANE ajustará tu ruta de preparación CAT3 según esta identidad.
-</p>
-
-<button onclick="showBeforeStart()">
-Continuar
-</button>
-</div>
-
-
-<div class="card hidden" id="beforeStartBox">
-<h2>Antes de comenzar la ruta CAT3</h2>
-
-<p>
-Cuando estudias metabolismo celular por primera vez, ¿qué haces normalmente?
-</p>
-
-<button class="option" onclick="setStrategy('memorizo')">
-Intento memorizar rutas y nombres
-</button>
-
-<button class="option" onclick="setStrategy('relaciono')">
-Intento entender cómo se conectan los procesos
-</button>
-
-<button class="option" onclick="setStrategy('ejemplos')">
-Busco ejemplos o comparaciones concretas
-</button>
-
-<button class="option" onclick="setStrategy('preguntas')">
-Practico con preguntas tipo prueba
-</button>
-
-<p class="small">
-Esta respuesta no es una evaluación. Solo ayuda a pVANE a ajustar el acompañamiento.
-</p>
-</div>
-
-
-<div class="card hidden" id="routeBox">
-<h2>Ruta CAT3 activada</h2>
-
-<h1 id="routeIdentity"></h1>
-
-<p id="routeMessage"></p>
-
-<hr>
-
-<h3>Hitos de preparación</h3>
-
-<p>① Energía celular</p>
-<p>② ATP y energía utilizable</p>
-<p>③ Enzimas</p>
-<p>④ Respiración celular</p>
-
-<button onclick="alert('Próximo módulo: Hito 1 · Energía celular')">
-Comenzar Hito 1
-</button>
-</div>
-
-
+<div id="app"></div>
 <script>
+const app = document.getElementById("app");
+let currentQuestion = 0;
+let score = {visual:0, lectura:0, auditivo:0, kinestesico:0};
 
 const questions = [
-"Cuando estudias metabolismo celular por primera vez prefieres ver un esquema general antes de leer detalles",
-"Te ayuda más comparar procesos celulares con situaciones reales",
-"Prefieres construir el concepto paso a paso en lugar de memorizar definiciones",
-"Entiendes mejor cuando alguien explica el proceso en voz alta",
-"Te orientas mejor con mapas conceptuales",
-"Prefieres aplicar ejercicios antes que leer teoría extensa",
-"Relacionas estructuras celulares con su función",
-"Aprendes mejor discutiendo ideas con otros",
-"Prefieres reconstruir procesos desde componentes básicos",
-"Recuerdas mejor lo que dibujas",
-"Comprendes mejor cuando explicas a alguien más",
-"Te sirve imaginar la célula como sistema integrado",
-"Prefieres identificar patrones entre procesos celulares",
-"Aprendes mejor cuando practicas preguntas tipo prueba",
-"Te ayuda conectar conceptos nuevos con contenidos previos",
-"Prefieres entender el propósito del proceso antes del mecanismo"
+"Prefieres visualizar primero el esquema general del proceso",
+"Comparar procesos celulares con situaciones reales facilita entenderlos",
+"Prefieres reconstruir mecanismos paso a paso",
+"Escuchar explicaciones mejora tu comprensión",
+"Los mapas conceptuales te orientan rápidamente",
+"Aplicar ejercicios antes que leer teoría extensa ayuda más",
+"Relacionar estructura y función facilita aprender",
+"Discutir ideas con otros mejora tu comprensión",
+"Reconstruir procesos desde componentes básicos te resulta natural",
+"Dibujar ayuda a recordar",
+"Explicar a otros mejora tu aprendizaje",
+"Imaginar la célula como sistema integrado ayuda",
+"Detectar patrones entre procesos facilita entender",
+"Practicar preguntas tipo prueba ayuda más",
+"Relacionar contenido nuevo con previo facilita aprender",
+"Entender propósito antes que detalles ayuda más"
 ];
 
-let current = 0;
-
-let score = {
-visual:0,
-lectura:0,
-auditivo:0,
-kinestesico:0
-};
-
-function startTest(){
-document.getElementById("landing").classList.add("hidden");
-document.getElementById("questionBox").classList.remove("hidden");
-showQuestion();
-}
-
-function showQuestion(){
-if(current >= questions.length){
-showResult();
-return;
-}
-
-document.getElementById("questionText").innerText =
-"Pregunta " + (current+1) + " de 16:\n\n" + questions[current];
-}
-
-function answer(type){
-score[type]++;
-current++;
-showQuestion();
-}
-
-function showResult(){
-document.getElementById("questionBox").classList.add("hidden");
-document.getElementById("resultBox").classList.remove("hidden");
-
-let profile = Object.keys(score).reduce((a,b)=>score[a]>score[b]?a:b);
-
-let identity = {
+const identityNames = {
 visual:"Cartógrafo celular",
 lectura:"Arqueólogo molecular",
 auditivo:"Diplomático celular",
 kinestesico:"Explorador experimental"
 };
 
-let finalIdentity = identity[profile];
-
-document.getElementById("result").innerText = finalIdentity;
-
-localStorage.setItem("identidadCAT3", finalIdentity);
-localStorage.setItem("perfilDominanteCAT3", profile);
-}
-
-function showBeforeStart(){
-document.getElementById("resultBox").classList.add("hidden");
-document.getElementById("beforeStartBox").classList.remove("hidden");
-}
-
-function setStrategy(strategy){
-localStorage.setItem("estrategiaInicialCAT3", strategy);
-
-document.getElementById("beforeStartBox").classList.add("hidden");
-document.getElementById("routeBox").classList.remove("hidden");
-
-let identity = localStorage.getItem("identidadCAT3");
-let profile = localStorage.getItem("perfilDominanteCAT3");
-
-document.getElementById("routeIdentity").innerText = identity;
-
-let messages = {
-visual:"pVANE usará mapas, esquemas y relaciones visuales para guiar tu ruta.",
-lectura:"pVANE usará definiciones breves, precisión conceptual y síntesis escritas.",
+const routeMessages = {
+visual:"pVANE usará mapas conceptuales para ubicar cada proceso energético.",
+lectura:"pVANE usará definiciones breves y síntesis estructuradas.",
 auditivo:"pVANE usará explicaciones conversadas y preguntas guiadas.",
 kinestesico:"pVANE usará casos, ejemplos aplicados y predicción de efectos celulares."
 };
 
-document.getElementById("routeMessage").innerText = messages[profile];
+const hitoIntro = {
+hito1:{
+"Cartógrafo celular":"Ubicaremos la energía dentro del sistema funcional completo de la célula.",
+"Arqueólogo molecular":"Reconstruiremos el concepto energía celular desde sus componentes.",
+"Diplomático celular":"Exploraremos cómo la célula negocia el uso de energía.",
+"Explorador experimental":"Evaluaremos qué ocurre cuando cambia la disponibilidad energética."
+},
+hito2:{
+"Cartógrafo celular":"Ubicaremos al ATP como nodo de conexión entre procesos celulares.",
+"Arqueólogo molecular":"Reconstruiremos por qué el ATP funciona como energía utilizable inmediata.",
+"Diplomático celular":"Exploraremos cómo el ATP permite coordinar procesos que requieren energía.",
+"Explorador experimental":"Analizaremos qué procesos celulares se afectan cuando disminuye el ATP."
+}
+};
+
+function isCompleted(hito){return localStorage.getItem(hito)==="completado";}
+function completedCount(){return ["hito1","hito2","hito3","hito4"].filter(isCompleted).length;}
+function starLabel(hito,title){return isCompleted(hito) ? "⭐ " + title : "⬜ " + title;}
+function getIdentity(){return localStorage.getItem("identidadCAT3") || "Identidad no definida";}
+function getProfile(){return localStorage.getItem("perfilCAT3") || "visual";}
+
+function resetRoute(){
+if(confirm("¿Quieres reiniciar tu avance local de la Ruta CAT3?")){
+localStorage.clear();
+currentQuestion=0;
+score={visual:0,lectura:0,auditivo:0,kinestesico:0};
+renderLanding();
+}
 }
 
-</script>
+function renderLanding(){
+const savedIdentity=localStorage.getItem("identidadCAT3");
+app.innerHTML=`
+<div class="card">
+<span class="badge">CBI111 · CAT3</span>
+<h1>Ruta de preparación CAT3</h1>
+<p>Entorno voluntario de apoyo para estudiantes de Biología Celular CBI111.</p>
+<p class="small">Participación voluntaria · Uso individual · No reemplaza evaluaciones oficiales del curso · No modifica tus calificaciones.</p>
+${savedIdentity ? `
+<div class="warning">Ya existe un avance guardado en este navegador para <strong>${savedIdentity}</strong>.</div>
+<div class="footer-actions">
+<button onclick="renderRoute()">Continuar mi ruta</button>
+<button class="secondary" onclick="resetRoute()">Reiniciar</button>
+</div>` : `<button onclick="startDiagnostic()">Iniciar diagnóstico de identidad</button>`}
+</div>`;
+}
 
+function startDiagnostic(){
+currentQuestion=0;
+score={visual:0,lectura:0,auditivo:0,kinestesico:0};
+renderQuestion();
+}
+
+function renderQuestion(){
+if(currentQuestion>=questions.length){calculateIdentity();return;}
+app.innerHTML=`
+<div class="card">
+<div class="progress">Pregunta ${currentQuestion+1} de 16</div>
+<h2>${questions[currentQuestion]}</h2>
+<button class="option" onclick="answer('visual')">Prefiero esquemas o mapas</button>
+<button class="option" onclick="answer('lectura')">Prefiero leer y analizar texto</button>
+<button class="option" onclick="answer('auditivo')">Prefiero explicaciones habladas</button>
+<button class="option" onclick="answer('kinestesico')">Prefiero practicar con ejercicios</button>
+</div>`;
+}
+
+function answer(type){
+score[type]++;
+currentQuestion++;
+renderQuestion();
+}
+
+function calculateIdentity(){
+let profile=Object.keys(score).reduce((a,b)=>score[a]>score[b]?a:b);
+let identity=identityNames[profile];
+localStorage.setItem("perfilCAT3",profile);
+localStorage.setItem("identidadCAT3",identity);
+localStorage.setItem("scoreIdentidadCAT3",JSON.stringify(score));
+renderIdentityResult();
+}
+
+function renderIdentityResult(){
+const identity=getIdentity();
+app.innerHTML=`
+<div class="card">
+<h2>Tu perfil de aprendizaje es:</h2>
+<h1>${identity}</h1>
+<p>pVANE ajustará tu ruta CAT3 según esta identidad.</p>
+<button onclick="renderStrategyQuestion()">Continuar</button>
+</div>`;
+}
+
+function renderStrategyQuestion(){
+app.innerHTML=`
+<div class="card">
+<h2>Antes de comenzar</h2>
+<p>Cuando estudias metabolismo celular por primera vez:</p>
+<button class="option" onclick="saveStrategy('memorizo')">Intento memorizar rutas y nombres</button>
+<button class="option" onclick="saveStrategy('relaciono')">Intento entender cómo se conectan los procesos</button>
+<button class="option" onclick="saveStrategy('ejemplos')">Busco ejemplos o comparaciones concretas</button>
+<button class="option" onclick="saveStrategy('preguntas')">Practico preguntas tipo prueba</button>
+<p class="small">Esto no es una evaluación. Solo ayuda a pVANE a ajustar el acompañamiento.</p>
+</div>`;
+}
+
+function saveStrategy(strategy){
+localStorage.setItem("estrategiaCAT3",strategy);
+renderRoute();
+}
+
+function renderRoute(){
+const identity=getIdentity();
+const profile=getProfile();
+app.innerHTML=`
+<div class="card">
+<span class="badge">Ruta activa</span>
+<h2>Ruta CAT3 activada</h2>
+<h1>${identity}</h1>
+<p>${routeMessages[profile]}</p>
+<hr>
+<h3>Progreso CAT3</h3>
+<p class="star">⭐ ${completedCount()} / 4 hitos completados</p>
+<div class="grid">
+<div class="hito">
+<strong>${starLabel("hito1","Energía celular")}</strong>
+<span class="small">Modelo mental: energía para sostener organización celular.</span>
+<button onclick="startHito1()">Entrar</button>
+</div>
+<div class="hito">
+<strong>${starLabel("hito2","ATP y energía utilizable")}</strong>
+<span class="small">Relación funcional: ATP como energía de uso inmediato.</span>
+<button onclick="startHito2()">Entrar</button>
+</div>
+<div class="hito">
+<strong>${starLabel("hito3","Enzimas")}</strong>
+<span class="small">Próximo nodo: velocidad compatible con la vida.</span>
+<button class="secondary" onclick="comingSoon('Hito 3 · Enzimas')">Próximamente</button>
+</div>
+<div class="hito">
+<strong>${starLabel("hito4","Respiración celular")}</strong>
+<span class="small">Próximo nodo: oxígeno, fermentación y ATP.</span>
+<button class="secondary" onclick="comingSoon('Hito 4 · Respiración celular')">Próximamente</button>
+</div>
+</div>
+<div class="footer-actions">
+<button onclick="generateTorpedo()">Generar pTorpedo</button>
+<button class="secondary" onclick="resetRoute()">Reiniciar ruta</button>
+</div>
+</div>`;
+}
+
+function comingSoon(moduleName){
+app.innerHTML=`
+<div class="card">
+<h2>${moduleName}</h2>
+<p>Este nodo ya está definido en el cromosoma CAT3, pero aún no se encuentra activo en esta versión alfa.</p>
+<button onclick="renderRoute()">Volver a la ruta</button>
+</div>`;
+}
+
+function startHito1(){
+const identity=getIdentity();
+app.innerHTML=`
+<div class="card">
+<span class="badge">Hito 1</span>
+<h2>Energía celular</h2>
+<p>${hitoIntro.hito1[identity]}</p>
+<hr>
+<h3>Pregunta inicial</h3>
+<p>¿Por qué la célula necesita energía incluso cuando no está creciendo?</p>
+<button onclick="completeHito1()">Ver clave conceptual</button>
+</div>`;
+}
+
+function completeHito1(){
+localStorage.setItem("hito1","completado");
+app.innerHTML=`
+<div class="card">
+<h3>Clave conceptual</h3>
+<p>La célula necesita energía para mantener gradientes, transportar moléculas, reparar estructuras y sostener su organización interna incluso en reposo.</p>
+<div class="star">⭐ Hito 1 completado</div>
+<button onclick="renderRoute()">Volver a la ruta</button>
+</div>`;
+}
+
+function startHito2(){
+const identity=getIdentity();
+app.innerHTML=`
+<div class="card">
+<span class="badge">Hito 2</span>
+<h2>ATP y energía utilizable</h2>
+<p>${hitoIntro.hito2[identity]}</p>
+<hr>
+<h3>Pregunta inicial</h3>
+<p>Si una célula tiene muy poco ATP disponible, ¿qué tipo de procesos se verían afectados primero?</p>
+<button onclick="completeHito2()">Ver clave conceptual</button>
+</div>`;
+}
+
+function completeHito2(){
+localStorage.setItem("hito2","completado");
+app.innerHTML=`
+<div class="card">
+<h3>Clave conceptual</h3>
+<p>Se afectarían procesos que requieren energía utilizable inmediata, como transporte activo, síntesis de moléculas, reparación celular y movimiento.</p>
+<div class="star">⭐ Hito 2 completado</div>
+<button onclick="renderRoute()">Volver a la ruta</button>
+</div>`;
+}
+
+function generateTorpedo(){
+const identity=getIdentity();
+const strategy=localStorage.getItem("estrategiaCAT3") || "no definida";
+const done=completedCount();
+let strengths=[];
+if(isCompleted("hito1")) strengths.push("Comprendes que la célula necesita energía para mantener su organización interna.");
+if(isCompleted("hito2")) strengths.push("Reconoces que el ATP funciona como energía utilizable inmediata para procesos celulares.");
+if(strengths.length===0) strengths.push("Aún no has completado hitos. Comienza por Energía celular.");
+let focus=[];
+if(!isCompleted("hito1")) focus.push("Reforzar por qué la célula requiere energía incluso en reposo.");
+if(!isCompleted("hito2")) focus.push("Reforzar el rol del ATP como energía de uso inmediato.");
+focus.push("Próximamente: enzimas y respiración celular.");
+
+const torpedoText =
+`TUTORPEDO CAT3 · Biología Celular CBI111
+
+Identidad pVANE:
+${identity}
+
+Estrategia inicial declarada:
+${strategy}
+
+Progreso:
+${done} de 4 hitos completados
+
+Conceptos dominados:
+- ${strengths.join("\n- ")}
+
+Focos de refuerzo:
+- ${focus.join("\n- ")}
+
+Síntesis personalizada:
+La célula funciona como un sistema organizado que requiere energía para mantenerse activa, incluso cuando no está creciendo. El ATP permite disponer de energía utilizable de forma inmediata para sostener procesos celulares que requieren trabajo.
+
+Checklist antes de CAT3:
+☐ Puedo explicar por qué la célula necesita energía.
+☐ Puedo explicar para qué sirve el ATP.
+☐ Puedo diferenciar energía utilizable inmediata de reserva energética.
+☐ Puedo conectar energía, ATP y función celular.
+
+Prompt para NotebookLM:
+Usa esta guía para hacerme preguntas tipo CAT3 sobre energía celular y ATP. Primero usa selección múltiple y luego preguntas abiertas de explicación y predicción.`;
+
+app.innerHTML=`
+<div class="card">
+<span class="badge">pTorpedo alfa</span>
+<h2>Guía personalizada CAT3</h2>
+<div class="torpedo">${torpedoText}</div>
+<div class="footer-actions">
+<button onclick="copyTorpedo()">Copiar texto</button>
+<button class="secondary" onclick="renderRoute()">Volver a la ruta</button>
+</div>
+</div>`;
+localStorage.setItem("ptorpedoCAT3",torpedoText);
+}
+
+function copyTorpedo(){
+const text=localStorage.getItem("ptorpedoCAT3") || "";
+navigator.clipboard.writeText(text);
+alert("pTorpedo copiado al portapapeles");
+}
+
+renderLanding();
+</script>
 </body>
 </html>
