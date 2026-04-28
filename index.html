@@ -621,6 +621,64 @@ textarea{
   background:#2563eb;
 }
 
+
+.arch-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:14px;
+  margin:18px 0;
+}
+
+.arch-metric{
+  border:1px solid var(--line);
+  background:#fbfdff;
+  border-radius:18px;
+  padding:16px;
+  text-align:left;
+}
+
+.arch-metric .value{
+  font-size:30px;
+  font-weight:900;
+  margin-top:6px;
+}
+
+.arch-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:12px;
+  font-size:14px;
+}
+
+.arch-table th,.arch-table td{
+  border-bottom:1px solid var(--line);
+  padding:10px;
+  text-align:left;
+}
+
+.arch-log{
+  max-height:260px;
+  overflow:auto;
+  text-align:left;
+  background:#0f172a;
+  color:#dbeafe;
+  border-radius:16px;
+  padding:14px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:12px;
+  white-space:pre-wrap;
+}
+
+.arch-warning{
+  background:#fef2f2;
+  border:1px solid #fecaca;
+  color:#7f1d1d;
+  border-radius:16px;
+  padding:14px;
+  text-align:left;
+  margin:14px 0;
+}
+
 @media(max-width:1100px){
   body{padding:14px}
   .app{grid-template-columns:1fr}
@@ -703,15 +761,15 @@ textarea{
 
 <script>
 /* =========================================================
-   PRE-PARÁSITO CAT3 v1.3
+   PRE-PARÁSITO CAT3 v1.4
    Cambios:
    - Cuestionario de identidad extendido a 16 preguntas y sin mostrar identidad antes del resultado.
-   - Tour post-identidad vuelve a cuadro interactivo paso a paso.
+   - Dashboard arquitecto simple + simulador de ruta completa.
    - Sin atajos de teclado molestos.
    - Payload incluye contrato de estilo conversacional para pVANE.
    ========================================================= */
 
-const STORAGE_KEY = "PRE_PARASITO_CAT3_V1_3";
+const STORAGE_KEY = "PRE_PARASITO_CAT3_V1_4";
 const ENDPOINT = "/.netlify/functions/pvane-evaluate";
 
 const identities = {
@@ -949,6 +1007,7 @@ function initialState(){
     ptorpedo:{confirmed:[], progress:[], next:[]},
     ptorpedoVisible:false,
     ptorpedoModalShown:false,
+    simulationLog:[],
     studentId:null
   };
 }
@@ -984,6 +1043,7 @@ function render(){
   if(state.screen==="tour") return renderTour();
   if(state.screen==="app") return renderApp();
   if(state.screen==="report") return renderReport();
+  if(state.screen==="architect") return renderArchitect();
 }
 
 function renderWelcome(){
@@ -998,6 +1058,7 @@ function renderWelcome(){
     </div>
     <p class="small">Primero haremos un cuestionario breve para definir tu identidad de estudio. No hay respuestas buenas o malas.</p>
     <button onclick="startQuiz()">Comenzar</button>
+    ${architectEnabled() ? '<button class="ghost" onclick="openArchitect()">Acceso arquitecto</button>' : ''}
   </div>`;
 }
 
@@ -1152,6 +1213,7 @@ function renderApp(){
 
       <div class="actions">
         <button onclick="changeIdentity()">Cambiar identidad</button>
+        ${architectEnabled() ? '<button class="ghost" onclick="openArchitect()">Dashboard arquitecto</button>' : ''}
         <button class="secondary" onclick="resetAll()">Reiniciar</button>
       </div>
     </div>
@@ -1497,6 +1559,196 @@ function nextOnboardingStep(){
 function prevOnboardingStep(){
   onboardingStep = Math.max(0,onboardingStep - 1);
   renderOnboardingStep();
+}
+
+
+function architectEnabled(){
+  const url = new URL(window.location.href);
+  return url.searchParams.get("architect") === "1" || localStorage.getItem("ARCHITECT_ACCESS") === "true";
+}
+
+function openArchitect(){
+  localStorage.setItem("ARCHITECT_ACCESS","true");
+  state.screen = "architect";
+  saveState();
+  render();
+}
+
+function closeArchitect(){
+  state.screen = "app";
+  saveState();
+  render();
+}
+
+function architectMetrics(){
+  const turns = state.chat.filter(m => m.role === "user").length;
+  const vaneTurns = state.chat.filter(m => m.role === "vane" || m.role === "award").length;
+  const unlocked = milestoneOrder.filter(k => isUnlocked(k)).length;
+  const p = state.ptorpedo;
+  const assets = p.confirmed.length + p.progress.length + p.next.length;
+  return {turns, vaneTurns, unlocked, assets, readiness:readiness()};
+}
+
+function renderArchitect(){
+  const m = architectMetrics();
+  const rows = milestoneOrder.map(k=>{
+    const p = state.progress[k];
+    return `
+      <tr>
+        <td>${milestones[k].short}</td>
+        <td>${isUnlocked(k) ? "🔓 abierto" : "🔒 cerrado"}</td>
+        <td>${milestoneStars(k)}</td>
+        <td>${Math.round((p.reconoce||0)*100)}%</td>
+        <td>${Math.round((p.explica||0)*100)}%</td>
+        <td>${Math.round((p.integra||0)*100)}%</td>
+      </tr>`;
+  }).join("");
+
+  root().innerHTML = `
+  <div class="card center" style="max-width:1180px">
+    <span class="badge">Acceso arquitecto · modo local</span>
+    <h1>Dashboard simple del pre-parásito</h1>
+    <p class="small">Panel temporal para probar ruta, botones, diálogos y futura integración Supabase. Los datos mostrados vienen de este navegador.</p>
+
+    <div class="arch-warning">
+      <strong>Modo prueba:</strong> este dashboard no es para estudiantes. Para abrirlo usa <code>?architect=1</code> en la URL.
+    </div>
+
+    <div class="arch-grid">
+      <div class="arch-metric"><strong>Readiness</strong><div class="value">${m.readiness}%</div></div>
+      <div class="arch-metric"><strong>Hitos abiertos</strong><div class="value">${m.unlocked}/${milestoneOrder.length}</div></div>
+      <div class="arch-metric"><strong>Turnos estudiante</strong><div class="value">${m.turns}</div></div>
+      <div class="arch-metric"><strong>Entradas pTorpedo</strong><div class="value">${m.assets}</div></div>
+    </div>
+
+    <h3>Estado de hitos</h3>
+    <table class="arch-table">
+      <thead><tr><th>Hito</th><th>Estado</th><th>Estrellas</th><th>Reconoce</th><th>Explica</th><th>Integra</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+
+    <h3>Simulación</h3>
+    <p class="small">Simula una ruta completa sin depender de respuestas reales. Sirve para revisar desbloqueos, pTorpedo, fanfarria, diálogo y luego conexión Supabase.</p>
+    <div class="actions">
+      <button onclick="simulateFullRoute()">Simular ruta completa</button>
+      <button class="ghost" onclick="simulateOneStep()">Simular solo un paso</button>
+      <button class="secondary" onclick="clearSimulation()">Limpiar simulación</button>
+      <button class="ghost" onclick="backFromArchitect()">Volver a la ruta</button>
+    </div>
+
+    <h3>Log de simulación</h3>
+    <div class="arch-log">${escapeHTML((state.simulationLog||[]).join("\\n") || "Aún no hay simulaciones.")}</div>
+  </div>`;
+}
+
+function backFromArchitect(){
+  state.screen = state.identity ? "app" : "welcome";
+  saveState();
+  render();
+}
+
+function logSim(txt){
+  if(!state.simulationLog) state.simulationLog = [];
+  const stamp = new Date().toLocaleTimeString();
+  state.simulationLog.push(`[${stamp}] ${txt}`);
+  if(state.simulationLog.length > 80) state.simulationLog.shift();
+}
+
+function applySimulatedEvaluation(milestone, level){
+  state.activeMilestone = milestone;
+  const p = state.progress[milestone];
+
+  const evByLevel = {
+    reconoce:{
+      reconoce:.75, explica:0, integra:0, star_awarded:.25, unlock:false,
+      feedback:"Simulación: el estudiante reconoció conceptos base del hito.",
+      next_prompt:"Siguiente paso simulado: pedir explicación causal.",
+      ptorpedo_entry:{
+        conceptos_validados:[`Reconocimiento base en ${milestones[milestone].short}`],
+        conexion_lograda:"",
+        error_a_corregir:`Profundizar explicación causal en ${milestones[milestone].short}`
+      }
+    },
+    explica:{
+      reconoce:1, explica:.75, integra:.25, star_awarded:.5, unlock:true,
+      feedback:"Simulación: el estudiante explicó causa y consecuencia con mérito suficiente.",
+      next_prompt:"Siguiente paso simulado: integrar con otro proceso celular.",
+      ptorpedo_entry:{
+        conceptos_validados:[`Explicación funcional en ${milestones[milestone].short}`],
+        conexion_lograda:`Relación causal lograda en ${milestones[milestone].short}`,
+        error_a_corregir:"Aumentar integración entre hitos."
+      }
+    },
+    integra:{
+      reconoce:1, explica:1, integra:1, star_awarded:1, unlock:true,
+      feedback:"Simulación: el estudiante integró el hito con procesos celulares relacionados.",
+      next_prompt:"Hito simulado estabilizado.",
+      ptorpedo_entry:{
+        conceptos_validados:[`Integración completa en ${milestones[milestone].short}`],
+        conexion_lograda:`Conexión sistémica lograda en ${milestones[milestone].short}`,
+        error_a_corregir:"Revisar precisión terminológica antes de CAT3."
+      }
+    }
+  };
+
+  const ev = evByLevel[level];
+  addChat("user", `Tú: [simulación] respuesta nivel ${level} para ${milestones[milestone].short}`, "user");
+  updateProgress(milestone, ev);
+  updatePTorpedo(ev);
+  addChat("award", `pVANE: ${ev.feedback}\\n\\n${ev.next_prompt}`, "award");
+  logSim(`Aplicado ${level} en ${milestones[milestone].short}`);
+}
+
+function simulateOneStep(){
+  if(!state.identity){
+    state.identity = "ingeniero";
+    addChat("vane", "Simulación: identidad asignada como Ingeniero.", "system");
+  }
+  const current = milestoneOrder.find(k => {
+    const p = state.progress[k];
+    return isUnlocked(k) && (p.integra||0) < 1;
+  }) || "cat3_h1_termodinamica";
+
+  const p = state.progress[current];
+  if((p.reconoce||0) < 1) applySimulatedEvaluation(current,"reconoce");
+  else if((p.explica||0) < 1) applySimulatedEvaluation(current,"explica");
+  else applySimulatedEvaluation(current,"integra");
+
+  saveState();
+  state.screen="architect";
+  render();
+}
+
+function simulateFullRoute(){
+  if(!state.identity){
+    state.identity = "ingeniero";
+    addChat("vane", "Simulación: identidad asignada como Ingeniero.", "system");
+  }
+
+  milestoneOrder.forEach(k=>{
+    state.unlocked[k] = true;
+    applySimulatedEvaluation(k,"reconoce");
+    applySimulatedEvaluation(k,"explica");
+    applySimulatedEvaluation(k,"integra");
+  });
+
+  state.ptorpedoVisible = true;
+  state.ptorpedoModalShown = true;
+  logSim("Ruta completa simulada: hitos, estrellas, pTorpedo y desbloqueos.");
+  saveState();
+  state.screen="architect";
+  render();
+}
+
+function clearSimulation(){
+  const keepAccess = localStorage.getItem("ARCHITECT_ACCESS");
+  localStorage.removeItem(STORAGE_KEY);
+  state = initialState();
+  state.screen = "architect";
+  state.simulationLog = ["Simulación limpiada."];
+  if(keepAccess) localStorage.setItem("ARCHITECT_ACCESS", keepAccess);
+  saveState();
+  render();
 }
 
 function renderReport(){
