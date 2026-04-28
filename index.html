@@ -523,6 +523,104 @@ textarea{
   font-size:14px;
 }
 
+.identity-result-card{
+  max-width:720px;
+  margin:18px auto;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:18px;
+  background:#fbfdff;
+  text-align:left;
+}
+
+.tour-modal-visual{
+  position:relative;
+  height:220px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:linear-gradient(135deg,#f8fafc,#eff6ff);
+  overflow:hidden;
+  margin:16px 0;
+}
+
+.tour-demo{
+  position:absolute;
+  background:white;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:12px;
+  box-shadow:0 10px 24px rgba(15,23,42,.08);
+  font-size:13px;
+}
+
+.tour-demo.identity{left:22px;top:24px;width:180px}
+.tour-demo.stars{left:240px;top:24px;width:190px}
+.tour-demo.chat{right:22px;top:24px;width:190px}
+.tour-demo.ptorpedo{left:235px;bottom:24px;width:210px}
+
+.tour-demo.highlight{
+  border-color:#2563eb;
+  box-shadow:0 0 0 4px rgba(37,99,235,.12),0 10px 24px rgba(15,23,42,.08);
+}
+
+.tour-cursor{
+  position:absolute;
+  font-size:30px;
+  z-index:4;
+  filter:drop-shadow(0 4px 7px rgba(15,23,42,.22));
+  transition:.35s ease;
+}
+
+.tour-cursor.step0{left:72px;top:78px}
+.tour-cursor.step1{left:305px;top:78px}
+.tour-cursor.step2{left:520px;top:78px}
+.tour-cursor.step3{left:308px;top:158px}
+.tour-cursor.step4{left:510px;top:78px}
+
+.tour-modal-caption{
+  text-align:left;
+  background:#fbfdff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:14px;
+  margin:12px 0;
+  min-height:72px;
+}
+
+.tour-step-count{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.tour-nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-top:14px;
+}
+
+.tour-dots{
+  display:flex;
+  gap:6px;
+  justify-content:center;
+  flex:1;
+}
+
+.tour-dot{
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:#cbd5e1;
+}
+
+.tour-dot.active{
+  background:#2563eb;
+}
+
 @media(max-width:1100px){
   body{padding:14px}
   .app{grid-template-columns:1fr}
@@ -574,19 +672,46 @@ textarea{
   </div>
 </div>
 
+<div id="onboardingModal" class="modal-backdrop" onclick="closeOnboardingModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <span class="badge">Tour de preparación</span>
+    <h2 id="onboardingTitle">Cómo funciona tu ruta</h2>
+
+    <div class="tour-modal-visual">
+      <div id="tourDemoIdentity" class="tour-demo identity"><strong>Identidad</strong><br><span class="small">Ajusta el lenguaje de pVANE.</span></div>
+      <div id="tourDemoStars" class="tour-demo stars"><strong>Estrellas</strong><br><span class="stars">☆☆☆</span><br><span class="small">Mérito conceptual.</span></div>
+      <div id="tourDemoChat" class="tour-demo chat"><strong>pVANE</strong><br><span class="small">Pregunta, guía y valida.</span></div>
+      <div id="tourDemoPTorpedo" class="tour-demo ptorpedo"><strong>pTorpedo</strong><br><span class="small">Tu guía aparece al avanzar.</span></div>
+      <div id="tourCursor" class="tour-cursor step0">➜</div>
+    </div>
+
+    <div class="tour-modal-caption">
+      <div id="tourStepCount" class="tour-step-count">Paso 1/5</div>
+      <strong id="tourStepTitle"></strong>
+      <p id="tourStepText" class="small"></p>
+    </div>
+
+    <div class="tour-nav">
+      <button class="secondary" onclick="prevOnboardingStep()">← Atrás</button>
+      <div id="tourDots" class="tour-dots"></div>
+      <button id="tourNextBtn" onclick="nextOnboardingStep()">Siguiente →</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
 /* =========================================================
-   PRE-PARÁSITO CAT3 v1.2
+   PRE-PARÁSITO CAT3 v1.3
    Cambios:
    - Cuestionario de identidad extendido a 16 preguntas y sin mostrar identidad antes del resultado.
-   - Tour animado post-identidad + pTorpedo con confetti y cuadro explicativo.
+   - Tour post-identidad vuelve a cuadro interactivo paso a paso.
    - Sin atajos de teclado molestos.
    - Payload incluye contrato de estilo conversacional para pVANE.
    ========================================================= */
 
-const STORAGE_KEY = "PRE_PARASITO_CAT3_V1_2";
+const STORAGE_KEY = "PRE_PARASITO_CAT3_V1_3";
 const ENDPOINT = "/.netlify/functions/pvane-evaluate";
 
 const identities = {
@@ -929,35 +1054,18 @@ function renderTour(){
     <h1>Tu identidad: ${id.name}</h1>
     <p>${id.phrase}</p>
 
-    <div class="onboarding-visual">
-      <div class="demo-card one">
-        <strong>Hitos CAT3</strong><br>
-        <span class="small">Avanzas por evidencia, no por clics.</span>
-      </div>
-      <div class="demo-card two">
-        <strong>pVANE</strong><br>
-        <span class="small">Te guía con preguntas y ajustes breves.</span>
-      </div>
-      <div class="demo-card three">
-        <strong>pTorpedo</strong><br>
-        <span class="small">Aparece cuando logras tu primera evidencia.</span>
-      </div>
-      <div class="pulse-ring"></div>
-      <div class="demo-cursor">➜</div>
+    <div class="identity-result-card">
+      <strong>Antes de entrar:</strong>
+      <p class="small">Te mostraremos un tour breve de cómo funcionan los hitos, las estrellas, pVANE y el pTorpedo. Puedes repetirlo cuando quieras.</p>
     </div>
 
-    <div class="tour-caption">
-      <strong>Cómo funciona:</strong> eliges un hito, respondes a pVANE y el sistema actualiza estrellas, desbloqueos y pTorpedo solo si tu explicación muestra mérito conceptual.
+    <div class="actions">
+      <button onclick="showOnboardingModal()">Ver tour interactivo</button>
+      <button class="secondary" onclick="enterRoute()">Entrar directo a la ruta</button>
     </div>
-
-    <div class="tour-steps">
-      <div class="tour-step"><div class="tour-icon">⭐</div><div><strong>Estrellas</strong><br><span class="small">No se ganan por hacer clic. pVANE las entrega cuando detecta evidencia conceptual.</span></div></div>
-      <div class="tour-step"><div class="tour-icon">🧠</div><div><strong>Reconoce / Explica / Integra</strong><br><span class="small">Primero identificas, luego conectas mecanismos y finalmente integras procesos celulares.</span></div></div>
-      <div class="tour-step"><div class="tour-icon">📄</div><div><strong>pTorpedo</strong><br><span class="small">Se desbloquea con tu primera evidencia validada y crece con tus mejores respuestas.</span></div></div>
-    </div>
-
-    <button onclick="enterRoute()">Entrar a la ruta</button>
   </div>`;
+
+  setTimeout(showOnboardingModal, 350);
 }
 
 function enterRoute(){
@@ -1298,6 +1406,97 @@ function closePTorpedoModal(event){
   if(event && event.target && event.target.id !== "ptorpedoModal") return;
   const modal = document.getElementById("ptorpedoModal");
   if(modal) modal.classList.remove("visible");
+}
+
+let onboardingStep = 0;
+
+const onboardingSteps = [
+  {
+    title:"Tu identidad no cambia el contenido",
+    text:"Cambia el lenguaje de pVANE: metáforas, tipo de pistas y forma de guiarte. El estándar conceptual sigue siendo el mismo.",
+    target:"tourDemoIdentity"
+  },
+  {
+    title:"Las estrellas son evidencia, no clics",
+    text:"Reconoce, Explica e Integra suben solo cuando tu respuesta muestra mérito conceptual. No hay botones para regalar progreso.",
+    target:"tourDemoStars"
+  },
+  {
+    title:"pVANE conversa contigo",
+    text:"pVANE valida lo correcto, ajusta lo impreciso y te empuja un paso más. No busca responder por ti: busca que construyas la respuesta.",
+    target:"tourDemoChat"
+  },
+  {
+    title:"El pTorpedo aparece cuando lo mereces",
+    text:"Cuando logras tu primera evidencia validada, se activa tu guía personal. Ahí se guardan conceptos, conexiones y próximos pasos.",
+    target:"tourDemoPTorpedo"
+  },
+  {
+    title:"Aumentarlo te conviene",
+    text:"Mientras más lo alimentes con buenas explicaciones, más útil será para estudiar antes de la CAT3. Es tu síntesis personalizada.",
+    target:"tourDemoPTorpedo"
+  }
+];
+
+function showOnboardingModal(){
+  onboardingStep = 0;
+  const modal = document.getElementById("onboardingModal");
+  if(modal){
+    modal.classList.add("visible");
+    renderOnboardingStep();
+  }
+}
+
+function closeOnboardingModal(event){
+  if(event && event.target && event.target.id !== "onboardingModal") return;
+  const modal = document.getElementById("onboardingModal");
+  if(modal) modal.classList.remove("visible");
+}
+
+function renderOnboardingStep(){
+  const step = onboardingSteps[onboardingStep];
+  const title = document.getElementById("tourStepTitle");
+  const text = document.getElementById("tourStepText");
+  const count = document.getElementById("tourStepCount");
+  const next = document.getElementById("tourNextBtn");
+  const cursor = document.getElementById("tourCursor");
+  const dots = document.getElementById("tourDots");
+
+  if(title) title.innerText = step.title;
+  if(text) text.innerText = step.text;
+  if(count) count.innerText = `Paso ${onboardingStep + 1}/${onboardingSteps.length}`;
+  if(next) next.innerText = onboardingStep === onboardingSteps.length - 1 ? "Entrar a la ruta →" : "Siguiente →";
+
+  ["tourDemoIdentity","tourDemoStars","tourDemoChat","tourDemoPTorpedo"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.remove("highlight");
+  });
+
+  const target = document.getElementById(step.target);
+  if(target) target.classList.add("highlight");
+
+  if(cursor){
+    cursor.className = "tour-cursor step" + onboardingStep;
+  }
+
+  if(dots){
+    dots.innerHTML = onboardingSteps.map((_,i)=>`<div class="tour-dot ${i===onboardingStep?'active':''}"></div>`).join("");
+  }
+}
+
+function nextOnboardingStep(){
+  if(onboardingStep >= onboardingSteps.length - 1){
+    closeOnboardingModal();
+    enterRoute();
+    return;
+  }
+  onboardingStep += 1;
+  renderOnboardingStep();
+}
+
+function prevOnboardingStep(){
+  onboardingStep = Math.max(0,onboardingStep - 1);
+  renderOnboardingStep();
 }
 
 function renderReport(){
