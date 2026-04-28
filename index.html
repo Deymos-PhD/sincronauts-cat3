@@ -137,6 +137,12 @@ button:disabled{
   margin:10px 0;
 }
 
+.answer-card strong{
+  display:block;
+  font-size:15px;
+  margin-bottom:6px;
+}
+
 .avatar{
   width:86px;
   height:86px;
@@ -392,6 +398,131 @@ textarea{
   background:var(--soft-blue);
 }
 
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.48);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:22px;
+  z-index:20;
+  backdrop-filter:blur(4px);
+}
+
+.modal-backdrop.visible{
+  display:flex;
+}
+
+.modal{
+  width:min(680px,100%);
+  background:white;
+  border-radius:26px;
+  padding:26px;
+  box-shadow:0 24px 80px rgba(15,23,42,.25);
+  animation:pop .28s ease;
+}
+
+.modal h2{
+  margin-bottom:8px;
+}
+
+.modal-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:10px;
+  margin:16px 0;
+}
+
+.modal-tile{
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#fbfdff;
+  padding:14px;
+}
+
+.modal-tile .big{
+  font-size:26px;
+}
+
+.sparkle{
+  background:linear-gradient(90deg,#2563eb,#16a34a,#f59e0b);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+
+.onboarding-visual{
+  position:relative;
+  height:170px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:linear-gradient(135deg,#f8fafc,#eff6ff);
+  overflow:hidden;
+  margin:18px 0;
+}
+
+.demo-card{
+  position:absolute;
+  background:white;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:12px;
+  box-shadow:0 10px 24px rgba(15,23,42,.08);
+  font-size:13px;
+}
+
+.demo-card.one{left:22px;top:24px;width:170px}
+.demo-card.two{right:22px;top:28px;width:190px}
+.demo-card.three{left:210px;bottom:24px;width:210px}
+
+.demo-cursor{
+  position:absolute;
+  left:42px;
+  top:48px;
+  font-size:28px;
+  animation:cursorTour 5.6s ease-in-out infinite;
+  z-index:4;
+  filter:drop-shadow(0 4px 7px rgba(15,23,42,.22));
+}
+
+.pulse-ring{
+  position:absolute;
+  width:48px;
+  height:48px;
+  border:3px solid #2563eb;
+  border-radius:50%;
+  opacity:.0;
+  animation:pulseTour 5.6s ease-in-out infinite;
+  z-index:3;
+}
+
+@keyframes cursorTour{
+  0%,12%{left:42px;top:48px}
+  28%,40%{left:485px;top:52px}
+  56%,68%{left:286px;top:115px}
+  84%,100%{left:42px;top:48px}
+}
+
+@keyframes pulseTour{
+  0%,12%{left:36px;top:42px;opacity:.65}
+  18%{opacity:0}
+  28%,40%{left:478px;top:44px;opacity:.65}
+  46%{opacity:0}
+  56%,68%{left:278px;top:108px;opacity:.65}
+  74%,100%{opacity:0}
+}
+
+.tour-caption{
+  min-height:48px;
+  text-align:left;
+  background:#fbfdff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:12px;
+  margin-top:12px;
+  font-size:14px;
+}
+
 @media(max-width:1100px){
   body{padding:14px}
   .app{grid-template-columns:1fr}
@@ -402,7 +533,7 @@ textarea{
 @media print{
   body{background:white;padding:0}
   .app{display:block}
-  .chat-panel,.sidebar,.actions,button,textarea{display:none!important}
+  .chat-panel,.sidebar,.actions,button,textarea,.modal-backdrop{display:none!important}
   .card{box-shadow:none;border-radius:0}
   .ptorpedo-panel{display:block!important}
 }
@@ -412,14 +543,50 @@ textarea{
 <body>
 <div id="root"></div>
 
+<div id="ptorpedoModal" class="modal-backdrop" onclick="closePTorpedoModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <span class="badge">Logro desbloqueado</span>
+    <h2><span class="sparkle">pTorpedo activado</span> ✦</h2>
+    <p>Tu primera evidencia conceptual ya quedó registrada. Desde ahora, tus avances se irán transformando en una guía personal de estudio para CAT3.</p>
+    <div class="modal-grid">
+      <div class="modal-tile">
+        <div class="big">✔</div>
+        <strong>Qué guarda</strong>
+        <p class="small">Conceptos validados, relaciones en progreso y errores que conviene corregir.</p>
+      </div>
+      <div class="modal-tile">
+        <div class="big">⭐</div>
+        <strong>Cómo crece</strong>
+        <p class="small">Aumenta solo cuando pVANE detecta mérito conceptual en tus respuestas.</p>
+      </div>
+      <div class="modal-tile">
+        <div class="big">📄</div>
+        <strong>Qué ganas</strong>
+        <p class="small">Una síntesis propia para estudiar, imprimir o repasar antes de la CAT3.</p>
+      </div>
+    </div>
+    <div class="notice">
+      Mientras más precisas sean tus explicaciones, más útil será tu pTorpedo.
+    </div>
+    <div class="actions">
+      <button onclick="closePTorpedoModal()">Entendido, seguir con VANE</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <script>
 /* =========================================================
-   PRE-PARÁSITO CAT3 v1
-   Identidad → tour → hitos verticales → pVANE → estrellas → pTorpedo
-   La API key nunca vive aquí. Este frontend solo llama a Netlify Functions.
+   PRE-PARÁSITO CAT3 v1.2
+   Cambios:
+   - Cuestionario de identidad extendido a 16 preguntas y sin mostrar identidad antes del resultado.
+   - Tour animado post-identidad + pTorpedo con confetti y cuadro explicativo.
+   - Sin atajos de teclado molestos.
+   - Payload incluye contrato de estilo conversacional para pVANE.
    ========================================================= */
 
-const STORAGE_KEY = "PRE_PARASITO_CAT3_V1";
+const STORAGE_KEY = "PRE_PARASITO_CAT3_V1_2";
 const ENDPOINT = "/.netlify/functions/pvane-evaluate";
 
 const identities = {
@@ -457,7 +624,7 @@ const quizQuestions = [
   {
     q:"Cuando enfrentas un tema nuevo en biología celular, ¿qué haces primero?",
     a:[
-      ["Busco el mecanismo: qué pieza hace qué y cómo falla.","ingeniero"],
+      ["Busco cómo funciona: qué pieza hace qué y cómo podría fallar.","ingeniero"],
       ["Busco antecedentes: de dónde viene la idea y qué evidencia la sostiene.","arqueologo"],
       ["Busco relaciones: qué procesos se conectan entre sí.","diplomatico"],
       ["Busco prioridades: qué variable controla el resultado final.","estratega"]
@@ -491,7 +658,7 @@ const quizQuestions = [
     ]
   },
   {
-    q:"Si VANE te desafía, ¿qué tipo de pregunta te motiva más?",
+    q:"Si pVANE te desafía, ¿qué tipo de pregunta te motiva más?",
     a:[
       ["¿Cómo arreglarías este sistema?","ingeniero"],
       ["¿Qué evidencia te permite afirmar eso?","arqueologo"],
@@ -524,6 +691,78 @@ const quizQuestions = [
       ["Justificar la respuesta con evidencia conceptual.","arqueologo"],
       ["Conectar varios conceptos en una explicación coherente.","diplomatico"],
       ["Predecir consecuencias en un escenario nuevo.","estratega"]
+    ]
+  },
+  {
+    q:"Cuando aparece una vía metabólica con muchas flechas, ¿qué haces primero?",
+    a:[
+      ["Sigo el flujo e identifico dónde entra y sale energía.","ingeniero"],
+      ["Reconstruyo cada etapa para entender cómo se llegó al producto final.","arqueologo"],
+      ["Busco qué moléculas conectan una etapa con otra.","diplomatico"],
+      ["Identifico el paso limitante o la decisión crítica de la ruta.","estratega"]
+    ]
+  },
+  {
+    q:"Si una célula cambia de respiración a fermentación, ¿qué te interesa explicar primero?",
+    a:[
+      ["Qué mecanismo alternativo permite seguir produciendo ATP.","ingeniero"],
+      ["Qué evidencia muestra que cambió la condición metabólica.","arqueologo"],
+      ["Cómo se conectan oxígeno, NADH, glucólisis y ATP.","diplomatico"],
+      ["Qué consecuencia funcional tiene elegir una ruta menos eficiente.","estratega"]
+    ]
+  },
+  {
+    q:"Cuando estudias enzimas, ¿qué enfoque te acomoda más?",
+    a:[
+      ["Entender cómo bajan la energía de activación y aceleran el proceso.","ingeniero"],
+      ["Identificar sitio activo, sustrato, complejo ES y producto.","arqueologo"],
+      ["Relacionar enzima, sustrato, regulación, pH, temperatura e inhibidores.","diplomatico"],
+      ["Predecir qué pasa si inhibo o altero una enzima clave.","estratega"]
+    ]
+  },
+  {
+    q:"Si te equivocas al responder, ¿qué tipo de pista prefieres?",
+    a:[
+      ["Una pista sobre la pieza del sistema que falta.","ingeniero"],
+      ["Una pista sobre el dato o evidencia que debería revisar.","arqueologo"],
+      ["Una pista sobre la conexión que no estoy integrando.","diplomatico"],
+      ["Una pista sobre la consecuencia de mi razonamiento.","estratega"]
+    ]
+  },
+  {
+    q:"Para aprender un concepto difícil, prefieres que pVANE:",
+    a:[
+      ["Me haga probar si mi explicación funciona como mecanismo.","ingeniero"],
+      ["Me ayude a reconstruirlo desde conceptos básicos.","arqueologo"],
+      ["Me haga conversar el concepto con otros procesos.","diplomatico"],
+      ["Me ponga en escenarios donde deba decidir y justificar.","estratega"]
+    ]
+  },
+  {
+    q:"Cuando lees una pregunta de prueba, ¿qué buscas detectar primero?",
+    a:[
+      ["Qué proceso celular está funcionando o fallando.","ingeniero"],
+      ["Qué dato clave del enunciado permite resolverla.","arqueologo"],
+      ["Qué conceptos aparecen relacionados en la situación.","diplomatico"],
+      ["Qué alternativa tiene mejores consecuencias lógicas.","estratega"]
+    ]
+  },
+  {
+    q:"Si tuvieras que explicar ΔG a un compañero, partirías por:",
+    a:[
+      ["Cómo indica si una reacción puede entregar energía útil.","ingeniero"],
+      ["Qué significa el signo del cambio energético entre reactantes y productos.","arqueologo"],
+      ["Cómo conecta espontaneidad, ATP, acoplamiento y metabolismo.","diplomatico"],
+      ["Cómo permite decidir si una reacción avanza sola o requiere ayuda.","estratega"]
+    ]
+  },
+  {
+    q:"Cuando quieres saber si realmente entendiste, ¿qué prueba te haces?",
+    a:[
+      ["Intento explicar el mecanismo sin mirar apuntes.","ingeniero"],
+      ["Intento reconstruir la explicación desde la evidencia inicial.","arqueologo"],
+      ["Intento conectar el concepto con otros dos procesos celulares.","diplomatico"],
+      ["Intento predecir qué pasaría si cambia una condición del sistema.","estratega"]
     ]
   }
 ];
@@ -584,6 +823,7 @@ function initialState(){
     chat:[],
     ptorpedo:{confirmed:[], progress:[], next:[]},
     ptorpedoVisible:false,
+    ptorpedoModalShown:false,
     studentId:null
   };
 }
@@ -631,7 +871,7 @@ function renderWelcome(){
       Participación voluntaria · Uso individual · No reemplaza evaluaciones oficiales del curso.<br>
       Tus estrellas dependen de mérito conceptual detectado durante el diálogo.
     </div>
-    <p class="small">Primero haremos un cuestionario breve para definir tu identidad de estudio.</p>
+    <p class="small">Primero haremos un cuestionario breve para definir tu identidad de estudio. No hay respuestas buenas o malas.</p>
     <button onclick="startQuiz()">Comenzar</button>
   </div>`;
 }
@@ -653,9 +893,9 @@ function renderQuiz(){
     <h2>${q.q}</h2>
     <div class="quiz-progress"><div class="quiz-fill" style="width:${pct}%"></div></div>
     <div>
-      ${q.a.map(([txt,id])=>`
+      ${q.a.map(([txt,id],i)=>`
         <div class="answer-card" onclick="answerQuiz('${id}')">
-          <strong>${identities[id].emoji} ${identities[id].name}</strong>
+          <strong>Opción ${i+1}</strong>
           <p class="small">${txt}</p>
         </div>
       `).join("")}
@@ -689,12 +929,31 @@ function renderTour(){
     <h1>Tu identidad: ${id.name}</h1>
     <p>${id.phrase}</p>
 
+    <div class="onboarding-visual">
+      <div class="demo-card one">
+        <strong>Hitos CAT3</strong><br>
+        <span class="small">Avanzas por evidencia, no por clics.</span>
+      </div>
+      <div class="demo-card two">
+        <strong>pVANE</strong><br>
+        <span class="small">Te guía con preguntas y ajustes breves.</span>
+      </div>
+      <div class="demo-card three">
+        <strong>pTorpedo</strong><br>
+        <span class="small">Aparece cuando logras tu primera evidencia.</span>
+      </div>
+      <div class="pulse-ring"></div>
+      <div class="demo-cursor">➜</div>
+    </div>
+
+    <div class="tour-caption">
+      <strong>Cómo funciona:</strong> eliges un hito, respondes a pVANE y el sistema actualiza estrellas, desbloqueos y pTorpedo solo si tu explicación muestra mérito conceptual.
+    </div>
+
     <div class="tour-steps">
       <div class="tour-step"><div class="tour-icon">⭐</div><div><strong>Estrellas</strong><br><span class="small">No se ganan por hacer clic. pVANE las entrega cuando detecta evidencia conceptual.</span></div></div>
       <div class="tour-step"><div class="tour-icon">🧠</div><div><strong>Reconoce / Explica / Integra</strong><br><span class="small">Primero identificas, luego conectas mecanismos y finalmente integras procesos celulares.</span></div></div>
-      <div class="tour-step"><div class="tour-icon">📍</div><div><strong>Hitos CAT3</strong><br><span class="small">Cada hito corresponde a un punto crítico de preparación para la evaluación.</span></div></div>
-      <div class="tour-step"><div class="tour-icon">💬</div><div><strong>VANE</strong><br><span class="small">No entrega respuestas directas. Te guía con preguntas, pistas y validación progresiva.</span></div></div>
-      <div class="tour-step"><div class="tour-icon">📄</div><div><strong>pTorpedo</strong><br><span class="small">Aparece solo cuando logras tu primera evidencia conceptual validada.</span></div></div>
+      <div class="tour-step"><div class="tour-icon">📄</div><div><strong>pTorpedo</strong><br><span class="small">Se desbloquea con tu primera evidencia validada y crece con tus mejores respuestas.</span></div></div>
     </div>
 
     <button onclick="enterRoute()">Entrar a la ruta</button>
@@ -810,6 +1069,7 @@ function renderApp(){
       ${renderPTorpedoHTML()}
       <div class="actions">
         <button onclick="renderReport()">Ver versión imprimible</button>
+        <button class="ghost" onclick="showPTorpedoModal()">¿Cómo funciona?</button>
       </div>
     </div>
   </div>`;
@@ -905,7 +1165,9 @@ function updateProgress(milestone, ev){
 
   if(!state.ptorpedoVisible && (p.reconoce > 0 || p.explica > 0 || p.integra > 0)){
     state.ptorpedoVisible = true;
-    addChat("award", "Tu primera evidencia conceptual ya quedó registrada.\nHe abierto tu pTorpedo: desde ahora, tus avances empezarán a formar tu guía personal de estudio.", "award");
+    addChat("award", "Tu primera evidencia conceptual ya quedó registrada.\nHe activado tu pTorpedo ✦\nDesde ahora, tus avances comenzarán a organizarse automáticamente como tu guía personal de estudio.", "award");
+    celebratePTorpedoUnlock();
+    setTimeout(showPTorpedoModal, 450);
   }
 
   const nextId = milestones[milestone].next;
@@ -983,6 +1245,15 @@ async function sendToVane(){
         milestone:state.activeMilestone,
         identity:state.identity,
         response:text,
+        message:text,
+        conversation_style:{
+          mode:"tutor_fluido",
+          structure:"validar_refinar_conectar_preguntar_solo_si_hace_falta",
+          avoid:["¿Puedes explicar...?","¿Podrías explicar...?","repetir la misma pregunta en cada turno"],
+          prefer:["observa que","fíjate en esto","eso conecta con","piensa ahora en","aquí aparece"],
+          semantic_echo:true,
+          tone:"socrático natural, no interrogatorio"
+        },
         history:state.chat.slice(-8).map(m=>({
           role:m.role==="user" ? "student" : "pvane",
           content:m.text
@@ -997,7 +1268,6 @@ async function sendToVane(){
     ev = normalizeEvaluation({evaluation:fallbackEvaluation(text)});
   }
 
-  // reemplaza el "pensando..."
   const idx = state.chat.map(m=>m.text).lastIndexOf("pVANE está pensando…");
   if(idx >= 0) state.chat.splice(idx,1);
 
@@ -1009,6 +1279,25 @@ async function sendToVane(){
 
   saveState();
   render();
+}
+
+function celebratePTorpedoUnlock(){
+  if(typeof confetti !== "function") return;
+  confetti({ particleCount:90, spread:70, origin:{ y:0.62 }, scalar:.9 });
+  setTimeout(()=>confetti({ particleCount:45, spread:115, origin:{ y:0.58 }, scalar:.65 }),130);
+}
+
+function showPTorpedoModal(){
+  state.ptorpedoModalShown = true;
+  saveState();
+  const modal = document.getElementById("ptorpedoModal");
+  if(modal) modal.classList.add("visible");
+}
+
+function closePTorpedoModal(event){
+  if(event && event.target && event.target.id !== "ptorpedoModal") return;
+  const modal = document.getElementById("ptorpedoModal");
+  if(modal) modal.classList.remove("visible");
 }
 
 function renderReport(){
