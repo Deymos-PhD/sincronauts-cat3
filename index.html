@@ -1,535 +1,784 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Ruta CAT3 · pVANE</title>
 
 <style>
+:root{
+  --bg:#f4f6fb;
+  --card:#ffffff;
+  --text:#111827;
+  --muted:#6b7280;
+  --blue:#2563eb;
+  --blue-dark:#1d4ed8;
+  --green:#16a34a;
+  --amber:#f59e0b;
+  --line:#e5e7eb;
+  --soft-blue:#eff6ff;
+}
+
+*{box-sizing:border-box}
+
 body{
-font-family:system-ui;
-background:#f5f7fa;
-margin:0;
-padding:40px;
-display:flex;
-justify-content:center;
+  margin:0;
+  padding:28px;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
 }
+
+.app{
+  max-width:1180px;
+  margin:auto;
+  display:grid;
+  grid-template-columns: 1fr 420px;
+  gap:20px;
+}
+
 .card{
-background:white;
-padding:30px;
-border-radius:14px;
-box-shadow:0 8px 30px rgba(0,0,0,.08);
-width:560px;
-text-align:center;
+  background:var(--card);
+  border-radius:22px;
+  padding:28px;
+  box-shadow:0 14px 42px rgba(15,23,42,.08);
 }
+
+h1,h2,h3{margin-top:0}
+p{line-height:1.45}
+
 button{
-margin:8px;
-padding:12px 18px;
-border:none;
-border-radius:8px;
-background:#2563eb;
-color:white;
-cursor:pointer;
-font-size:15px;
+  border:0;
+  border-radius:12px;
+  padding:12px 18px;
+  margin:6px;
+  background:var(--blue);
+  color:white;
+  cursor:pointer;
+  font-size:15px;
+  transition:.16s ease;
 }
-.secondary{
-background:#e5e7eb;
-color:#111;
+
+button:hover{
+  background:var(--blue-dark);
+  transform:translateY(-1px);
 }
-.options button{
-display:block;
-width:100%;
+
+button.secondary{
+  background:#e5e7eb;
+  color:#111827;
 }
-textarea{
-width:92%;
-height:140px;
-margin-top:15px;
+
+button.ghost{
+  background:#f8fafc;
+  color:#1f2937;
+  border:1px solid var(--line);
 }
-.badge{
-font-size:13px;
-color:#555;
-}
-.star{
-font-size:22px;
-margin:10px 0;
-}
+
 .small{
-font-size:13px;
-color:#777;
+  font-size:13px;
+  color:var(--muted);
+}
+
+.notice{
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+  color:#7c2d12;
+  padding:14px;
+  border-radius:14px;
+  margin:16px 0;
+}
+
+.badge{
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:999px;
+  background:var(--soft-blue);
+  color:var(--blue);
+  font-size:13px;
+  font-weight:700;
+}
+
+.progress-wrap{
+  margin:18px 0;
+}
+
+.progress{
+  height:16px;
+  border-radius:999px;
+  overflow:hidden;
+  background:#e5e7eb;
+}
+
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,#2563eb,#16a34a);
+  width:0%;
+  transition:.3s ease;
+}
+
+.nodes{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:12px;
+  margin-top:18px;
+}
+
+.node{
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:16px;
+  text-align:left;
+  background:#fbfdff;
+}
+
+.node.active{
+  border-color:#93c5fd;
+  background:#eff6ff;
+}
+
+.node.locked{
+  opacity:.45;
+}
+
+.node-title{
+  font-weight:800;
+  margin-bottom:6px;
+}
+
+.stars{
+  letter-spacing:1px;
+  font-size:18px;
+  margin-top:8px;
+}
+
+.levels{
+  margin-top:8px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.avatar{
+  width:86px;
+  height:86px;
+  margin:6px auto 16px;
+  display:block;
+}
+
+.chatbox{
+  height:430px;
+  overflow-y:auto;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:14px;
+  background:#fbfdff;
+  text-align:left;
+}
+
+.msg{
+  margin:10px 0;
+  padding:10px 12px;
+  border-radius:14px;
+  max-width:94%;
+  white-space:pre-wrap;
+}
+
+.user{
+  margin-left:auto;
+  background:#dbeafe;
+}
+
+.vane{
+  margin-right:auto;
+  background:#f3f4f6;
+}
+
+.award{
+  margin-right:auto;
+  background:#ecfdf5;
+  border:1px solid #bbf7d0;
+  color:#14532d;
+}
+
+textarea{
+  width:100%;
+  height:88px;
+  margin-top:12px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  padding:12px;
+  resize:none;
+  font-family:inherit;
+}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:center;
+  margin-top:10px;
+}
+
+.identity-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:12px;
+  margin-top:16px;
+}
+
+.identity-card{
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:16px;
+  background:#fbfdff;
+  cursor:pointer;
+  transition:.16s ease;
+}
+
+.identity-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(15,23,42,.08);
+}
+
+.report{
+  text-align:left;
+  white-space:pre-wrap;
+  border:1px solid var(--line);
+  background:#fbfdff;
+  border-radius:16px;
+  padding:18px;
+}
+
+@media(max-width:980px){
+  body{padding:16px}
+  .app{grid-template-columns:1fr}
+  .chatbox{height:360px}
+}
+
+@media print{
+  body{background:white;padding:0}
+  .app{display:block}
+  .chat-panel,.actions,button,textarea{display:none!important}
+  .card{box-shadow:none;border-radius:0}
 }
 </style>
 </head>
-<body>
 
-<div id="app"></div>
+<body>
+<div id="root"></div>
 
 <script>
+/* =========================================================
+   pVANE-driven CAT3 route
+   Estado y progreso dependen de interacción con pVANE.
+   No hay botones para regalar estrellas.
+   ========================================================= */
 
-/* ================= STATE ================= */
+const STORAGE_KEY = "PVANE_CAT3_VANE_DRIVEN_V1";
 
-function loadState(){
-const saved = localStorage.getItem("pVANE_CAT3");
-if(saved) return JSON.parse(saved);
-
-return {
-identity:null,
-stars:{
-hito1:[0,0,0],
-hito2:[0,0,0],
-hito3:[0,0,0],
-hito4:[0,0,0]
-},
-simScore:null
+const identities = {
+  cartografo:{
+    name:"Cartógrafo",
+    emoji:"🗺️",
+    color:"#06b6d4",
+    phrase:"Te ayudaré a ubicar cada concepto dentro de un mapa funcional.",
+    opener:"Partamos dibujando el mapa mental: ¿dónde ubicarías la energía dentro del funcionamiento celular?"
+  },
+  ingeniero:{
+    name:"Ingeniero",
+    emoji:"🔧",
+    color:"#f97316",
+    phrase:"Te ayudaré a pensar la célula como un sistema operativo de energía.",
+    opener:"Partamos por el mecanismo: ¿qué proceso celular se cae primero si falta energía utilizable?"
+  },
+  analista:{
+    name:"Analista",
+    emoji:"🔬",
+    color:"#6b7280",
+    phrase:"Te ayudaré a comparar conceptos cercanos y distinguirlos con precisión.",
+    opener:"Partamos comparando: ¿en qué se diferencia energía disponible, ATP y reserva energética?"
+  },
+  explorador:{
+    name:"Explorador",
+    emoji:"🧭",
+    color:"#22c55e",
+    phrase:"Te ayudaré a probar escenarios y predecir consecuencias.",
+    opener:"Partamos con un escenario: si cambia la disponibilidad de oxígeno, ¿qué esperas que ocurra con la obtención de energía?"
+  },
+  medico:{
+    name:"Médico celular",
+    emoji:"🩺",
+    color:"#ef4444",
+    phrase:"Te ayudaré a conectar procesos celulares con consecuencias funcionales.",
+    opener:"Partamos desde la consecuencia: ¿qué función celular notarías alterada si disminuye el ATP?"
+  },
+  estratega:{
+    name:"Estratega",
+    emoji:"🧠",
+    color:"#8b5cf6",
+    phrase:"Te ayudaré a priorizar relaciones críticas y tomar decisiones conceptuales.",
+    opener:"Partamos ordenando prioridades: ¿qué concepto gobierna a los demás en esta unidad?"
+  },
+  docente:{
+    name:"Docente",
+    emoji:"📘",
+    color:"#0ea5e9",
+    phrase:"Te ayudaré a explicar los conceptos como si tuvieras que enseñarlos.",
+    opener:"Partamos enseñando: explícale a alguien por qué una célula necesita energía aunque esté en reposo."
+  }
 };
+
+const hitos = {
+  energia:{
+    title:"Energía celular",
+    oa:"OA3.1 · Energía libre, sistemas y espontaneidad",
+    focus:"Explicar por qué la célula requiere energía constante.",
+    prompt:"Explícame por qué una célula necesita energía incluso cuando no está creciendo.",
+    keywords:{
+      recognize:["energía","mantener","organización","gradiente","transporte","reposo"],
+      explain:["gradiente","transporte activo","homeostasis","reparar","estructura","organización interna"],
+      integrate:["sistema","equilibrio","entropía","función celular","mantener gradientes","organización celular"]
+    }
+  },
+  atp:{
+    title:"ATP y energía utilizable",
+    oa:"RDA3a · ATP como intermediario energético",
+    focus:"Relacionar ATP con energía inmediata, trabajo celular y acoplamiento.",
+    prompt:"Explícame por qué el ATP funciona como energía utilizable inmediata y no como reserva de largo plazo.",
+    keywords:{
+      recognize:["atp","energía","fosfato","inmediata","hidrólisis"],
+      explain:["hidrólisis","reacción endergónica","acoplamiento","transporte activo","síntesis","movimiento"],
+      integrate:["catabolismo","anabolismo","intermediario","acopla","energía utilizable","trabajo celular"]
+    }
+  },
+  enzimas:{
+    title:"Enzimas",
+    oa:"OA3.2 · Energía de activación y catálisis",
+    focus:"Explicar cómo enzimas permiten velocidades compatibles con la vida.",
+    prompt:"Explícame por qué una enzima permite que una reacción ocurra a velocidad compatible con la vida.",
+    keywords:{
+      recognize:["enzima","catalizador","energía de activación","sustrato","sitio activo"],
+      explain:["disminuye energía de activación","complejo enzima sustrato","velocidad","especificidad","no se consume"],
+      integrate:["no cambia equilibrio","estado de transición","regulación","temperatura","ph","inhibidor"]
+    }
+  },
+  respiracion:{
+    title:"Respiración y fermentación",
+    oa:"OA3.3–OA3.4 · Respiración celular, fermentación e integración",
+    focus:"Integrar oxígeno, respiración, fermentación y rendimiento energético.",
+    prompt:"Explícame por qué el oxígeno permite obtener más ATP y qué ocurre cuando falta.",
+    keywords:{
+      recognize:["oxígeno","respiración","fermentación","atp","mitocondria"],
+      explain:["aceptor final","cadena de electrones","fosforilación oxidativa","nadh","gradiente de protones"],
+      integrate:["fermentación regenera nad","menor rendimiento","glucólisis continúa","anaeróbico","eficiencia energética"]
+    }
+  }
+};
+
+const levelNames = ["Reconoce","Explica","Integra"];
+const levelKeys = ["recognize","explain","integrate"];
+
+function initialState(){
+  return {
+    started:false,
+    identity:null,
+    activeHito:"energia",
+    path:[],
+    progress:{
+      energia:[0,0,0],
+      atp:[0,0,0],
+      enzimas:[0,0,0],
+      respiracion:[0,0,0]
+    },
+    seenEvidence:{},
+    chat:[],
+    lastAward:null,
+    simScore:null
+  };
 }
 
 let state = loadState();
 
+function loadState(){
+  try{
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || initialState();
+  }catch(e){
+    return initialState();
+  }
+}
+
 function saveState(){
-localStorage.setItem("pVANE_CAT3",JSON.stringify(state));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-/* ================= DATA ================= */
-
-const identities=[
-"cartografo",
-"ingeniero",
-"analista",
-"explorador",
-"medico",
-"estratega",
-"docente"
-];
-
-const identityPhrases={
-cartografo:"Ubica cada proceso energético dentro del mapa metabólico celular.",
-ingeniero:"Interpreta la célula como sistema optimizado de energía.",
-analista:"Compara eficiencia entre rutas metabólicas.",
-explorador:"Relaciona energía con adaptación celular.",
-medico:"Conecta energía con funcionamiento fisiológico.",
-estratega:"Evalúa decisiones energéticas celulares.",
-docente:"Explícalo como si enseñaras a otra persona."
-};
-
-const quickChecks={
-
-hito1:{
-q:"¿Por qué la célula necesita energía en reposo?",
-options:[
-"Mantener organización interna",
-"Producir ADN continuamente",
-"Dividirse permanentemente",
-"Eliminar oxígeno"
-],
-correct:0
-},
-
-hito2:{
-q:"¿Qué caracteriza al ATP?",
-options:[
-"Almacena genes",
-"Libera energía inmediata",
-"Transporta oxígeno",
-"Forma membranas"
-],
-correct:1
-},
-
-hito3:{
-q:"¿Qué hacen las enzimas?",
-options:[
-"Reducen energía de activación",
-"Aumentan temperatura celular",
-"Producen ATP siempre",
-"Destruyen glucosa"
-],
-correct:0
-},
-
-hito4:{
-q:"¿Qué permite el oxígeno?",
-options:[
-"Fermentación",
-"Mayor rendimiento energético",
-"Menor ATP",
-"Inhibición celular"
-],
-correct:1
+function totalQuarters(){
+  return Object.values(state.progress).flat().reduce((a,b)=>a+b,0);
 }
 
-};
-
-const microEssay={
-
-hito1:"Explica en máximo 3 líneas por qué la célula necesita energía incluso en reposo.",
-hito2:"Explica en máximo 3 líneas por qué el ATP funciona como moneda energética inmediata.",
-hito3:"Explica en máximo 3 líneas cómo las enzimas permiten que la célula funcione.",
-hito4:"Explica en máximo 3 líneas por qué el oxígeno aumenta el rendimiento energético."
-
-};
-
-const summaries={
-
-hito1:"La célula mantiene gradientes, transporte activo y organización interna.",
-hito2:"ATP entrega energía inmediata y reciclable continuamente.",
-hito3:"Las enzimas reducen energía de activación acelerando reacciones.",
-hito4:"Oxígeno permite máxima eficiencia energética en respiración aeróbica."
-
-};
-
-const cat3Simulation=[
-
-{
-q:"¿Cuál es la función principal del ATP?",
-options:[
-"Almacenar información genética",
-"Moneda energética inmediata",
-"Transportar oxígeno",
-"Regular pH"
-],
-correct:1
-},
-
-{
-q:"¿Por qué las enzimas aceleran reacciones?",
-options:[
-"Aumentan temperatura",
-"Reducen energía activación",
-"Consumen ADN",
-"Destruyen sustratos"
-],
-correct:1
-},
-
-{
-q:"¿Qué proceso genera mayor rendimiento energético?",
-options:[
-"Fermentación",
-"Glicólisis",
-"Respiración aeróbica",
-"Transporte pasivo"
-],
-correct:2
-},
-
-{
-q:"¿Qué ocurre si falta oxígeno?",
-options:[
-"Se detiene todo metabolismo",
-"Se usa fermentación",
-"Aumenta ATP",
-"No ocurre cambio"
-],
-correct:1
-},
-
-{
-q:"¿Por qué el metabolismo requiere regulación?",
-options:[
-"Evitar gasto energético innecesario",
-"Eliminar ADN",
-"Producir oxígeno",
-"Aumentar volumen celular"
-],
-correct:0
+function readiness(){
+  return Math.round((totalQuarters() / (4*3*4)) * 100);
 }
 
-];
-
-/* ================= HELPERS ================= */
-
-function getStars(h){
-return state.stars[h];
+function hitoStars(h){
+  return state.progress[h].reduce((a,b)=>a+b,0) / 4;
 }
 
-function setStars(h,i,val){
-state.stars[h][i]=val;
-saveState();
+function renderStars(h){
+  const q = state.progress[h].reduce((a,b)=>a+b,0);
+  const full = Math.floor(q/4);
+  const rem = q%4;
+  let s = "★".repeat(full);
+  if(rem>0) s += ["¼","½","¾"][rem-1];
+  s += "☆".repeat(3-full-(rem>0?1:0));
+  return s;
 }
 
-/* ================= UI ================= */
-
-const app=document.getElementById("app");
-
-function renderIdentitySelector(){
-
-app.innerHTML=`
-<div class="card">
-<h2>Selecciona tu identidad</h2>
-${identities.map(i=>`
-<button onclick="selectIdentity('${i}')">${i}</button>
-`).join("")}
-</div>
-`;
-
+function isUnlocked(h){
+  if(h==="energia") return true;
+  if(h==="atp") return hitoStars("energia") >= 1;
+  if(h==="enzimas") return hitoStars("atp") >= 1.5;
+  if(h==="respiracion") return hitoStars("enzimas") >= 1.5;
+  return false;
 }
 
-function selectIdentity(id){
-state.identity=id;
-saveState();
-renderRoute();
+function avatarSVG(id){
+  const data = identities[id] || identities.estratega;
+  return `
+  <svg class="avatar" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="40" fill="#fff"/>
+    <circle cx="50" cy="50" r="40" fill="${data.color}" opacity=".28"/>
+    <circle cx="38" cy="45" r="4" fill="#111827"/>
+    <circle cx="62" cy="45" r="4" fill="#111827"/>
+    <path d="M39 61 Q50 70 61 61" fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="29" cy="57" r="5" fill="#fca5a5" opacity=".9"/>
+    <circle cx="71" cy="57" r="5" fill="#fca5a5" opacity=".9"/>
+    <rect x="67" y="8" width="28" height="28" rx="8" fill="${data.color}" stroke="#111827" stroke-width="2"/>
+    <text x="81" y="29" text-anchor="middle" font-size="18">${data.emoji}</text>
+  </svg>`;
 }
 
-function renderRoute(){
-
-app.innerHTML=`
-<div class="card">
-<h2>Ruta CAT3</h2>
-<p>${identityPhrases[state.identity]}</p>
-
-${["hito1","hito2","hito3","hito4"].map(h=>`
-<button onclick="renderQuickCheck('${h}')">
-${h.toUpperCase()} ⭐ ${getStars(h).reduce((a,b)=>a+b,0)}
-</button>
-`).join("")}
-
-<br>
-
-<button onclick="renderPTorpedo()">Ver pTorpedo</button>
-<button class="secondary" onclick="resetProgress()">Reiniciar progreso</button>
-
-</div>
-`;
-
+function addChat(role, text, cls){
+  state.chat.push({role,text,cls:cls||role});
+  if(state.chat.length>40) state.chat.shift();
+  saveState();
 }
 
-function renderQuickCheck(h){
-
-const item=quickChecks[h];
-
-app.innerHTML=`
-<div class="card">
-<span class="badge">Chequeo conceptual</span>
-<h3>${item.q}</h3>
-<div class="options">
-${item.options.map((opt,i)=>`
-<button onclick="resolveQuickCheck('${h}',${i})">
-${opt}
-</button>
-`).join("")}
-</div>
-</div>
-`;
-
+function render(){
+  const root = document.getElementById("root");
+  if(!state.started) return renderWelcome(root);
+  return renderApp(root);
 }
 
-function resolveQuickCheck(h,index){
-
-const correct=quickChecks[h].correct;
-setStars(h,0,index===correct?1:0);
-renderMicroEssay(h);
-
+function renderWelcome(root){
+  root.innerHTML = `
+  <div class="card" style="max-width:760px;margin:auto;text-align:center">
+    <span class="badge">CBI111 · CAT3</span>
+    <h1>Ruta de preparación CAT3</h1>
+    <p>Entorno voluntario de estudio autónomo guiado por pVANE.</p>
+    <div class="notice">
+      Participación voluntaria · Uso individual · No reemplaza evaluaciones oficiales del curso.<br>
+      Tus datos permanecen en este navegador y no se envían a una base externa en esta versión.
+    </div>
+    <p class="small">Primero definiremos tu identidad de estudio. Luego pVANE irá validando tu avance a través de la conversación.</p>
+    <button onclick="startIdentity()">Comenzar</button>
+  </div>`;
 }
 
-function renderMicroEssay(h){
-
-app.innerHTML=`
-<div class="card">
-<span class="badge">Ensayo express</span>
-<h3>${microEssay[h]}</h3>
-<textarea placeholder="Escribe aquí tu respuesta"></textarea>
-<br>
-<button onclick="finishEssay('${h}')">Continuar</button>
-</div>
-`;
-
+function startIdentity(){
+  state.started = true;
+  saveState();
+  renderIdentity();
 }
 
-function finishEssay(h){
-
-setStars(h,1,1);
-startSimulation();
-
+function renderIdentity(){
+  const root = document.getElementById("root");
+  root.innerHTML = `
+  <div class="card" style="max-width:920px;margin:auto;text-align:center">
+    <h2>Elige tu enfoque inicial de estudio</h2>
+    <p class="small">Podrás pivotar después, pero el avance dependerá de lo que logres explicar con pVANE.</p>
+    <div class="identity-grid">
+      ${Object.entries(identities).map(([key,id])=>`
+        <div class="identity-card" onclick="selectIdentity('${key}')">
+          ${avatarSVG(key)}
+          <h3>${id.name}</h3>
+          <p class="small">${id.phrase}</p>
+        </div>
+      `).join("")}
+    </div>
+  </div>`;
 }
 
-/* ================= SIMULATION ================= */
-
-function startSimulation(){
-
-state.simIndex=0;
-state.simScore=0;
-
-renderSimulationQuestion();
-
+function selectIdentity(key){
+  state.identity = key;
+  if(!state.path.includes(identities[key].name)) state.path.push(identities[key].name);
+  if(state.chat.length===0){
+    addChat("vane", `Soy pVANE. No te voy a regalar progreso: voy a darte estrellas solo cuando tu explicación muestre mérito conceptual.\n\n${identities[key].opener}`, "vane");
+  }else{
+    addChat("vane", `Pivot registrado hacia ${identities[key].name}. Mantienes tu avance, pero desde ahora te pediré explicaciones usando este enfoque.`, "vane");
+  }
+  saveState();
+  render();
 }
 
-function renderSimulationQuestion(){
+function renderApp(root){
+  const active = hitos[state.activeHito];
+  root.innerHTML = `
+  <div class="app">
+    <div class="card">
+      <span class="badge">Ruta CAT3 · preparación guiada</span>
+      ${avatarSVG(state.identity)}
+      <h2>${identities[state.identity].name}</h2>
+      <p class="small">${identities[state.identity].phrase}</p>
+      <div class="progress-wrap">
+        <div class="progress"><div class="progress-fill" style="width:${readiness()}%"></div></div>
+        <p><strong>Readiness CAT3:</strong> ${readiness()}%</p>
+      </div>
 
-const item=cat3Simulation[state.simIndex];
+      <h3>Nodos de preparación</h3>
+      <div class="nodes">
+        ${Object.entries(hitos).map(([key,h])=>`
+          <div class="node ${state.activeHito===key?'active':''} ${!isUnlocked(key)?'locked':''}">
+            <div class="node-title">${h.title}</div>
+            <div class="small">${h.oa}</div>
+            <div class="stars">${renderStars(key)}</div>
+            <div class="levels">${levelNames.map((l,i)=>`${l}: ${state.progress[key][i]}/4`).join(" · ")}</div>
+            <button class="ghost" onclick="setActiveHito('${key}')" ${!isUnlocked(key)?"disabled":""}>Enfocar</button>
+          </div>
+        `).join("")}
+      </div>
 
-app.innerHTML=`
-<div class="card">
-<span class="badge">Simulación CAT3</span>
-<h3>${item.q}</h3>
-<div class="options">
-${item.options.map((opt,i)=>`
-<button onclick="answerSimulation(${i})">${opt}</button>
-`).join("")}
-</div>
-<p class="small">
-Pregunta ${state.simIndex+1} de ${cat3Simulation.length}
-</p>
-</div>
-`;
+      <div class="actions">
+        <button onclick="askVanePrompt()">Pedir desafío pVANE</button>
+        <button onclick="renderIdentity()">Pivotar identidad</button>
+        <button onclick="renderReport()">pTorpedo</button>
+        <button class="secondary" onclick="resetAll()">Reiniciar</button>
+      </div>
+    </div>
 
+    <div class="card chat-panel">
+      <h3>pVANE</h3>
+      <p class="small"><strong>Foco actual:</strong> ${active.title}<br>${active.focus}</p>
+      <div id="chatbox" class="chatbox">
+        ${state.chat.map(m=>`<div class="msg ${m.cls}">${m.text}</div>`).join("")}
+      </div>
+      <textarea id="userInput" placeholder="Responde a pVANE. Tu progreso se validará según la calidad conceptual de tu explicación."></textarea>
+      <div class="actions">
+        <button onclick="sendToVane()">Enviar a pVANE</button>
+      </div>
+      <p class="small">Las estrellas se otorgan por evidencia conceptual, no por hacer clic.</p>
+    </div>
+  </div>`;
+  scrollChat();
 }
 
-function answerSimulation(index){
-
-const item=cat3Simulation[state.simIndex];
-
-if(index===item.correct){
-state.simScore++;
+function scrollChat(){
+  setTimeout(()=>{
+    const cb=document.getElementById("chatbox");
+    if(cb) cb.scrollTop=cb.scrollHeight;
+  },0);
 }
 
-state.simIndex++;
-saveState();
-
-if(state.simIndex<cat3Simulation.length){
-renderSimulationQuestion();
-}else{
-renderSimulationResult();
+function setActiveHito(key){
+  if(!isUnlocked(key)) return;
+  state.activeHito = key;
+  addChat("vane", `Cambiamos el foco a ${hitos[key].title}.\n${hitos[key].prompt}`, "vane");
+  saveState();
+  render();
 }
 
+function askVanePrompt(){
+  const h = hitos[state.activeHito];
+  const id = identities[state.identity];
+  const current = state.progress[state.activeHito];
+  const missing = current.findIndex(q=>q<4);
+  const level = missing===-1 ? 2 : missing;
+  let prompt = "";
+  if(level===0) prompt = `Vamos por reconocimiento. ${h.prompt}`;
+  if(level===1) prompt = `Ahora necesito explicación funcional. No me des una definición: explícame causa y consecuencia. ${h.prompt}`;
+  if(level===2) prompt = `Ahora necesito integración. Conecta este hito con ATP, enzimas, respiración o funcionamiento celular.`;
+  addChat("vane", `${id.emoji} ${prompt}`, "vane");
+  saveState();
+  render();
 }
 
-function renderSimulationResult(){
-
-app.innerHTML=`
-<div class="card">
-<h2>Resultado simulación CAT3</h2>
-<h3>${state.simScore} / ${cat3Simulation.length}</h3>
-<button onclick="renderPTorpedo()">Generar pTorpedo final</button>
-</div>
-`;
-
+function normalize(txt){
+  return (txt||"").toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[.,;:!?¿¡()]/g," ");
 }
 
-/* ================= CHECKLIST ================= */
-
-function buildChecklist(){
-
-return`
-□ Explico por qué la célula necesita energía constante
-□ Explico el rol del ATP
-□ Explico función de enzimas
-□ Comparo respiración vs fermentación
-□ Integro metabolismo con fisiología
-`;
-
+function countKeywordHits(message, words){
+  const m = normalize(message);
+  return words.reduce((acc,w)=>{
+    const nw = normalize(w);
+    return acc + (m.includes(nw) ? 1 : 0);
+  },0);
 }
 
-/* ================= RECOMENDACIONES ================= */
+function evaluateMessage(message){
+  const key = state.activeHito;
+  const h = hitos[key];
+  const m = normalize(message);
+  const words = m.split(/\s+/).filter(Boolean);
+  const evidenceKey = key + "|" + m.slice(0,120);
 
-function buildRecommendations(){
+  let awards = [];
+  if(words.length < 8){
+    return {
+      awards,
+      feedback:"Necesito una explicación un poco más desarrollada. Una frase aislada no alcanza para validar mérito conceptual."
+    };
+  }
 
-let rec="";
+  levelKeys.forEach((levelKey,idx)=>{
+    const hits = countKeywordHits(message, h.keywords[levelKey]);
+    let required = idx===0 ? 2 : idx===1 ? 2 : 2;
 
-["hito1","hito2","hito3","hito4"].forEach(h=>{
+    let bonus = 0;
+    if(words.length >= 18) bonus += 1;
+    if(/\bporque\b|\bpor eso\b|\bentonces\b|\bpermite\b|\bdepende\b|\bconsecuencia\b/.test(m)) bonus += 1;
+    if(idx===2 && /\brelacion\b|\bconecta\b|\bintegra\b|\bsistema\b|\bsi\b|\bfalla\b|\bocurre\b/.test(m)) bonus += 1;
 
-const score=getStars(h).reduce((a,b)=>a+b,0);
+    const score = hits + bonus;
 
-if(score===0){
-rec+=`• Prioridad alta: reforzar ${h}\n`;
+    if(score >= required && state.progress[key][idx] < 4){
+      // mérito: no más de 1/4 por nivel por mensaje, salvo integración muy fuerte
+      let increment = 1;
+      if(idx===2 && score>=5 && words.length>=28) increment = 2;
+      const before = state.progress[key][idx];
+      state.progress[key][idx] = Math.min(4, state.progress[key][idx] + increment);
+      awards.push({level:idx, inc:state.progress[key][idx]-before});
+    }
+  });
+
+  // anti-farming básico: si repite exactamente evidencia reciente, no da premio
+  if(state.seenEvidence[evidenceKey]){
+    awards = [];
+    return {
+      awards,
+      feedback:"Eso ya fue registrado antes. Para avanzar necesito una explicación nueva o una conexión más profunda."
+    };
+  }
+  state.seenEvidence[evidenceKey]=true;
+
+  let feedback;
+  if(awards.length===0){
+    feedback = "Todavía no valido estrella. Hay una idea útil, pero falta precisión: intenta incluir causa, consecuencia y relación con otro proceso celular.";
+  }else{
+    const txt = awards.map(a=>`${a.inc}/4 en ${levelNames[a.level]}`).join(" · ");
+    feedback = `Mérito detectado: ${txt}.\nNo es regalo: la estrella subió porque tu respuesta mostró evidencia conceptual.`;
+  }
+
+  return {awards, feedback};
 }
 
-else if(score===1){
-rec+=`• Prioridad media: consolidar ${h}\n`;
+function nextGuidance(){
+  const h = state.activeHito;
+  const p = state.progress[h];
+  if(p[0]<4) return "Para seguir: nombra el concepto central y qué problema resuelve.";
+  if(p[1]<4) return "Para seguir: explica causa → consecuencia, no solo definición.";
+  if(p[2]<4) return "Para seguir: conecta este hito con otro proceso celular o predice qué ocurre si falla.";
+  return "Hito estabilizado. Puedes pivotar identidad o avanzar al siguiente nodo desbloqueado.";
 }
 
+function sendToVane(){
+  const input = document.getElementById("userInput");
+  const text = input.value.trim();
+  if(!text) return;
+
+  addChat("user", "Tú: " + text, "user");
+
+  const result = evaluateMessage(text);
+  if(result.awards.length>0){
+    addChat("vane", "pVANE: " + result.feedback + "\n\n" + nextGuidance(), "award");
+  }else{
+    addChat("vane", "pVANE: " + result.feedback + "\n\n" + nextGuidance(), "vane");
+  }
+
+  // desbloqueo orientado por mérito
+  if(hitoStars(state.activeHito)>=2.5){
+    const order = ["energia","atp","enzimas","respiracion"];
+    const idx = order.indexOf(state.activeHito);
+    if(idx>=0 && idx<order.length-1 && isUnlocked(order[idx+1])){
+      addChat("vane", `Nuevo nodo disponible: ${hitos[order[idx+1]].title}.`, "award");
+    }
+  }
+
+  saveState();
+  render();
+}
+
+function renderReport(){
+  const root = document.getElementById("root");
+  const report = generateReport();
+  root.innerHTML = `
+  <div class="card" style="max-width:850px;margin:auto">
+    <h1>pTorpedo CAT3</h1>
+    <div class="report">${report}</div>
+    <div class="actions">
+      <button onclick="downloadReport()">Descargar Markdown</button>
+      <button onclick="window.print()">Exportar PDF</button>
+      <button onclick="render()">Volver</button>
+    </div>
+  </div>`;
+}
+
+function generateReport(){
+  const lines = [];
+  lines.push(`# pTorpedo CAT3 · CBI111`);
+  lines.push(``);
+  lines.push(`Identidad actual: ${identities[state.identity]?.name || "No definida"}`);
+  lines.push(`Trayectoria de identidad: ${state.path.join(" → ") || "No definida"}`);
+  lines.push(`Readiness CAT3: ${readiness()}%`);
+  lines.push(``);
+  lines.push(`## Progreso por nodo`);
+  Object.entries(hitos).forEach(([key,h])=>{
+    lines.push(``);
+    lines.push(`### ${h.title}`);
+    lines.push(`${h.oa}`);
+    lines.push(`Estrellas: ${renderStars(key)}`);
+    lines.push(`- Reconoce: ${state.progress[key][0]}/4`);
+    lines.push(`- Explica: ${state.progress[key][1]}/4`);
+    lines.push(`- Integra: ${state.progress[key][2]}/4`);
+  });
+  lines.push(``);
+  lines.push(`## Recomendación pVANE`);
+  if(readiness()<35) lines.push(`Prioridad: reforzar reconocimiento y explicación funcional antes de avanzar rápido.`);
+  else if(readiness()<70) lines.push(`Prioridad: consolidar integración entre ATP, enzimas y respiración celular.`);
+  else lines.push(`Prioridad: practicar predicción aplicada y explicación escrita tipo CAT3.`);
+  lines.push(``);
+  lines.push(`## Checklist final`);
+  lines.push(`☐ Explico por qué la célula necesita energía constante.`);
+  lines.push(`☐ Relaciono ATP con trabajo celular inmediato.`);
+  lines.push(`☐ Explico cómo las enzimas reducen energía de activación.`);
+  lines.push(`☐ Comparo respiración aeróbica y fermentación.`);
+  lines.push(`☐ Predigo consecuencias si falla energía, ATP, enzimas u oxígeno.`);
+  return lines.join("\n");
+}
+
+function downloadReport(){
+  const blob = new Blob([generateReport()], {type:"text/markdown"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "pTorpedo_CAT3_pVANE.md";
+  a.click();
+}
+
+function resetAll(){
+  if(confirm("¿Reiniciar todo el progreso local?")){
+    localStorage.removeItem(STORAGE_KEY);
+    state = initialState();
+    render();
+  }
+}
+
+document.addEventListener("keydown", (e)=>{
+  if(e.key==="T"){
+    alert(`Panel docente local\nReadiness: ${readiness()}%\nEvidencias registradas: ${Object.keys(state.seenEvidence||{}).length}\nFoco actual: ${hitos[state.activeHito]?.title}`);
+  }
 });
 
-if(rec===""){
-rec="Trayectoria sólida. Integrar conceptos entre rutas.";
-}
-
-return rec;
-
-}
-
-/* ================= PTORPEDO ================= */
-
-function generatePTorpedoMarkdown(){
-
-return`
-# pTorpedo CAT3
-
-Identidad: ${state.identity}
-
-${identityPhrases[state.identity]}
-
----
-
-${Object.keys(state.stars).map(h=>`
-${h}: ${getStars(h).reduce((a,b)=>a+b,0)} ⭐
-${summaries[h]}
-`).join("")}
-
----
-
-Resultado simulación:
-${state.simScore ?? "No realizada"}
-
----
-
-Recomendaciones:
-${buildRecommendations()}
-
----
-
-Checklist final:
-${buildChecklist()}
-`;
-
-}
-
-function renderPTorpedo(){
-
-const report=generatePTorpedoMarkdown();
-
-app.innerHTML=`
-<div class="card">
-<h2>pTorpedo</h2>
-<textarea>${report}</textarea>
-<br>
-<button onclick="downloadPTorpedo()">Descargar Markdown</button>
-<button onclick="renderRoute()">Volver a la ruta</button>
-</div>
-`;
-
-}
-
-function downloadPTorpedo(){
-
-const blob=new Blob([generatePTorpedoMarkdown()],{type:"text/markdown"});
-
-const a=document.createElement("a");
-
-a.href=URL.createObjectURL(blob);
-
-a.download="pTorpedo_CAT3.md";
-
-a.click();
-
-}
-
-/* ================= RESET ================= */
-
-function resetProgress(){
-
-localStorage.removeItem("pVANE_CAT3");
-location.reload();
-
-}
-
-/* ================= INIT ================= */
-
-if(state.identity){
-renderRoute();
-}else{
-renderIdentitySelector();
-}
-
+render();
 </script>
-
 </body>
 </html>
