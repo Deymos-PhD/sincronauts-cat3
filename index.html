@@ -783,6 +783,93 @@ body.dark code{
   color:#bfdbfe;
 }
 
+
+/* Parasite v0.4 additions */
+.ptorpedo-section.priority{
+  border:2px solid rgba(37,99,235,.28);
+  background:linear-gradient(180deg,var(--soft-blue),var(--soft-card));
+}
+
+.ptorpedo-section.pending{
+  border:2px solid rgba(245,158,11,.32);
+  background:linear-gradient(180deg,var(--soft-amber),var(--soft-card));
+}
+
+.ptorpedo-section h3,
+.ptorpedo-section strong{
+  font-size:15px;
+}
+
+.fanfare-toast{
+  position:fixed;
+  left:50%;
+  top:22px;
+  transform:translateX(-50%) translateY(-14px) scale(.96);
+  z-index:80;
+  background:var(--card);
+  color:var(--text);
+  border:1px solid var(--line);
+  box-shadow:0 18px 50px rgba(15,23,42,.22);
+  border-radius:22px;
+  padding:16px 20px;
+  min-width:min(420px,92vw);
+  text-align:center;
+  opacity:0;
+  pointer-events:none;
+  transition:.25s ease;
+}
+
+.fanfare-toast.visible{
+  opacity:1;
+  transform:translateX(-50%) translateY(0) scale(1);
+}
+
+.fanfare-toast .big{
+  font-size:30px;
+  display:block;
+  margin-bottom:4px;
+}
+
+body.dark .fanfare-toast{
+  box-shadow:0 18px 50px rgba(0,0,0,.45);
+}
+
+.arch-control{
+  border:1px solid var(--line);
+  background:var(--soft-card);
+  border-radius:16px;
+  padding:14px;
+  margin:12px 0;
+  text-align:left;
+}
+
+.arch-control select,
+.arch-control input{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:10px;
+  margin-top:8px;
+  background:var(--card);
+  color:var(--text);
+}
+
+.pending-chip{
+  display:inline-block;
+  border:1px solid rgba(245,158,11,.4);
+  background:var(--soft-amber);
+  color:#92400e;
+  border-radius:999px;
+  padding:5px 10px;
+  margin:4px;
+  font-size:12px;
+  font-weight:800;
+}
+
+body.dark .pending-chip{
+  color:#fde68a;
+}
+
 @media(max-width:1100px){
   body{padding:14px}
   .app{grid-template-columns:1fr; max-width:820px}
@@ -909,15 +996,6 @@ body.dark code{
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js">
-function jumpToMilestone(milestoneId){
-  localStorage.setItem("architectMode","true");
-  localStorage.setItem("forceMilestone", milestoneId);
-  document.getElementById("chatPanel").style.display="flex";
-  vaneMessage("Modo arquitecto: acceso directo al hito " + milestoneId);
-  state = state || {};
-  state.activeMilestone = milestoneId;
-}
-
 </script>
 
 <script>
@@ -1221,7 +1299,9 @@ function initialState(){
       cat3_h6_anaerobiosis_fermentacion:{reconoce:0, explica:0, integra:0}
     },
     chat:[],
-    ptorpedo:{confirmed:[], progress:[], next:[]},
+    ptorpedo:{confirmed:[], progress:[], next:[], pending:[], resolvedPending:[]},
+    vaneSettings:{level:"cat3_ready", fanfare:"full", maxAttempts:3},
+    obstacleMemory:{},
     ptorpedoVisible:false,
     ptorpedoModalShown:false,
     simulationLog:[],
@@ -1230,6 +1310,20 @@ function initialState(){
 }
 
 let state = loadState();
+
+function migrateState(){
+  if(!state.ptorpedo) state.ptorpedo = {confirmed:[], progress:[], next:[], pending:[], resolvedPending:[]};
+  if(!state.ptorpedo.pending) state.ptorpedo.pending = [];
+  if(!state.ptorpedo.resolvedPending) state.ptorpedo.resolvedPending = [];
+  if(!state.vaneSettings) state.vaneSettings = {level:"cat3_ready", fanfare:"full", maxAttempts:3};
+  if(!state.vaneSettings.level) state.vaneSettings.level = "cat3_ready";
+  if(!state.vaneSettings.fanfare) state.vaneSettings.fanfare = "full";
+  if(!state.vaneSettings.maxAttempts) state.vaneSettings.maxAttempts = 3;
+  if(!state.obstacleMemory) state.obstacleMemory = {};
+}
+
+migrateState();
+saveState();
 
 function loadState(){
   try{
@@ -1471,12 +1565,17 @@ function renderPTorpedoHTML(){
       ${(p.confirmed.length ? p.confirmed.map(x=>`<div class="ptorpedo-item">✔ ${escapeHTML(x)}</div>`).join("") : `<div class="empty">Aún no hay conceptos validados.</div>`)}
     </div>
     <div class="ptorpedo-section">
-      <strong>△ Relaciones en progreso</strong>
-      ${(p.progress.length ? p.progress.map(x=>`<div class="ptorpedo-item">△ ${escapeHTML(x)}</div>`).join("") : `<div class="empty">Aparecerán cuando haya conexiones parciales.</div>`)}
+      <strong>📍 Ahora estás consolidando…</strong>
+      ${(p.progress.length ? p.progress.map(x=>`<div class="ptorpedo-item">📍 ${escapeHTML(x)}</div>`).join("") : `<div class="empty">Aparecerá el foco conceptual actual cuando avances.</div>`)}
     </div>
-    <div class="ptorpedo-section">
-      <strong>✱ Próximos pasos</strong>
-      ${(p.next.length ? p.next.map(x=>`<div class="ptorpedo-item">✱ ${escapeHTML(x)}</div>`).join("") : `<div class="empty">VANE agregará sugerencias después de evaluar.</div>`)}
+    <div class="ptorpedo-section priority">
+      <strong>🧭 ¿Qué me está faltando?</strong>
+      ${(p.next.length ? p.next.map(x=>`<div class="ptorpedo-item">🧭 ${escapeHTML(x)}</div>`).join("") : `<div class="empty">pVANE agregará aquí lo que conviene reforzar para CAT3.</div>`)}
+    </div>
+    <div class="ptorpedo-section pending">
+      <strong>🧩 Conceptos pendientes</strong>
+      ${(p.pending && p.pending.length ? p.pending.map(x=>`<div class="ptorpedo-item">🧩 ${escapeHTML(x)}</div>`).join("") : `<div class="empty">Si te quedas pegado, pVANE dejará el concepto aquí y lo retomará más adelante.</div>`)}
+      ${(p.resolvedPending && p.resolvedPending.length ? `<div class="ptorpedo-item"><strong>Resueltos:</strong> ${p.resolvedPending.map(x=>`<span class="pending-chip">⭐ ${escapeHTML(x)}</span>`).join("")}</div>` : "")}
     </div>`;
 }
 
@@ -1544,6 +1643,109 @@ function normalizeEvaluation(data){
   };
 }
 
+
+function showFanfare(type, title, subtitle){
+  const mode = state.vaneSettings?.fanfare || "full";
+  if(mode === "off") return;
+  if(mode === "minimal" && type === "star") return;
+
+  let toast = document.getElementById("fanfareToast");
+  if(!toast){
+    toast = document.createElement("div");
+    toast.id = "fanfareToast";
+    toast.className = "fanfare-toast";
+    document.body.appendChild(toast);
+  }
+
+  const icons = {
+    star:"⭐",
+    milestone:"🎺",
+    pending:"🧩",
+    route:"🏁",
+    ptorpedo:"✦"
+  };
+
+  toast.innerHTML = `<span class="big">${icons[type] || "⭐"}</span><strong>${escapeHTML(title)}</strong><br><span class="small">${escapeHTML(subtitle || "")}</span>`;
+  toast.classList.add("visible");
+
+  if(typeof confetti === "function" && mode === "full"){
+    const particleCount = type === "route" ? 160 : type === "milestone" ? 95 : 55;
+    confetti({particleCount, spread: type === "route" ? 110 : 70, origin:{y:.2}, scalar:type === "star" ? .75 : .95});
+  }
+
+  clearTimeout(window.__fanfareTimer);
+  window.__fanfareTimer = setTimeout(()=>toast.classList.remove("visible"), 2400);
+}
+
+function ensureObstacleBucket(milestone){
+  if(!state.obstacleMemory) state.obstacleMemory = {};
+  if(!state.obstacleMemory[milestone]) state.obstacleMemory[milestone] = {attempts:0, pending:[]};
+  return state.obstacleMemory[milestone];
+}
+
+function markPendingConcept(concept, reason){
+  concept = String(concept || "").trim();
+  if(!concept) return;
+  if(!state.ptorpedo.pending) state.ptorpedo.pending = [];
+  if(!state.ptorpedo.pending.includes(concept)) state.ptorpedo.pending.push(concept);
+  pushUnique(state.ptorpedo.next, reason || `Retomar: ${concept}`);
+  addChat("system", `🧩 Dejé pendiente este concepto para retomarlo después: ${concept}`, "system");
+}
+
+function resolvePendingConcept(concept){
+  concept = String(concept || "").trim();
+  if(!concept || !state.ptorpedo.pending) return false;
+  const idx = state.ptorpedo.pending.indexOf(concept);
+  if(idx < 0) return false;
+  state.ptorpedo.pending.splice(idx,1);
+  if(!state.ptorpedo.resolvedPending) state.ptorpedo.resolvedPending = [];
+  pushUnique(state.ptorpedo.resolvedPending, concept);
+  pushUnique(state.ptorpedo.confirmed, `Pendiente resuelto: ${concept}`);
+  showFanfare("pending","Concepto pendiente resuelto","Apareció más adelante en tu diálogo.");
+  addChat("award", `⭐ Concepto pendiente resuelto: ${concept}`, "award");
+  return true;
+}
+
+function detectPendingCandidates(text){
+  const t = String(text||"").toLowerCase();
+  const found = [];
+  if(/acopla|acoplamiento|exerg.*enderg|enderg.*exerg/.test(t)) found.push("acoplamiento energético");
+  if(/atp|hidr[oó]lisis|rompe|fosfato/.test(t)) found.push("ATP como moneda energética");
+  if(/enzim|energ[ií]a de activaci[oó]n|sitio activo|sustrato/.test(t)) found.push("rol funcional de enzimas");
+  if(/oxid|reducci[oó]n|redox|electrones|nadh|fadh/.test(t)) found.push("transferencia de electrones / REDOX");
+  if(/dg|Δg|delta g|espont[aá]nea|exerg[oó]nica|enderg[oó]nica/.test(t)) found.push("ΔG funcional y espontaneidad");
+  return found;
+}
+
+function retroValidatePending(text){
+  const candidates = detectPendingCandidates(text);
+  candidates.forEach(c=>resolvePendingConcept(c));
+}
+
+function maybeAdvanceWithPending(milestone, ev){
+  const bucket = ensureObstacleBucket(milestone);
+  const p = state.progress[milestone];
+  const hasEnough = (p.reconoce >= .75 && p.explica >= .5) || ev.unlock;
+
+  if(hasEnough) return;
+
+  bucket.attempts += 1;
+  const max = Number(state.vaneSettings?.maxAttempts || 3);
+  if(bucket.attempts >= max){
+    const concept = milestone === "cat3_h1_termodinamica" ? "acoplamiento energético"
+      : milestone === "cat3_h2_enzimas" ? "rol funcional de enzimas"
+      : milestone === "cat3_h3_atp_redox" ? "ATP como moneda energética"
+      : "diferencia respiración / fermentación";
+    markPendingConcept(concept, "No bloquea tu avance: lo retomaremos desde otra ruta o identidad.");
+    const nextId = milestones[milestone]?.next;
+    if(nextId && !state.unlocked[nextId]){
+      state.unlocked[nextId] = true;
+      addChat("award", `Avanzamos sin bloquearte. Dejé un concepto pendiente y desbloqueé: ${milestones[nextId].title}.`, "award");
+      showFanfare("milestone","Avance desbloqueado","Hay un concepto pendiente para retomar.");
+    }
+  }
+}
+
 function updateProgress(milestone, ev){
   const p = state.progress[milestone];
   p.reconoce = Math.max(Number(p.reconoce||0), clamp01(ev.reconoce));
@@ -1554,6 +1756,7 @@ function updateProgress(milestone, ev){
     state.ptorpedoVisible = true;
     addChat("award", "Tu primera evidencia conceptual ya quedó registrada.\nHe activado tu pTorpedo ✦\nDesde ahora, tus avances comenzarán a organizarse automáticamente como tu guía personal de estudio.", "award");
     celebratePTorpedoUnlock();
+    showFanfare("ptorpedo","pTorpedo activado","Tu guía personal empezó a construirse.");
     setTimeout(showPTorpedoModal, 450);
   }
 
@@ -1562,8 +1765,10 @@ function updateProgress(milestone, ev){
     if(!state.unlocked[nextId]){
       state.unlocked[nextId] = true;
       addChat("award", `Ya tienes evidencia suficiente en este hito.\nHe desbloqueado el siguiente: ${milestones[nextId].title}.`, "award");
+      showFanfare("milestone","Hito de sincronización alcanzado",`Nuevo hito: ${milestones[nextId].short}`);
     }
   }
+  maybeAdvanceWithPending(milestone, ev);
 }
 
 function clamp01(n){
@@ -1634,6 +1839,7 @@ async function sendToVane(){
 
   input.value = "";
   addChat("user","Tú: " + text,"user");
+  retroValidatePending(text);
   addChat("vane","pVANE está pensando…","vane");
   saveState();
   render();
@@ -1671,6 +1877,8 @@ async function sendToVane(){
           tone:"socrático natural, amable y de preparación CAT3"
         },
         validation_policy:cat3ValidationPolicy,
+        architect_settings:state.vaneSettings,
+        pending_concepts:state.ptorpedo?.pending || [],
         milestone_contract:{
           current:state.activeMilestone,
           pass_threshold:"concepto correcto + relación funcional correcta",
@@ -1700,6 +1908,12 @@ async function sendToVane(){
 
   const vaneText = `pVANE: ${ev.feedback}${ev.next_prompt ? "\n\n" + ev.next_prompt : ""}`;
   addChat(ev.star_awarded > 0 ? "award" : "vane", vaneText, ev.star_awarded > 0 ? "award" : "vane");
+  if(ev.star_awarded > 0){
+    showFanfare("star","Evidencia conceptual registrada","Una estrella o fracción fue añadida a tu ruta.");
+  }
+  if(readiness() >= 100){
+    showFanfare("route","Ruta CAT3 completada","Tu guía personal está lista para repasar.");
+  }
 
   saveState();
   render();
@@ -1894,6 +2108,51 @@ function renderArchitect(){
       <tbody>${rows}</tbody>
     </table>
 
+    <h3>Control arquitecto</h3>
+    <div class="arch-grid">
+      <div class="arch-control">
+        <strong>Nivel pVANE</strong>
+        <select onchange="setVaneLevel(this.value)">
+          <option value="exploratorio" ${state.vaneSettings?.level==='exploratorio'?'selected':''}>Exploratorio</option>
+          <option value="cat3_ready" ${state.vaneSettings?.level==='cat3_ready'?'selected':''}>CAT3-ready</option>
+          <option value="cat3_plus" ${state.vaneSettings?.level==='cat3_plus'?'selected':''}>CAT3+ N+S</option>
+          <option value="docente" ${state.vaneSettings?.level==='docente'?'selected':''}>Docente profundo</option>
+        </select>
+      </div>
+      <div class="arch-control">
+        <strong>Fanfarria</strong>
+        <select onchange="setFanfareMode(this.value)">
+          <option value="off" ${state.vaneSettings?.fanfare==='off'?'selected':''}>OFF</option>
+          <option value="minimal" ${state.vaneSettings?.fanfare==='minimal'?'selected':''}>Mínima</option>
+          <option value="full" ${state.vaneSettings?.fanfare==='full'?'selected':''}>Completa</option>
+        </select>
+      </div>
+      <div class="arch-control">
+        <strong>Intentos antes de pendiente</strong>
+        <select onchange="setMaxAttempts(this.value)">
+          <option value="2" ${Number(state.vaneSettings?.maxAttempts)===2?'selected':''}>2</option>
+          <option value="3" ${Number(state.vaneSettings?.maxAttempts)===3?'selected':''}>3</option>
+          <option value="4" ${Number(state.vaneSettings?.maxAttempts)===4?'selected':''}>4</option>
+        </select>
+      </div>
+    </div>
+
+    <h3>Acceso directo</h3>
+    <div class="actions">
+      <button class="ghost" onclick="jumpToMilestone('cat3_h1_termodinamica')">RDA1 · Energía</button>
+      <button class="ghost" onclick="jumpToMilestone('cat3_h2_enzimas')">RDA2 · Enzimas</button>
+      <button class="ghost" onclick="jumpToMilestone('cat3_h3_atp_redox')">RDA3 · ATP/REDOX</button>
+      <button class="ghost" onclick="jumpToMilestone('cat3_h6_anaerobiosis_fermentacion')">RDA4 · Respiración/Fermentación</button>
+    </div>
+
+    <h3>Pendientes</h3>
+    <div class="arch-control">
+      <strong>Agregar pendiente manual</strong>
+      <input id="manualPendingConcept" placeholder="Ej: acoplamiento energético">
+      <button onclick="addManualPending()">Agregar pendiente</button>
+      <button class="ghost" onclick="resolveFirstPending()">Resolver primer pendiente</button>
+    </div>
+
     <h3>Simulación</h3>
     <p class="small">Simula una ruta completa sin depender de respuestas reales. Sirve para revisar desbloqueos, pTorpedo, fanfarria, diálogo y luego conexión Supabase.</p>
     <div class="actions">
@@ -2018,6 +2277,60 @@ function clearSimulation(){
   render();
 }
 
+
+function setVaneLevel(value){
+  if(!state.vaneSettings) state.vaneSettings = {};
+  state.vaneSettings.level = value;
+  logSim("Nivel pVANE cambiado a: " + value);
+  saveState();
+  render();
+}
+
+function setFanfareMode(value){
+  if(!state.vaneSettings) state.vaneSettings = {};
+  state.vaneSettings.fanfare = value;
+  logSim("Fanfarria cambiada a: " + value);
+  saveState();
+  render();
+}
+
+function setMaxAttempts(value){
+  if(!state.vaneSettings) state.vaneSettings = {};
+  state.vaneSettings.maxAttempts = Number(value);
+  logSim("Intentos antes de pendiente: " + value);
+  saveState();
+  render();
+}
+
+function addManualPending(){
+  const input = document.getElementById("manualPendingConcept");
+  const value = input ? input.value.trim() : "";
+  if(!value) return;
+  markPendingConcept(value, "Pendiente agregado manualmente por arquitecto.");
+  logSim("Pendiente manual agregado: " + value);
+  saveState();
+  render();
+}
+
+function resolveFirstPending(){
+  const first = state.ptorpedo?.pending?.[0];
+  if(first) resolvePendingConcept(first);
+  else logSim("No había pendientes para resolver.");
+  saveState();
+  render();
+}
+
+function jumpToMilestone(milestoneId){
+  if(!state.identity) state.identity = "ingeniero";
+  state.activeMilestone = milestoneId;
+  state.unlocked[milestoneId] = true;
+  state.screen = "app";
+  addChat("system", `Modo arquitecto: acceso directo a ${milestones[milestoneId]?.title || milestoneId}.`, "system");
+  saveState();
+  render();
+  setTimeout(()=>askPrompt(),150);
+}
+
 function renderReport(){
   state.screen="report";
   saveState();
@@ -2042,9 +2355,17 @@ function renderReport(){
   if(state.ptorpedo.progress.length) state.ptorpedo.progress.forEach(x=>lines.push("△ " + x));
   else lines.push("Aún no hay relaciones registradas.");
   lines.push("");
-  lines.push("Próximos pasos:");
+  lines.push("¿Qué me está faltando?");
   if(state.ptorpedo.next.length) state.ptorpedo.next.forEach(x=>lines.push("✱ " + x));
   else lines.push("Aún no hay próximos pasos registrados.");
+  lines.push("");
+  lines.push("Conceptos pendientes:");
+  if(state.ptorpedo.pending && state.ptorpedo.pending.length) state.ptorpedo.pending.forEach(x=>lines.push("🧩 " + x));
+  else lines.push("No hay conceptos pendientes activos.");
+  lines.push("");
+  lines.push("Pendientes resueltos:");
+  if(state.ptorpedo.resolvedPending && state.ptorpedo.resolvedPending.length) state.ptorpedo.resolvedPending.forEach(x=>lines.push("⭐ " + x));
+  else lines.push("Aún no hay pendientes resueltos.");
 
   root().innerHTML = `
   <div class="card center">
@@ -2082,15 +2403,6 @@ document.addEventListener("keydown", function(event){
 
 applyTheme();
 render();
-
-function jumpToMilestone(milestoneId){
-  localStorage.setItem("architectMode","true");
-  localStorage.setItem("forceMilestone", milestoneId);
-  document.getElementById("chatPanel").style.display="flex";
-  vaneMessage("Modo arquitecto: acceso directo al hito " + milestoneId);
-  state = state || {};
-  state.activeMilestone = milestoneId;
-}
 
 </script>
 </body>
