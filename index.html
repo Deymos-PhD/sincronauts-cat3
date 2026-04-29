@@ -1173,7 +1173,12 @@ const cat3ValidationPolicy = {
     "entropía global del universo",
     "exportación formal de entropía",
     "formulación fisicoquímica avanzada",
-    "profundización repetida sobre calor y segunda ley si ya explicó relación funcional"
+    "profundización repetida sobre calor y segunda ley si ya explicó relación funcional",
+    "tipo exacto de enlace fosfato",
+    "mecanismo molecular de transferencia de fosfato",
+    "detalle de hidrólisis de ATP más allá de ATP entrega energía",
+    "explicar cómo cambia la energía libre de la reacción energizada",
+    "lenguaje de bioquímica intermedia sobre fosforilación si no es necesario"
   ],
   after_validation:"refinar para pTorpedo y avanzar",
   repair_rule:"si falta algo, hacer solo una micro-pregunta concreta y celular",
@@ -1181,7 +1186,9 @@ const cat3ValidationPolicy = {
     "Las reacciones exergónicas liberan energía y pueden impulsar reacciones endergónicas.",
     "Si ΔG es negativo la reacción libera energía; si es positivo necesita energía.",
     "La célula usa energía de ATP para sintetizar proteínas o replicar ADN.",
-    "La síntesis necesita energía porque construye moléculas más complejas."
+    "La síntesis necesita energía porque construye moléculas más complejas.",
+    "El ATP se rompe y libera energía que ayuda a que ocurran procesos que requieren energía.",
+    "ATP entrega energía para transporte, síntesis o movimiento celular."
   ]
 };
 
@@ -1582,21 +1589,29 @@ function fallbackEvaluation(text){
     state.activeMilestone === "cat3_h1_termodinamica" &&
     /exerg|enderg|dg|Δg|atp|energ|libera|requiere|sintesis|síntesis|replic/.test(t);
 
+  const atpFunctional =
+    state.activeMilestone === "cat3_h3_atp_redox" &&
+    /atp|energ|libera|rompe|hidr[oó]lisis|fosfato|trabajo|transporte|s[ií]ntesis|movimiento|nadh|fadh|electrones/.test(t);
+
   return {
-    reconoce: h1Functional ? .9 : (hasCore ? .5 : .25),
-    explica: h1Functional && hasCause ? .75 : (hasCause ? .5 : 0),
-    integra: h1Functional && hasIntegration ? .5 : (hasIntegration ? .25 : 0),
-    unlock:h1Functional && hasCause,
+    reconoce: (h1Functional || atpFunctional) ? .9 : (hasCore ? .5 : .25),
+    explica: ((h1Functional || atpFunctional) && hasCause) ? .75 : (hasCause ? .5 : 0),
+    integra: ((h1Functional || atpFunctional) && hasIntegration) ? .5 : (hasIntegration ? .25 : 0),
+    unlock:(h1Functional || atpFunctional) && (hasCause || atpFunctional),
     feedback:h1Functional
       ? "Modo respaldo activado: tu respuesta es suficiente para CAT3 porque conecta energía con función celular. La guardo como evidencia y avanzamos."
-      : "Modo respaldo activado: detecté algunos elementos conceptuales, pero no pude conectar con pVANE real en este intento.",
+      : atpFunctional
+        ? "Modo respaldo activado: tu respuesta es suficiente para CAT3 porque reconoces que ATP entrega energía utilizable para procesos celulares. La guardo y avanzamos."
+        : "Modo respaldo activado: detecté algunos elementos conceptuales, pero no pude conectar con pVANE real en este intento.",
     next_prompt:h1Functional
       ? "Versión pTorpedo: la célula acopla reacciones que liberan energía con procesos que la requieren, como síntesis, transporte o replicación."
-      : "Intenta responder conectando causa, proceso y consecuencia celular.",
+      : atpFunctional
+        ? "Versión pTorpedo: el ATP actúa como moneda energética; al hidrolizarse entrega energía que ayuda a impulsar procesos celulares como síntesis, transporte o movimiento."
+        : "Intenta responder conectando causa, proceso y consecuencia celular.",
     ptorpedo_entry:{
-      conceptos_validados: h1Functional ? ["Energía celular y acoplamiento funcional"] : (hasCore ? ["Concepto central identificado parcialmente"] : []),
-      conexion_lograda: h1Functional ? "Relaciona energía disponible con trabajo celular." : (hasCause ? "Hay intento de explicación causal." : ""),
-      error_a_corregir: h1Functional ? "No profundizar en termoquímica avanzada salvo que sea necesario." : "Reintentar conexión con pVANE real o profundizar la relación conceptual.",
+      conceptos_validados: h1Functional ? ["Energía celular y acoplamiento funcional"] : atpFunctional ? ["ATP como moneda energética funcional"] : (hasCore ? ["Concepto central identificado parcialmente"] : []),
+      conexion_lograda: h1Functional ? "Relaciona energía disponible con trabajo celular." : atpFunctional ? "Relaciona ATP con procesos celulares que requieren energía." : (hasCause ? "Hay intento de explicación causal." : ""),
+      error_a_corregir: (h1Functional || atpFunctional) ? "No profundizar en bioquímica avanzada salvo que sea necesario." : "Reintentar conexión con pVANE real o profundizar la relación conceptual.",
       frase_util_del_estudiante: text.slice(0,120)
     }
   };
@@ -1631,13 +1646,16 @@ async function sendToVane(){
             "¿Puedes explicar...?","¿Podrías explicar...?","repetir la misma pregunta en cada turno",
             "insistir en entropía global si ya hay relación funcional",
             "pedir ΔH, ΔS o ecuación de Gibbs salvo que el estudiante lo pida",
-            "bloquear avance por no usar lenguaje termoquímico avanzado"
+            "bloquear avance por no usar lenguaje termoquímico avanzado",
+            "preguntar por tipo de enlace fosfato o mecanismo molecular de ATP",
+            "pedir detalle de cambio de energía libre en reacción acoplada si el estudiante ya entendió la función"
           ],
           prefer:[
             "validar cuando exista relación proceso → energía → consecuencia celular",
             "usar micro-reparaciones de una sola pregunta",
             "traducir la respuesta del estudiante a versión pTorpedo",
-            "conectar con síntesis, transporte, respiración, ATP o enzimas"
+            "conectar con síntesis, transporte, respiración, ATP o enzimas",
+            "para ATP aceptar lenguaje simple: entrega energía, se rompe, libera energía, permite trabajo celular"
           ],
           semantic_echo:true,
           tone:"socrático natural, amable y de preparación CAT3"
@@ -1646,7 +1664,9 @@ async function sendToVane(){
         milestone_contract:{
           current:state.activeMilestone,
           pass_threshold:"concepto correcto + relación funcional correcta",
-          h1_specific_rule:"En el primer hito no exigir ΔH, ΔS, entropía global ni formulación fisicoquímica avanzada. Si el estudiante distingue exergónico/endergónico, ΔG básico y acoplamiento energético, validar y avanzar."
+          h1_specific_rule:"En el primer hito no exigir ΔH, ΔS, entropía global ni formulación fisicoquímica avanzada. Si el estudiante distingue exergónico/endergónico, ΔG básico y acoplamiento energético, validar y avanzar.",
+          atp_specific_rule:"En ATP no exigir tipo exacto de enlace, mecanismo molecular de transferencia de fosfato ni explicación fina de energía libre. Validar si el estudiante dice que ATP se rompe/hidroliza/libera o entrega energía para procesos celulares que la requieren.",
+          enzymes_specific_rule:"En enzimas no exigir Michaelis-Menten, Km, Vmax ni cinética formal. Validar si reconoce catalizador, baja energía de activación, especificidad o regulación básica."
         },
         history:state.chat.slice(-8).map(m=>({
           role:m.role==="user" ? "student" : "pvane",
