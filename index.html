@@ -908,7 +908,17 @@ body.dark code{
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js">
+function jumpToMilestone(milestoneId){
+  localStorage.setItem("architectMode","true");
+  localStorage.setItem("forceMilestone", milestoneId);
+  document.getElementById("chatPanel").style.display="flex";
+  vaneMessage("Modo arquitecto: acceso directo al hito " + milestoneId);
+  state = state || {};
+  state.activeMilestone = milestoneId;
+}
+
+</script>
 
 <script>
 
@@ -2072,6 +2082,16 @@ document.addEventListener("keydown", function(event){
 
 applyTheme();
 render();
+
+function jumpToMilestone(milestoneId){
+  localStorage.setItem("architectMode","true");
+  localStorage.setItem("forceMilestone", milestoneId);
+  document.getElementById("chatPanel").style.display="flex";
+  vaneMessage("Modo arquitecto: acceso directo al hito " + milestoneId);
+  state = state || {};
+  state.activeMilestone = milestoneId;
+}
+
 </script>
 </body>
 </html>
