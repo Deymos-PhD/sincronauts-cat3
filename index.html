@@ -1123,22 +1123,22 @@ const quizQuestions = [
 
 const milestones = {
   cat3_h1_termodinamica:{
-    title:"Energía libre y termodinámica",
-    short:"ΔG y espontaneidad",
-    oa:"Unidad 3 · Sistemas, leyes termodinámicas y energía libre",
-    focus:"Relacionar energía libre, espontaneidad y organización celular.",
-    prompt:"¿Por qué una reacción con ΔG negativo puede ocurrir espontáneamente en la célula?",
-    next:"cat3_h2_atp_redox"
+    title:"Energía celular y reacciones acopladas",
+    short:"Energía celular",
+    oa:"Unidad 3 · Energía, ΔG básico, exergónico / endergónico y acoplamiento",
+    focus:"Reconocer que algunas reacciones liberan energía, otras la requieren, y que la célula las acopla para realizar trabajo celular.",
+    prompt:"Una célula debe sintetizar proteínas o replicar ADN: ¿por qué necesita energía y de dónde puede obtenerla?",
+    next:"cat3_h2_enzimas"
   },
-  cat3_h2_atp_redox:{
+  cat3_h2_enzimas:{
     title:"ATP, acoplamiento y REDOX",
     short:"ATP y REDOX",
     oa:"Unidad 3 · ATP, acoplamiento, oxidación y reducción",
     focus:"Explicar cómo ATP y transportadores de electrones conectan energía con trabajo celular.",
     prompt:"¿Cómo permite el ATP impulsar reacciones endergónicas y cómo se conecta esto con reacciones REDOX?",
-    next:"cat3_h3_enzimas"
+    next:"cat3_h3_atp_redox"
   },
-  cat3_h3_enzimas:{
+  cat3_h3_atp_redox:{
     title:"Enzimas y regulación",
     short:"Enzimas",
     oa:"Unidad 3 · Energía de activación, catálisis e inhibición",
@@ -1156,6 +1156,35 @@ const milestones = {
   }
 };
 
+
+const cat3ValidationPolicy = {
+  level:"CAT3_READY_CBI111",
+  principle:"validar suficiencia funcional, no excelencia termoquímica",
+  validate_when:[
+    "distingue reacción exergónica y endergónica",
+    "relaciona ΔG negativo con liberación de energía o espontaneidad",
+    "relaciona ΔG positivo con necesidad de energía/acoplamiento",
+    "conecta energía con trabajo celular como síntesis, transporte, movimiento o replicación",
+    "reconoce que ATP permite acoplar procesos celulares"
+  ],
+  do_not_require:[
+    "ΔG = ΔH - TΔS",
+    "discusión de ΔH y ΔS",
+    "entropía global del universo",
+    "exportación formal de entropía",
+    "formulación fisicoquímica avanzada",
+    "profundización repetida sobre calor y segunda ley si ya explicó relación funcional"
+  ],
+  after_validation:"refinar para pTorpedo y avanzar",
+  repair_rule:"si falta algo, hacer solo una micro-pregunta concreta y celular",
+  examples_of_sufficient:[
+    "Las reacciones exergónicas liberan energía y pueden impulsar reacciones endergónicas.",
+    "Si ΔG es negativo la reacción libera energía; si es positivo necesita energía.",
+    "La célula usa energía de ATP para sintetizar proteínas o replicar ADN.",
+    "La síntesis necesita energía porque construye moléculas más complejas."
+  ]
+};
+
 const milestoneOrder = Object.keys(milestones);
 const levelNames = ["Reconoce","Explica","Integra"];
 const levelKeys = ["reconoce","explica","integra"];
@@ -1170,8 +1199,8 @@ function initialState(){
     unlocked:{cat3_h1_termodinamica:true},
     progress:{
       cat3_h1_termodinamica:{reconoce:0, explica:0, integra:0},
-      cat3_h2_atp_redox:{reconoce:0, explica:0, integra:0},
-      cat3_h3_enzimas:{reconoce:0, explica:0, integra:0},
+      cat3_h2_enzimas:{reconoce:0, explica:0, integra:0},
+      cat3_h3_atp_redox:{reconoce:0, explica:0, integra:0},
       cat3_h6_anaerobiosis_fermentacion:{reconoce:0, explica:0, integra:0}
     },
     chat:[],
@@ -1462,7 +1491,7 @@ function selectMilestone(id){
 
 function askPrompt(){
   const m = activeMilestone();
-  addChat("vane", `${identities[state.identity].emoji} ${m.prompt}\n\nResponde intentando incluir causa, proceso y consecuencia celular.`, "vane");
+  addChat("vane", `${identities[state.identity].emoji} ${m.prompt}\n\nResponde intentando incluir: qué proceso requiere energía, de dónde viene esa energía y qué consecuencia celular permite.`, "vane");
   saveState();
   render();
 }
@@ -1545,21 +1574,29 @@ function updatePTorpedo(ev){
 
 function fallbackEvaluation(text){
   const t = text.toLowerCase();
-  const hasCore = /atp|energ|enzim|gluc|nadh|fadh|redox|ferment|respir|oxigen|delta|dg|Δg/.test(t);
-  const hasCause = /porque|permite|entonces|depende|consecuencia|por eso|si /.test(t);
-  const hasIntegration = /relacion|conecta|sistema|proceso|metabol|catabol|anabol|gradiente/.test(t);
+  const hasCore = /atp|energ|enzim|gluc|nadh|fadh|redox|ferment|respir|oxigen|delta|dg|Δg|exerg|enderg|síntesis|sintesis|replic/.test(t);
+  const hasCause = /porque|permite|entonces|depende|consecuencia|por eso|si |requiere|libera|necesita|ocurre/.test(t);
+  const hasIntegration = /relacion|conecta|sistema|proceso|metabol|catabol|anabol|gradiente|acopla|acoplamiento|trabajo celular|celula|célula/.test(t);
+
+  const h1Functional =
+    state.activeMilestone === "cat3_h1_termodinamica" &&
+    /exerg|enderg|dg|Δg|atp|energ|libera|requiere|sintesis|síntesis|replic/.test(t);
 
   return {
-    reconoce: hasCore ? .5 : .25,
-    explica: hasCause ? .5 : 0,
-    integra: hasIntegration ? .25 : 0,
-    unlock:false,
-    feedback:"Modo respaldo activado: detecté algunos elementos conceptuales, pero no pude conectar con pVANE real en este intento.",
-    next_prompt:"Intenta responder conectando causa, proceso y consecuencia celular.",
+    reconoce: h1Functional ? .9 : (hasCore ? .5 : .25),
+    explica: h1Functional && hasCause ? .75 : (hasCause ? .5 : 0),
+    integra: h1Functional && hasIntegration ? .5 : (hasIntegration ? .25 : 0),
+    unlock:h1Functional && hasCause,
+    feedback:h1Functional
+      ? "Modo respaldo activado: tu respuesta es suficiente para CAT3 porque conecta energía con función celular. La guardo como evidencia y avanzamos."
+      : "Modo respaldo activado: detecté algunos elementos conceptuales, pero no pude conectar con pVANE real en este intento.",
+    next_prompt:h1Functional
+      ? "Versión pTorpedo: la célula acopla reacciones que liberan energía con procesos que la requieren, como síntesis, transporte o replicación."
+      : "Intenta responder conectando causa, proceso y consecuencia celular.",
     ptorpedo_entry:{
-      conceptos_validados: hasCore ? ["Concepto central identificado parcialmente"] : [],
-      conexion_lograda: hasCause ? "Hay intento de explicación causal." : "",
-      error_a_corregir: "Reintentar conexión con pVANE real o profundizar la relación conceptual.",
+      conceptos_validados: h1Functional ? ["Energía celular y acoplamiento funcional"] : (hasCore ? ["Concepto central identificado parcialmente"] : []),
+      conexion_lograda: h1Functional ? "Relaciona energía disponible con trabajo celular." : (hasCause ? "Hay intento de explicación causal." : ""),
+      error_a_corregir: h1Functional ? "No profundizar en termoquímica avanzada salvo que sea necesario." : "Reintentar conexión con pVANE real o profundizar la relación conceptual.",
       frase_util_del_estudiante: text.slice(0,120)
     }
   };
@@ -1588,12 +1625,28 @@ async function sendToVane(){
         response:text,
         message:text,
         conversation_style:{
-          mode:"tutor_fluido",
-          structure:"validar_refinar_conectar_preguntar_solo_si_hace_falta",
-          avoid:["¿Puedes explicar...?","¿Podrías explicar...?","repetir la misma pregunta en cada turno"],
-          prefer:["observa que","fíjate en esto","eso conecta con","piensa ahora en","aquí aparece"],
+          mode:"CAT3_ready_no_postgrado",
+          structure:"validar_suficiencia_funcional_refinar_y_avanzar",
+          avoid:[
+            "¿Puedes explicar...?","¿Podrías explicar...?","repetir la misma pregunta en cada turno",
+            "insistir en entropía global si ya hay relación funcional",
+            "pedir ΔH, ΔS o ecuación de Gibbs salvo que el estudiante lo pida",
+            "bloquear avance por no usar lenguaje termoquímico avanzado"
+          ],
+          prefer:[
+            "validar cuando exista relación proceso → energía → consecuencia celular",
+            "usar micro-reparaciones de una sola pregunta",
+            "traducir la respuesta del estudiante a versión pTorpedo",
+            "conectar con síntesis, transporte, respiración, ATP o enzimas"
+          ],
           semantic_echo:true,
-          tone:"socrático natural, no interrogatorio"
+          tone:"socrático natural, amable y de preparación CAT3"
+        },
+        validation_policy:cat3ValidationPolicy,
+        milestone_contract:{
+          current:state.activeMilestone,
+          pass_threshold:"concepto correcto + relación funcional correcta",
+          h1_specific_rule:"En el primer hito no exigir ΔH, ΔS, entropía global ni formulación fisicoquímica avanzada. Si el estudiante distingue exergónico/endergónico, ΔG básico y acoplamiento energético, validar y avanzar."
         },
         history:state.chat.slice(-8).map(m=>({
           role:m.role==="user" ? "student" : "pvane",
@@ -1792,6 +1845,7 @@ function renderArchitect(){
     <span class="badge">Acceso arquitecto · modo local</span>
     <h1>Dashboard simple del pre-parásito</h1>
     <p class="small">Panel temporal para probar ruta, botones, diálogos y futura integración Supabase. Los datos mostrados vienen de este navegador.</p>
+    <p class="small"><strong>Calibración actual:</strong> CAT3-ready. pVANE debe validar suficiencia funcional y no insistir en fisicoquímica avanzada en el primer hito.</p>
 
     <div class="arch-warning">
       <strong>Modo prueba:</strong> este dashboard no es para estudiantes. Para abrirlo usa <code>?architect=1</code> en la URL.
