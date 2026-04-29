@@ -2405,5 +2405,43 @@ applyTheme();
 render();
 
 </script>
+
+<!-- Parasite v0.5 CAT3-fastmode patch -->
+<script>
+/*
+CAT3-fastmode:
+If a nuclear concept keyword appears, immediately mark conceptual closure hint.
+This reduces redundant prompting loops in pVANE.
+*/
+function vaneFastModeDetect(text){
+  const t = String(text||"").toLowerCase();
+  const nuclear = [
+    "sistema abierto",
+    "intercambia energia",
+    "intercambia materia",
+    "dg negativo",
+    "exerg",
+    "enderg",
+    "atp",
+    "acopla",
+    "redox"
+  ];
+  return nuclear.some(k=>t.includes(k));
+}
+
+if(typeof sendToVane === "function"){
+  const originalSendToVane = sendToVane;
+  sendToVane = function(){
+    const input = document.getElementById("userInput");
+    if(input && vaneFastModeDetect(input.value)){
+      if(window.showFanfare){
+        showFanfare("star","Evidencia nuclear detectada","Avance conceptual acelerado (modo CAT3‑rápido).");
+      }
+    }
+    return originalSendToVane.apply(this, arguments);
+  }
+}
+</script>
+
 </body>
 </html>
