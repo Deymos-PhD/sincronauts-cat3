@@ -1266,7 +1266,10 @@ const cat3ValidationPolicy = {
     "mecanismo molecular de transferencia de fosfato",
     "detalle de hidrólisis de ATP más allá de ATP entrega energía",
     "explicar cómo cambia la energía libre de la reacción energizada",
-    "lenguaje de bioquímica intermedia sobre fosforilación si no es necesario"
+    "lenguaje de bioquímica intermedia sobre fosforilación si no es necesario",
+    "potencial redox estándar",
+    "rendimiento ATP exacto",
+    "detalles de Michaelis-Menten"
   ],
   after_validation:"refinar para pTorpedo y avanzar",
   repair_rule:"si falta algo, hacer solo una micro-pregunta concreta y celular",
@@ -1279,6 +1282,87 @@ const cat3ValidationPolicy = {
     "ATP entrega energía para transporte, síntesis o movimiento celular."
   ]
 };
+
+
+const cat3ExamMatrix = {
+  version:"CAT3_REAL_202610",
+  principle:"si aparece un concepto realmente evaluado en CAT3, validar sin pedir formalización avanzada",
+  triggers:[
+    {concept:"primera ley / transformación de energía", patterns:["energia no se crea","energía no se crea","solo se transforma","se transforma"], milestone:"cat3_h1_termodinamica"},
+    {concept:"sistema abierto", patterns:["sistema abierto","intercambia materia","intercambia energia","intercambia energía"], milestone:"cat3_h1_termodinamica"},
+    {concept:"reducción gana electrones", patterns:["gana electrones","incorpora electrones","se reduce"], milestone:"cat3_h3_atp_redox"},
+    {concept:"oxidación pierde electrones", patterns:["pierde electrones","se oxida"], milestone:"cat3_h3_atp_redox"},
+    {concept:"reacción exergónica libera energía", patterns:["exergonica","exergónica","libera energia","libera energía"], milestone:"cat3_h1_termodinamica"},
+    {concept:"reacción endergónica requiere energía", patterns:["endergonica","endergónica","requiere energia","requiere energía","absorbe energia","absorbe energía"], milestone:"cat3_h1_termodinamica"},
+    {concept:"ATP libera energía utilizable", patterns:["atp","adp","fosfato","pi","libera energia","libera energía","se rompe"], milestone:"cat3_h3_atp_redox"},
+    {concept:"NADH/FADH2 transportan electrones", patterns:["nadh","fadh","transporta electrones","llevan electrones","cadena respiratoria"], milestone:"cat3_h3_atp_redox"},
+    {concept:"ΔG positivo es endergónico", patterns:["dg positivo","Δg positivo","endergonica","endergónica"], milestone:"cat3_h1_termodinamica"},
+    {concept:"enzimas pierden función por desnaturalización", patterns:["desnaturaliza","desnaturalizacion","desnaturalización","pierde funcion","pierde función","estructura tridimensional","fiebre"], milestone:"cat3_h2_enzimas"},
+    {concept:"especificidad enzimática", patterns:["especificidad","sustrato especifico","sustrato específico","amilasa","almidon","almidón"], milestone:"cat3_h2_enzimas"},
+    {concept:"inhibición competitiva", patterns:["inhibidor competitivo","inhibicion competitiva","inhibición competitiva","sitio activo"], milestone:"cat3_h2_enzimas"},
+    {concept:"sitio activo", patterns:["sitio activo"], milestone:"cat3_h2_enzimas"},
+    {concept:"ajuste inducido", patterns:["ajuste inducido","cambia su forma","adapta al sustrato"], milestone:"cat3_h2_enzimas"},
+    {concept:"coenzima / cofactor", patterns:["coenzima","cofactor","molecula organica","molécula orgánica"], milestone:"cat3_h2_enzimas"},
+    {concept:"lactasa rompe lactosa", patterns:["lactasa","lactosa","monosacaridos","monosacáridos"], milestone:"cat3_h2_enzimas"},
+    {concept:"respiración aeróbica produce ATP, CO2 y agua", patterns:["respiracion aerobica","respiración aeróbica","atp co2 agua","co2 y agua"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
+    {concept:"oxígeno aceptor final de electrones", patterns:["oxigeno aceptor final","oxígeno aceptor final","aceptor final de electrones"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
+    {concept:"fosforilación oxidativa produce más ATP", patterns:["fosforilacion oxidativa","fosforilación oxidativa","mayor cantidad de atp"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
+    {concept:"ATP sintasa permite síntesis de ATP", patterns:["atp sintasa","disminucion de atp","disminución de atp"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
+    {concept:"glucólisis ocurre en citoplasma", patterns:["glucolisis","glucólisis","citoplasma","citosol"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
+    {concept:"glucólisis produce piruvato", patterns:["piruvato","dos piruvatos"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
+    {concept:"fermentación regenera NAD+", patterns:["fermentacion","fermentación","regenera nad","nad+"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
+    {concept:"fermentación láctica en músculo", patterns:["fermentacion lactica","fermentación láctica","lactato","ejercicio intenso"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
+    {concept:"ciclo de Cori", patterns:["ciclo de cori","higado","hígado","lactato en glucosa"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
+    {concept:"levaduras producen etanol y CO2 sin oxígeno", patterns:["levaduras","etanol","dioxido de carbono","dióxido de carbono","sin oxigeno","sin oxígeno"], milestone:"cat3_h6_anaerobiosis_fermentacion"}
+  ],
+  forbidden_overreach:[
+    "no exigir ΔH/ΔS",
+    "no exigir entropía global",
+    "no exigir tipo exacto de enlace fosfato",
+    "no exigir Michaelis-Menten",
+    "no exigir potencial redox",
+    "no exigir rendimiento ATP exacto salvo si el estudiante lo pide"
+  ]
+};
+
+function normalizeCAT3Text(text){
+  return String(text||"")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+function detectCAT3ExamConcepts(text){
+  const t = normalizeCAT3Text(text);
+  return cat3ExamMatrix.triggers.filter(item =>
+    item.patterns.some(p => t.includes(normalizeCAT3Text(p)))
+  );
+}
+
+function applyCAT3ExamValidation(text){
+  const hits = detectCAT3ExamConcepts(text);
+  if(!hits.length) return false;
+
+  hits.forEach(hit=>{
+    pushUnique(state.ptorpedo.confirmed, hit.concept);
+    pushUnique(state.ptorpedo.progress, `CAT3 real: ${hit.concept}`);
+    resolvePendingConcept(hit.concept);
+    if(hit.milestone && state.progress && state.progress[hit.milestone]){
+      state.progress[hit.milestone].reconoce = Math.max(state.progress[hit.milestone].reconoce || 0, 1);
+      state.progress[hit.milestone].explica = Math.max(state.progress[hit.milestone].explica || 0, .75);
+      const nextId = milestones[hit.milestone]?.next;
+      if(nextId) state.unlocked[nextId] = true;
+    }
+  });
+
+  const list = hits.slice(0,3).map(h=>h.concept).join(", ");
+  addChat("award", `⭐ Evidencia CAT3 real detectada: ${list}.\nNo necesito pedir formalización avanzada para validar esto.`, "award");
+  showFanfare("star","Evidencia CAT3 real detectada","Concepto evaluado en la prueba reconocido.");
+  state.ptorpedoVisible = true;
+  return true;
+}
 
 const milestoneOrder = Object.keys(milestones);
 const levelNames = ["Reconoce","Explica","Integra"];
@@ -1840,6 +1924,7 @@ async function sendToVane(){
   input.value = "";
   addChat("user","Tú: " + text,"user");
   retroValidatePending(text);
+  const cat3Hit = applyCAT3ExamValidation(text);
   addChat("vane","pVANE está pensando…","vane");
   saveState();
   render();
@@ -1879,6 +1964,8 @@ async function sendToVane(){
         validation_policy:cat3ValidationPolicy,
         architect_settings:state.vaneSettings,
         pending_concepts:state.ptorpedo?.pending || [],
+        cat3_exam_matrix:cat3ExamMatrix,
+        hard_rule:"Si la respuesta contiene un concepto de cat3ExamMatrix, validar y avanzar. No pedir formalización avanzada.",
         milestone_contract:{
           current:state.activeMilestone,
           pass_threshold:"concepto correcto + relación funcional correcta",
@@ -1906,6 +1993,11 @@ async function sendToVane(){
   updateProgress(state.activeMilestone, ev);
   updatePTorpedo(ev);
 
+  if(typeof cat3Hit !== "undefined" && cat3Hit){
+    ev.feedback = "Validé este punto porque corresponde directamente al nivel de la CAT3 real. Lo dejo registrado y seguimos avanzando.";
+    ev.next_prompt = "Siguiente paso: conecta este concepto con otro proceso celular evaluado, sin entrar en detalle termoquímico avanzado.";
+    ev.star_awarded = Math.max(ev.star_awarded || 0, 1);
+  }
   const vaneText = `pVANE: ${ev.feedback}${ev.next_prompt ? "\n\n" + ev.next_prompt : ""}`;
   addChat(ev.star_awarded > 0 ? "award" : "vane", vaneText, ev.star_awarded > 0 ? "award" : "vane");
   if(ev.star_awarded > 0){
@@ -2089,7 +2181,7 @@ function renderArchitect(){
     <span class="badge">Acceso arquitecto · modo local</span>
     <h1>Dashboard simple del pre-parásito</h1>
     <p class="small">Panel temporal para probar ruta, botones, diálogos y futura integración Supabase. Los datos mostrados vienen de este navegador.</p>
-    <p class="small"><strong>Calibración actual:</strong> CAT3-ready. pVANE debe validar suficiencia funcional y no insistir en fisicoquímica avanzada en el primer hito.</p>
+    <p class="small"><strong>Calibración actual:</strong> CAT3-ready + matriz CAT3 real. pVANE debe validar suficiencia funcional y no insistir en fisicoquímica avanzada en el primer hito.</p>
 
     <div class="arch-warning">
       <strong>Modo prueba:</strong> este dashboard no es para estudiantes. Para abrirlo usa <code>?architect=1</code> en la URL.
@@ -2341,6 +2433,8 @@ function renderReport(){
   lines.push("");
   lines.push("Identidad activa: " + id.name);
   lines.push("Readiness CAT3: " + readiness() + "%");
+  lines.push("");
+  lines.push("Matriz CAT3 real activa: sí");
   lines.push("");
   lines.push("Hitos:");
   milestoneOrder.forEach(k=>{
