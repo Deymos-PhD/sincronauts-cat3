@@ -1,2541 +1,550 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Ruta CAT3 · pVANE</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pSINCRO · CBI111</title>
 <style>
 :root{
-  --bg:#f4f6fb;
-  --card:#ffffff;
-  --text:#111827;
-  --muted:#6b7280;
-  --blue:#2563eb;
-  --blue-dark:#1d4ed8;
-  --green:#16a34a;
-  --amber:#f59e0b;
-  --red:#dc2626;
-  --line:#e5e7eb;
-  --soft-blue:#eff6ff;
-  --soft-green:#ecfdf5;
-  --soft-amber:#fffbeb;
-  --soft-card:#fbfdff;
-  --surface:#f8fafc;
-  --modal-bg:#ffffff;
-  --overlay:rgba(15,23,42,.48);
-  --body-gradient:radial-gradient(circle at top left,#eef6ff 0,#f4f6fb 34%,#f7f9fc 100%);
-  --shadow:0 14px 42px rgba(15,23,42,.08);
+  --bg:#f4f6fb; --card:#ffffff; --text:#111827; --muted:#64748b; --line:#e5e7eb;
+  --blue:#2563eb; --blue-dark:#1d4ed8; --green:#16a34a; --amber:#f59e0b; --red:#dc2626;
+  --soft-blue:#eff6ff; --soft-green:#ecfdf5; --soft-amber:#fffbeb; --soft-red:#fef2f2;
+  --soft-card:#fbfdff; --surface:#f8fafc; --shadow:0 16px 50px rgba(15,23,42,.08);
+  --gradient:radial-gradient(circle at top left,#e0f2fe 0,#f4f6fb 38%,#f8fafc 100%);
 }
-
 body.dark{
-  --bg:#0f172a;
-  --card:#111827;
-  --text:#f8fafc;
-  --muted:#cbd5e1;
-  --blue:#60a5fa;
-  --blue-dark:#3b82f6;
-  --green:#22c55e;
-  --amber:#fbbf24;
-  --red:#f87171;
-  --line:#334155;
-  --soft-blue:#172554;
-  --soft-green:#052e16;
-  --soft-amber:#451a03;
-  --soft-card:#1e293b;
-  --surface:#020617;
-  --modal-bg:#111827;
-  --overlay:rgba(2,6,23,.72);
-  --body-gradient:radial-gradient(circle at top left,#1e3a8a 0,#0f172a 38%,#020617 100%);
-  --shadow:0 18px 52px rgba(0,0,0,.35);
+  --bg:#0f172a; --card:#111827; --text:#f8fafc; --muted:#cbd5e1; --line:#334155;
+  --blue:#60a5fa; --blue-dark:#3b82f6; --green:#22c55e; --amber:#fbbf24; --red:#f87171;
+  --soft-blue:#172554; --soft-green:#052e16; --soft-amber:#451a03; --soft-red:#450a0a;
+  --soft-card:#1e293b; --surface:#020617; --shadow:0 18px 54px rgba(0,0,0,.38);
+  --gradient:radial-gradient(circle at top left,#1e3a8a 0,#0f172a 40%,#020617 100%);
 }
-
 *{box-sizing:border-box}
-
 body{
-  margin:0;
-  padding:24px;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  background:var(--body-gradient);
-  color:var(--text);
+  margin:0; padding:22px; min-height:100vh; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:var(--gradient); color:var(--text);
 }
-
-.card{
-  background:var(--card);
-  border-radius:24px;
-  padding:28px;
-  box-shadow:var(--shadow);
+button{
+  border:0; border-radius:14px; padding:12px 18px; margin:6px; background:var(--blue);
+  color:white; cursor:pointer; font-size:15px; font-weight:800; transition:.16s ease;
 }
-
+button:hover{background:var(--blue-dark); transform:translateY(-1px)}
+button.secondary{background:#e5e7eb;color:#111827}
+button.ghost{background:var(--surface);color:var(--text);border:1px solid var(--line)}
+button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+body.dark button.secondary{background:#334155;color:#f8fafc}
+input,select,textarea{
+  width:100%; border:1px solid var(--line); border-radius:14px; padding:12px; background:var(--card); color:var(--text);
+  font:inherit; margin:6px 0 12px;
+}
+textarea{height:98px; resize:vertical}
 h1,h2,h3{margin-top:0}
 p{line-height:1.45}
-strong{font-weight:800}
-
-button{
-  border:0;
-  border-radius:14px;
-  padding:12px 18px;
-  margin:6px;
-  background:var(--blue);
-  color:white;
-  cursor:pointer;
-  font-size:15px;
-  font-weight:700;
-  transition:.16s ease;
-}
-
-button:hover{
-  background:var(--blue-dark);
-  transform:translateY(-1px);
-}
-
-button.secondary{
-  background:#e5e7eb;
-  color:#111827;
-}
-
-button.ghost{
-  background:var(--surface);
-  color:#1f2937;
-  border:1px solid var(--line);
-}
-
-button:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-  transform:none;
-}
-
-.small{
-  font-size:13px;
-  color:var(--muted);
-}
-
+.small{font-size:13px;color:var(--muted)}
+.badge{display:inline-block;padding:6px 12px;border-radius:999px;background:var(--soft-blue);color:var(--blue);font-weight:900;font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:26px;box-shadow:var(--shadow)}
+.center{max-width:980px;margin:0 auto;text-align:center}
 .notice{
-  background:#fff7ed;
-  border:1px solid #fed7aa;
-  color:#7c2d12;
-  padding:14px;
-  border-radius:16px;
-  margin:16px 0;
+  background:var(--soft-amber); border:2px solid rgba(245,158,11,.45); color:#78350f;
+  padding:18px; border-radius:20px; margin:18px 0; text-align:left;
 }
-
-.badge{
-  display:inline-block;
-  padding:6px 12px;
-  border-radius:999px;
-  background:var(--soft-blue);
-  color:var(--blue);
-  font-size:13px;
-  font-weight:800;
+body.dark .notice{color:#fde68a}
+.ethics-hero{
+  border:3px solid rgba(37,99,235,.32); background:linear-gradient(135deg,var(--soft-blue),var(--card));
+  padding:22px; border-radius:24px; margin:24px 0; text-align:left;
 }
-
-.center{
-  max-width:900px;
-  margin:0 auto;
-  text-align:center;
+.ethics-hero h2{margin-bottom:8px}
+.footer{
+  margin:28px auto 0; max-width:980px; text-align:center; color:var(--muted); font-size:13px; line-height:1.45;
 }
-
 .theme-toggle{
-  position:fixed;
-  top:18px;
-  right:18px;
-  z-index:30;
-  display:flex;
-  gap:8px;
-  align-items:center;
-  background:var(--card);
-  color:var(--text);
-  border:1px solid var(--line);
-  box-shadow:var(--shadow);
-  border-radius:999px;
-  padding:7px 10px;
+  position:fixed; top:16px; right:16px; z-index:40; display:flex; gap:6px; align-items:center;
+  background:var(--card); border:1px solid var(--line); border-radius:999px; padding:6px; box-shadow:var(--shadow)
 }
-
-.theme-toggle button{
-  margin:0;
-  padding:8px 10px;
-  border-radius:999px;
-  background:transparent;
-  color:var(--muted);
-  border:1px solid transparent;
-  font-size:13px;
+.theme-toggle button{margin:0;padding:8px 10px;background:transparent;color:var(--muted);border-radius:999px;font-size:13px}
+.theme-toggle button.active{background:var(--soft-blue);color:var(--blue)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.field{text-align:left}
+.check{
+  display:flex; gap:10px; align-items:flex-start; text-align:left; background:var(--soft-card);
+  border:1px solid var(--line); border-radius:16px; padding:14px; margin:10px 0;
 }
-
-.theme-toggle button.active{
-  background:var(--soft-blue);
-  color:var(--blue);
-  border-color:var(--line);
+.check input{width:auto;margin-top:3px}
+.pilot-code{
+  font-size:28px; letter-spacing:.08em; font-weight:950; background:var(--surface); border:1px dashed var(--blue);
+  padding:14px; border-radius:18px; display:inline-block; margin:10px 0;
 }
-
-body.dark .theme-toggle button.active{
-  background:#1e3a8a;
-  color:#dbeafe;
-}
-
-
-.identity-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
-  gap:12px;
-  margin-top:16px;
-}
-
-.identity-card, .answer-card{
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:16px;
-  background:var(--soft-card);
-  cursor:pointer;
-  transition:.16s ease;
-  text-align:left;
-}
-
-.identity-card:hover,.answer-card:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 22px rgba(15,23,42,.08);
-  border-color:#93c5fd;
-}
-
+.app{max-width:1360px;margin:auto;display:grid;grid-template-columns:310px 1fr 330px;gap:18px}
+.sidebar,.chat-panel,.ptorpedo-panel{min-height:calc(100vh - 44px)}
+.identity-pill{display:flex;gap:10px;align-items:center;padding:12px;border-radius:16px;background:var(--soft-card);border:1px solid var(--line);margin:14px 0}
+.identity-mini{font-size:28px;width:46px;height:46px;display:grid;place-items:center;border-radius:14px;background:var(--soft-blue)}
+.progress{height:16px;border-radius:999px;overflow:hidden;background:var(--line);margin:12px 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,#2563eb,#16a34a);transition:.3s ease}
+.node{border:1px solid var(--line);border-radius:18px;padding:14px;background:var(--soft-card);cursor:pointer;margin:10px 0;text-align:left}
+.node.active{border-color:#60a5fa;background:var(--soft-blue)}
+.node.locked{opacity:.55}
+.node-title{font-weight:950;margin-bottom:4px}
+.stars{letter-spacing:1px;font-size:21px;margin-top:8px;color:var(--amber)}
+.chatbox{height:calc(100vh - 320px);min-height:410px;overflow-y:auto;border:1px solid var(--line);border-radius:20px;padding:14px;background:var(--soft-card);text-align:left}
+.msg{margin:10px 0;padding:12px 14px;border-radius:16px;max-width:94%;white-space:pre-wrap;line-height:1.4}
+.user{margin-left:auto;background:#dbeafe;color:#0f172a}
+.guide{margin-right:auto;background:var(--surface)}
+.award{margin-right:auto;background:var(--soft-green);border:1px solid #bbf7d0;color:#14532d}
+.system{margin:12px auto;text-align:center;background:var(--soft-amber);border:1px solid #fed7aa;color:#7c2d12;font-size:13px}
+body.dark .user{background:#172554;color:#dbeafe}
+body.dark .award{color:#bbf7d0}
+body.dark .system{color:#fde68a}
+.actions{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:10px}
+.ptorpedo-section{border:1px solid var(--line);background:var(--soft-card);border-radius:18px;padding:14px;margin:12px 0;text-align:left}
+.ptorpedo-section.priority{border:2px solid rgba(37,99,235,.28);background:linear-gradient(180deg,var(--soft-blue),var(--soft-card))}
+.ptorpedo-section.pending{border:2px solid rgba(245,158,11,.34);background:linear-gradient(180deg,var(--soft-amber),var(--soft-card))}
+.ptorpedo-item{font-size:13px;margin:8px 0;line-height:1.35}
+.empty{color:var(--muted);font-size:13px}
 .answer-card{
-  text-align:left;
-  margin:10px 0;
-}
-
-.answer-card strong{
-  display:block;
-  font-size:15px;
-  margin-bottom:6px;
-}
-
-.avatar{
-  width:86px;
-  height:86px;
-  margin:6px auto 16px;
-  display:block;
-}
-
-.quiz-progress{
-  height:12px;
-  border-radius:999px;
-  overflow:hidden;
-  background:#e5e7eb;
-  margin:18px 0;
-}
-
-.quiz-fill{
-  height:100%;
-  background:linear-gradient(90deg,#2563eb,#16a34a);
-  transition:.25s ease;
-}
-
-.app{
-  max-width:1320px;
-  margin:auto;
-  display:grid;
-  grid-template-columns:310px 1fr 310px;
-  gap:18px;
-}
-
-.sidebar,.chat-panel,.ptorpedo-panel{
-  min-height:calc(100vh - 48px);
-}
-
-.identity-pill{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  padding:12px;
-  border-radius:16px;
-  background:var(--soft-card);
-  border:1px solid var(--line);
-  margin-bottom:14px;
-}
-
-.identity-mini{
-  font-size:28px;
-  width:44px;
-  height:44px;
-  display:grid;
-  place-items:center;
-  border-radius:12px;
-  background:var(--soft-blue);
-}
-
-.progress-wrap{
-  margin:18px 0;
-}
-
-.progress{
-  height:16px;
-  border-radius:999px;
-  overflow:hidden;
-  background:#e5e7eb;
-}
-
-.progress-fill{
-  height:100%;
-  background:linear-gradient(90deg,#2563eb,#16a34a);
-  width:0%;
-  transition:.3s ease;
-}
-
-.milestones{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.node{
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:14px;
-  text-align:left;
-  background:var(--soft-card);
-  cursor:pointer;
-  transition:.16s ease;
-}
-
-.node:hover{
-  transform:translateY(-1px);
-  box-shadow:0 8px 18px rgba(15,23,42,.06);
-}
-
-.node.active{
-  border-color:#60a5fa;
-  background:#eff6ff;
-}
-
-.node.locked{
-  opacity:.45;
-  cursor:not-allowed;
-}
-
-.node-title{
-  font-weight:900;
-  margin-bottom:4px;
-}
-
-.stars{
-  letter-spacing:1px;
-  font-size:21px;
-  margin-top:8px;
-  color:#f59e0b;
-}
-
-.levels{
-  margin-top:8px;
-  font-size:12px;
-  color:var(--muted);
-}
-
-.chatbox{
-  height:calc(100vh - 300px);
-  min-height:410px;
-  overflow-y:auto;
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:14px;
-  background:var(--soft-card);
-  text-align:left;
-}
-
-.msg{
-  margin:10px 0;
-  padding:12px 14px;
-  border-radius:16px;
-  max-width:94%;
-  white-space:pre-wrap;
-  line-height:1.4;
-}
-
-.user{
-  margin-left:auto;
-  background:var(--soft-blue);
-}
-
-.vane{
-  margin-right:auto;
-  background:var(--surface);
-}
-
-.award{
-  margin-right:auto;
-  background:#ecfdf5;
-  border:1px solid #bbf7d0;
-  color:#14532d;
-}
-
-.system{
-  margin:12px auto;
-  text-align:center;
-  background:#fff7ed;
-  border:1px solid #fed7aa;
-  color:#7c2d12;
-  font-size:13px;
-}
-
-textarea{
-  width:100%;
-  height:96px;
-  margin-top:12px;
-  border-radius:16px;
-  border:1px solid var(--line);
-  padding:12px;
-  resize:none;
-  font-family:inherit;
-  font-size:15px;
-}
-
-.actions{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  align-items:center;
-  margin-top:10px;
-}
-
-.ptorpedo-panel{
-  display:none;
-}
-
-.ptorpedo-panel.visible{
-  display:block;
-  animation:pop .35s ease;
-}
-
-@keyframes pop{
-  from{opacity:0; transform:translateY(10px) scale(.98)}
-  to{opacity:1; transform:translateY(0) scale(1)}
-}
-
-.ptorpedo-section{
-  border:1px solid var(--line);
-  background:var(--soft-card);
-  border-radius:16px;
-  padding:14px;
-  margin:12px 0;
-}
-
-.ptorpedo-item{
-  font-size:13px;
-  margin:8px 0;
-  line-height:1.35;
-}
-
-.empty{
-  color:var(--muted);
-  font-size:13px;
-}
-
-.report{
-  text-align:left;
-  white-space:pre-wrap;
-  border:1px solid var(--line);
-  background:var(--soft-card);
-  border-radius:16px;
-  padding:18px;
-}
-
-.tour-steps{
-  text-align:left;
-  max-width:720px;
-  margin:18px auto;
-}
-
-.tour-step{
-  display:flex;
-  gap:12px;
-  padding:12px;
-  border:1px solid var(--line);
-  background:var(--soft-card);
-  border-radius:16px;
-  margin:10px 0;
-}
-
-.tour-icon{
-  font-size:24px;
-  width:38px;
-  height:38px;
-  border-radius:12px;
-  display:grid;
-  place-items:center;
-  background:var(--soft-blue);
-}
-
-.modal-backdrop{
-  position:fixed;
-  inset:0;
-  background:var(--overlay);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:22px;
-  z-index:20;
-  backdrop-filter:blur(4px);
-}
-
-.modal-backdrop.visible{
-  display:flex;
-}
-
-.modal{
-  width:min(680px,100%);
-  background:var(--modal-bg);
-  border-radius:26px;
-  padding:26px;
-  box-shadow:0 24px 80px rgba(15,23,42,.25);
-  animation:pop .28s ease;
-}
-
-.modal h2{
-  margin-bottom:8px;
-}
-
-.modal-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:10px;
-  margin:16px 0;
-}
-
-.modal-tile{
-  border:1px solid var(--line);
-  border-radius:18px;
-  background:var(--soft-card);
-  padding:14px;
-}
-
-.modal-tile .big{
-  font-size:26px;
-}
-
-.sparkle{
-  background:linear-gradient(90deg,#2563eb,#16a34a,#f59e0b);
-  -webkit-background-clip:text;
-  color:transparent;
-}
-
-.onboarding-visual{
-  position:relative;
-  height:170px;
-  border:1px solid var(--line);
-  border-radius:22px;
-  background:linear-gradient(135deg,#f8fafc,#eff6ff);
-  overflow:hidden;
-  margin:18px 0;
-}
-
-.demo-card{
-  position:absolute;
-  background:var(--modal-bg);
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:12px;
-  box-shadow:0 10px 24px rgba(15,23,42,.08);
-  font-size:13px;
-}
-
-.demo-card.one{left:22px;top:24px;width:170px}
-.demo-card.two{right:22px;top:28px;width:190px}
-.demo-card.three{left:210px;bottom:24px;width:210px}
-
-.demo-cursor{
-  position:absolute;
-  left:42px;
-  top:48px;
-  font-size:28px;
-  animation:cursorTour 5.6s ease-in-out infinite;
-  z-index:4;
-  filter:drop-shadow(0 4px 7px rgba(15,23,42,.22));
-}
-
-.pulse-ring{
-  position:absolute;
-  width:48px;
-  height:48px;
-  border:3px solid #2563eb;
-  border-radius:50%;
-  opacity:.0;
-  animation:pulseTour 5.6s ease-in-out infinite;
-  z-index:3;
-}
-
-@keyframes cursorTour{
-  0%,12%{left:42px;top:48px}
-  28%,40%{left:485px;top:52px}
-  56%,68%{left:286px;top:115px}
-  84%,100%{left:42px;top:48px}
-}
-
-@keyframes pulseTour{
-  0%,12%{left:36px;top:42px;opacity:.65}
-  18%{opacity:0}
-  28%,40%{left:478px;top:44px;opacity:.65}
-  46%{opacity:0}
-  56%,68%{left:278px;top:108px;opacity:.65}
-  74%,100%{opacity:0}
-}
-
-.tour-caption{
-  min-height:48px;
-  text-align:left;
-  background:var(--soft-card);
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:12px;
-  margin-top:12px;
-  font-size:14px;
-}
-
-.identity-result-card{
-  max-width:720px;
-  margin:18px auto;
-  border:1px solid var(--line);
-  border-radius:22px;
-  padding:18px;
-  background:var(--soft-card);
-  text-align:left;
-}
-
-.tour-modal-visual{
-  position:relative;
-  height:220px;
-  border:1px solid var(--line);
-  border-radius:22px;
-  background:linear-gradient(135deg,#f8fafc,#eff6ff);
-  overflow:hidden;
-  margin:16px 0;
-}
-
-.tour-demo{
-  position:absolute;
-  background:var(--modal-bg);
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:12px;
-  box-shadow:0 10px 24px rgba(15,23,42,.08);
-  font-size:13px;
-}
-
-.tour-demo.identity{left:22px;top:24px;width:180px}
-.tour-demo.stars{left:240px;top:24px;width:190px}
-.tour-demo.chat{right:22px;top:24px;width:190px}
-.tour-demo.ptorpedo{left:235px;bottom:24px;width:210px}
-
-.tour-demo.highlight{
-  border-color:#2563eb;
-  box-shadow:0 0 0 4px rgba(37,99,235,.12),0 10px 24px rgba(15,23,42,.08);
-}
-
-.tour-cursor{
-  position:absolute;
-  font-size:30px;
-  z-index:4;
-  filter:drop-shadow(0 4px 7px rgba(15,23,42,.22));
-  transition:.35s ease;
-}
-
-.tour-cursor.step0{left:72px;top:78px}
-.tour-cursor.step1{left:305px;top:78px}
-.tour-cursor.step2{left:520px;top:78px}
-.tour-cursor.step3{left:308px;top:158px}
-.tour-cursor.step4{left:510px;top:78px}
-
-.tour-modal-caption{
-  text-align:left;
-  background:var(--soft-card);
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:14px;
-  margin:12px 0;
-  min-height:72px;
-}
-
-.tour-step-count{
-  font-size:12px;
-  color:var(--muted);
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.04em;
-}
-
-.tour-nav{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-top:14px;
-}
-
-.tour-dots{
-  display:flex;
-  gap:6px;
-  justify-content:center;
-  flex:1;
-}
-
-.tour-dot{
-  width:8px;
-  height:8px;
-  border-radius:999px;
-  background:#cbd5e1;
-}
-
-.tour-dot.active{
-  background:#2563eb;
-}
-
-
-.arch-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:14px;
-  margin:18px 0;
-}
-
-.arch-metric{
-  border:1px solid var(--line);
-  background:var(--soft-card);
-  border-radius:18px;
-  padding:16px;
-  text-align:left;
-}
-
-.arch-metric .value{
-  font-size:30px;
-  font-weight:900;
-  margin-top:6px;
-}
-
-.arch-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:12px;
-  font-size:14px;
-}
-
-.arch-table th,.arch-table td{
-  border-bottom:1px solid var(--line);
-  padding:10px;
-  text-align:left;
-}
-
-.arch-log{
-  max-height:260px;
-  overflow:auto;
-  text-align:left;
-  background:#0f172a;
-  color:#dbeafe;
-  border-radius:16px;
-  padding:14px;
-  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-  font-size:12px;
-  white-space:pre-wrap;
-}
-
-.arch-warning{
-  background:#fef2f2;
-  border:1px solid #fecaca;
-  color:#7f1d1d;
-  border-radius:16px;
-  padding:14px;
-  text-align:left;
-  margin:14px 0;
-}
-
-
-body.dark .user{ color:#dbeafe; }
-body.dark .vane{ color:var(--text); }
-body.dark .identity-card,
-body.dark .answer-card,
-body.dark .node,
-body.dark .ptorpedo-section,
-body.dark .modal-tile,
-body.dark .tour-step,
-body.dark .demo-card,
-body.dark .tour-demo,
-body.dark .tour-caption,
-body.dark .tour-modal-caption,
-body.dark .identity-result-card,
-body.dark .arch-metric{
-  background:var(--soft-card);
-}
-
-body.dark textarea{
-  background:#020617;
-  color:var(--text);
-  border-color:var(--line);
-}
-
-body.dark button.secondary{
-  background:#334155;
-  color:#f8fafc;
-}
-
-body.dark button.ghost{
-  background:#0f172a;
-  color:#f8fafc;
-  border-color:#334155;
-}
-
-body.dark code{
-  color:#bfdbfe;
-}
-
-
-/* Parasite v0.4 additions */
-.ptorpedo-section.priority{
-  border:2px solid rgba(37,99,235,.28);
-  background:linear-gradient(180deg,var(--soft-blue),var(--soft-card));
-}
-
-.ptorpedo-section.pending{
-  border:2px solid rgba(245,158,11,.32);
-  background:linear-gradient(180deg,var(--soft-amber),var(--soft-card));
-}
-
-.ptorpedo-section h3,
-.ptorpedo-section strong{
-  font-size:15px;
-}
-
+  border:1px solid var(--line); border-radius:18px; padding:16px; background:var(--soft-card); cursor:pointer;
+  transition:.16s ease; text-align:left; margin:10px 0;
+}
+.answer-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(15,23,42,.08);border-color:#93c5fd}
+.quiz-progress{height:12px;border-radius:999px;overflow:hidden;background:var(--line);margin:18px 0}
+.quiz-fill{height:100%;background:linear-gradient(90deg,#2563eb,#16a34a);transition:.25s ease}
+.avatar{width:86px;height:86px;margin:6px auto 16px;display:block}
 .fanfare-toast{
-  position:fixed;
-  left:50%;
-  top:22px;
-  transform:translateX(-50%) translateY(-14px) scale(.96);
-  z-index:80;
-  background:var(--card);
-  color:var(--text);
-  border:1px solid var(--line);
-  box-shadow:0 18px 50px rgba(15,23,42,.22);
-  border-radius:22px;
-  padding:16px 20px;
-  min-width:min(420px,92vw);
-  text-align:center;
-  opacity:0;
-  pointer-events:none;
-  transition:.25s ease;
+  position:fixed;left:50%;top:22px;transform:translateX(-50%) translateY(-14px) scale(.96);z-index:80;
+  background:var(--card);color:var(--text);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:22px;
+  padding:16px 20px;min-width:min(420px,92vw);text-align:center;opacity:0;pointer-events:none;transition:.25s ease
 }
-
-.fanfare-toast.visible{
-  opacity:1;
-  transform:translateX(-50%) translateY(0) scale(1);
-}
-
-.fanfare-toast .big{
-  font-size:30px;
-  display:block;
-  margin-bottom:4px;
-}
-
-body.dark .fanfare-toast{
-  box-shadow:0 18px 50px rgba(0,0,0,.45);
-}
-
-.arch-control{
-  border:1px solid var(--line);
-  background:var(--soft-card);
-  border-radius:16px;
-  padding:14px;
-  margin:12px 0;
-  text-align:left;
-}
-
-.arch-control select,
-.arch-control input{
-  width:100%;
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:10px;
-  margin-top:8px;
-  background:var(--card);
-  color:var(--text);
-}
-
-.pending-chip{
-  display:inline-block;
-  border:1px solid rgba(245,158,11,.4);
-  background:var(--soft-amber);
-  color:#92400e;
-  border-radius:999px;
-  padding:5px 10px;
-  margin:4px;
-  font-size:12px;
-  font-weight:800;
-}
-
-body.dark .pending-chip{
-  color:#fde68a;
-}
-
+.fanfare-toast.visible{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+.fanfare-toast .big{font-size:30px;display:block;margin-bottom:4px}
+.arch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:18px 0}
+.arch-metric{border:1px solid var(--line);background:var(--soft-card);border-radius:18px;padding:16px;text-align:left}
+.arch-metric .value{font-size:30px;font-weight:950;margin-top:6px}
+.arch-control{border:1px solid var(--line);background:var(--soft-card);border-radius:16px;padding:14px;margin:12px 0;text-align:left}
+.arch-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+.arch-table th,.arch-table td{border-bottom:1px solid var(--line);padding:10px;text-align:left}
+.report{text-align:left;white-space:pre-wrap;border:1px solid var(--line);background:var(--soft-card);border-radius:16px;padding:18px}
 @media(max-width:1100px){
-  body{padding:14px}
-  .app{grid-template-columns:1fr; max-width:820px}
-  .sidebar,.chat-panel,.ptorpedo-panel{min-height:auto}
-  .chatbox{height:420px}
+  body{padding:14px}.app{grid-template-columns:1fr;max-width:850px}.sidebar,.chat-panel,.ptorpedo-panel{min-height:auto}.chatbox{height:420px}
 }
-
 @media(max-width:760px){
-  body{padding:10px}
-  .card{padding:18px;border-radius:20px}
-  .center{max-width:100%}
-  h1{font-size:1.75rem}
-  h2{font-size:1.35rem}
-  button{width:100%;margin:6px 0}
-  .actions{display:grid;grid-template-columns:1fr;gap:6px}
-  .identity-grid{grid-template-columns:1fr}
-  .chatbox{height:52vh;min-height:300px}
-  textarea{height:84px}
-  .theme-toggle{
-    position:sticky;
-    top:8px;
-    right:auto;
-    margin:0 auto 10px;
-    justify-content:center;
-    width:min(100%,360px);
-  }
-  .modal{padding:18px;border-radius:22px}
-  .tour-modal-visual,
-  .onboarding-visual{height:260px}
-  .tour-demo.identity{left:12px;top:12px;width:42%}
-  .tour-demo.stars{right:12px;left:auto;top:12px;width:42%}
-  .tour-demo.chat{left:12px;right:auto;top:104px;width:42%}
-  .tour-demo.ptorpedo{right:12px;left:auto;bottom:16px;width:42%}
-  .tour-cursor.step0{left:54px;top:64px}
-  .tour-cursor.step1{left:62%;top:64px}
-  .tour-cursor.step2{left:58px;top:152px}
-  .tour-cursor.step3{left:62%;top:184px}
-  .tour-cursor.step4{left:62%;top:184px}
-  .arch-table{font-size:12px;display:block;overflow-x:auto;white-space:nowrap}
-  .arch-grid{grid-template-columns:1fr}
+  body{padding:10px}.card{padding:18px;border-radius:20px}.center{max-width:100%}h1{font-size:1.75rem}h2{font-size:1.35rem}
+  button{width:100%;margin:6px 0}.actions{display:grid;grid-template-columns:1fr;gap:6px}.chatbox{height:52vh;min-height:300px}
+  .theme-toggle{position:sticky;top:8px;margin:0 auto 10px;justify-content:center;width:min(100%,360px)}
+  .arch-table{font-size:12px;display:block;overflow-x:auto;white-space:nowrap}.app{gap:12px}
 }
-
-@media(max-width:420px){
-  .badge{font-size:12px}
-  .small{font-size:12px}
-  .avatar{width:72px;height:72px}
-  .node{padding:12px}
-  .stars{font-size:18px}
-}
-
 @media print{
-  body{background:var(--modal-bg);padding:0}
-  .app{display:block}
-  .chat-panel,.sidebar,.actions,button,textarea,.modal-backdrop{display:none!important}
-  .card{box-shadow:none;border-radius:0}
-  .ptorpedo-panel{display:block!important}
+  body{background:white;padding:0}.theme-toggle,.actions,button,textarea,.sidebar,.chat-panel{display:none!important}
+  .card{box-shadow:none;border-radius:0}.app{display:block}.ptorpedo-panel{display:block!important}
 }
 </style>
 </head>
-
 <body>
 <div id="themeToggle" class="theme-toggle" aria-label="Selector de apariencia">
-  <button id="lightModeBtn" type="button" onclick="setTheme('light')">☀️ Claro</button>
-  <button id="darkModeBtn" type="button" onclick="setTheme('dark')">🌙 Oscuro</button>
+  <button id="lightModeBtn" onclick="setTheme('light')">☀️ Claro</button>
+  <button id="darkModeBtn" onclick="setTheme('dark')">🌙 Oscuro</button>
 </div>
 <div id="root"></div>
-
-<div id="ptorpedoModal" class="modal-backdrop" onclick="closePTorpedoModal(event)">
-  <div class="modal" onclick="event.stopPropagation()">
-    <span class="badge">Logro desbloqueado</span>
-    <h2><span class="sparkle">pTorpedo activado</span> ✦</h2>
-    <p>Tu primera evidencia conceptual ya quedó registrada. Desde ahora, tus avances se irán transformando en una guía personal de estudio para CAT3.</p>
-    <div class="modal-grid">
-      <div class="modal-tile">
-        <div class="big">✔</div>
-        <strong>Qué guarda</strong>
-        <p class="small">Conceptos validados, relaciones en progreso y errores que conviene corregir.</p>
-      </div>
-      <div class="modal-tile">
-        <div class="big">⭐</div>
-        <strong>Cómo crece</strong>
-        <p class="small">Aumenta solo cuando pVANE detecta mérito conceptual en tus respuestas.</p>
-      </div>
-      <div class="modal-tile">
-        <div class="big">📄</div>
-        <strong>Qué ganas</strong>
-        <p class="small">Una síntesis propia para estudiar, imprimir o repasar antes de la CAT3.</p>
-      </div>
-    </div>
-    <div class="notice">
-      Mientras más precisas sean tus explicaciones, más útil será tu pTorpedo.
-    </div>
-    <div class="actions">
-      <button onclick="closePTorpedoModal()">Entendido, seguir con VANE</button>
-    </div>
-  </div>
+<div class="footer">
+  Este recurso fue diseñado por el Dr. Alex Elías<br>
+  Académico transversal · Instituto de Ciencias Naturales · UDLA<br>
+  Piloto de innovación pedagógica · 2026
 </div>
-
-<div id="onboardingModal" class="modal-backdrop" onclick="closeOnboardingModal(event)">
-  <div class="modal" onclick="event.stopPropagation()">
-    <span class="badge">Tour de preparación</span>
-    <h2 id="onboardingTitle">Cómo funciona tu ruta</h2>
-
-    <div class="tour-modal-visual">
-      <div id="tourDemoIdentity" class="tour-demo identity"><strong>Identidad</strong><br><span class="small">Ajusta el lenguaje de pVANE.</span></div>
-      <div id="tourDemoStars" class="tour-demo stars"><strong>Estrellas</strong><br><span class="stars">☆☆☆</span><br><span class="small">Mérito conceptual.</span></div>
-      <div id="tourDemoChat" class="tour-demo chat"><strong>pVANE</strong><br><span class="small">Pregunta, guía y valida.</span></div>
-      <div id="tourDemoPTorpedo" class="tour-demo ptorpedo"><strong>pTorpedo</strong><br><span class="small">Tu guía aparece al avanzar.</span></div>
-      <div id="tourCursor" class="tour-cursor step0">➜</div>
-    </div>
-
-    <div class="tour-modal-caption">
-      <div id="tourStepCount" class="tour-step-count">Paso 1/5</div>
-      <strong id="tourStepTitle"></strong>
-      <p id="tourStepText" class="small"></p>
-    </div>
-
-    <div class="tour-nav">
-      <button class="secondary" onclick="prevOnboardingStep()">← Atrás</button>
-      <div id="tourDots" class="tour-dots"></div>
-      <button id="tourNextBtn" onclick="nextOnboardingStep()">Siguiente →</button>
-    </div>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js">
-</script>
-
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
-
-const THEME_KEY = "PRE_PARASITO_THEME";
-
-function applyTheme(){
-  const saved = localStorage.getItem(THEME_KEY) || "light";
-  document.body.classList.toggle("dark", saved === "dark");
-  const lightBtn = document.getElementById("lightModeBtn");
-  const darkBtn = document.getElementById("darkModeBtn");
-  if(lightBtn && darkBtn){
-    lightBtn.classList.toggle("active", saved === "light");
-    darkBtn.classList.toggle("active", saved === "dark");
-  }
-}
-
-function setTheme(theme){
-  localStorage.setItem(THEME_KEY, theme === "dark" ? "dark" : "light");
-  applyTheme();
-}
-
-
-/* =========================================================
-   PRE-PARÁSITO CAT3 v1.4
-   Cambios:
-   - Cuestionario de identidad extendido a 16 preguntas y sin mostrar identidad antes del resultado.
-   - Dashboard arquitecto simple + simulador de ruta completa.
-   - Sin atajos de teclado molestos.
-   - Payload incluye contrato de estilo conversacional para pVANE.
-   ========================================================= */
-
-const STORAGE_KEY = "PRE_PARASITO_CAT3_V1_4";
-const ENDPOINT = "/.netlify/functions/pvane-evaluate";
+const STORAGE_KEY = "PSINCRO_CBI111_V07";
+const THEME_KEY = "PSINCRO_THEME";
+const ARCH_PASS = "SincroArq2026!";
 
 const identities = {
-  ingeniero:{
-    name:"Ingeniero",
-    emoji:"🔧",
-    color:"#f97316",
-    phrase:"VANE usará lenguaje de sistemas, flujo, control y diagnóstico funcional.",
-    opener:"Partamos por el mecanismo: ¿qué proceso celular se cae primero si falta energía utilizable?"
-  },
-  arqueologo:{
-    name:"Arqueólogo",
-    emoji:"🏺",
-    color:"#92400e",
-    phrase:"VANE usará lenguaje de evidencia, capas, huellas y reconstrucción conceptual.",
-    opener:"Partamos reconstruyendo la evidencia: ¿qué señales te dicen que una célula necesita energía para mantenerse organizada?"
-  },
-  diplomatico:{
-    name:"Diplomático",
-    emoji:"🕊️",
-    color:"#0ea5e9",
-    phrase:"VANE usará lenguaje de interacción, regulación, comunicación y coordinación entre procesos.",
-    opener:"Partamos conectando partes: ¿cómo se coordinan energía, enzimas y metabolismo para sostener la vida celular?"
-  },
-  estratega:{
-    name:"Estratega",
-    emoji:"🧠",
-    color:"#8b5cf6",
-    phrase:"VANE usará lenguaje de decisiones, consecuencias, prioridades e integración.",
-    opener:"Partamos ordenando prioridades: si la célula pierde energía utilizable, ¿qué consecuencias aparecen primero?"
-  }
+  ingeniero:{name:"Ingeniero",emoji:"🔧",phrase:"Usaremos lenguaje de sistemas, flujo, control y diagnóstico funcional.",opener:"Partamos por el mecanismo: ¿qué proceso celular se cae primero si falta energía utilizable?"},
+  arqueologo:{name:"Arqueólogo",emoji:"🏺",phrase:"Usaremos lenguaje de evidencia, capas, huellas y reconstrucción conceptual.",opener:"Partamos reconstruyendo evidencia: ¿qué señales te dicen que una célula necesita energía para mantenerse organizada?"},
+  diplomatico:{name:"Diplomático",emoji:"🕊️",phrase:"Usaremos lenguaje de interacción, regulación y coordinación entre procesos.",opener:"Partamos conectando partes: ¿cómo se coordinan energía, enzimas y metabolismo para sostener la vida celular?"},
+  estratega:{name:"Estratega",emoji:"🧠",phrase:"Usaremos lenguaje de decisiones, consecuencias, prioridades e integración.",opener:"Partamos ordenando prioridades: si la célula pierde energía utilizable, ¿qué consecuencias aparecen primero?"}
 };
 
 const quizQuestions = [
-  {
-    q:"Cuando enfrentas un tema nuevo en biología celular, ¿qué haces primero?",
-    a:[
-      ["Busco cómo funciona: qué pieza hace qué y cómo podría fallar.","ingeniero"],
-      ["Busco antecedentes: de dónde viene la idea y qué evidencia la sostiene.","arqueologo"],
-      ["Busco relaciones: qué procesos se conectan entre sí.","diplomatico"],
-      ["Busco prioridades: qué variable controla el resultado final.","estratega"]
-    ]
-  },
-  {
-    q:"Si estudias metabolismo celular, ¿qué te ayuda más a entenderlo?",
-    a:[
-      ["Un esquema de flujo con entradas, salidas y puntos de control.","ingeniero"],
-      ["Una explicación paso a paso que reconstruya el origen del proceso.","arqueologo"],
-      ["Una conversación que conecte glucólisis, ATP, enzimas y respiración.","diplomatico"],
-      ["Un caso problema donde deba decidir qué ruta conviene usar.","estratega"]
-    ]
-  },
-  {
-    q:"Cuando una respuesta te sale incompleta, ¿qué corrección te sirve más?",
-    a:[
-      ["Que me indiquen qué parte del mecanismo está fallando.","ingeniero"],
-      ["Que me muestren qué evidencia omití o interpreté mal.","arqueologo"],
-      ["Que me pregunten qué relación no estoy viendo.","diplomatico"],
-      ["Que me pidan justificar la consecuencia de mi decisión conceptual.","estratega"]
-    ]
-  },
-  {
-    q:"Frente a una figura o gráfico de energía libre, ¿qué miras primero?",
-    a:[
-      ["La dirección del proceso y qué trabajo permite realizar.","ingeniero"],
-      ["Las pistas: reactantes, productos y cambios en energía.","arqueologo"],
-      ["Cómo se relaciona con ATP, enzimas u otra ruta metabólica.","diplomatico"],
-      ["Qué predicción permite hacer sobre espontaneidad o eficiencia.","estratega"]
-    ]
-  },
-  {
-    q:"Si pVANE te desafía, ¿qué tipo de pregunta te motiva más?",
-    a:[
-      ["¿Cómo arreglarías este sistema?","ingeniero"],
-      ["¿Qué evidencia te permite afirmar eso?","arqueologo"],
-      ["¿Con qué otro proceso se conecta?","diplomatico"],
-      ["¿Qué pasaría si esa condición cambia?","estratega"]
-    ]
-  },
-  {
-    q:"Cuando preparas una prueba, ¿qué producto final te sirve más?",
-    a:[
-      ["Un mapa de procesos con causas y efectos.","ingeniero"],
-      ["Un glosario comentado con conceptos y evidencias.","arqueologo"],
-      ["Una red de relaciones entre conceptos clave.","diplomatico"],
-      ["Una lista de decisiones conceptuales y consecuencias esperadas.","estratega"]
-    ]
-  },
-  {
-    q:"Si debes explicar ATP, prefieres partir diciendo:",
-    a:[
-      ["Es una molécula que permite ejecutar trabajo celular.","ingeniero"],
-      ["Su estructura y su hidrólisis explican su papel energético.","arqueologo"],
-      ["Conecta reacciones que liberan energía con otras que la requieren.","diplomatico"],
-      ["Permite decidir qué procesos pueden sostenerse en una condición dada.","estratega"]
-    ]
-  },
-  {
-    q:"Tu mejor forma de demostrar comprensión es:",
-    a:[
-      ["Describir el mecanismo con precisión.","ingeniero"],
-      ["Justificar la respuesta con evidencia conceptual.","arqueologo"],
-      ["Conectar varios conceptos en una explicación coherente.","diplomatico"],
-      ["Predecir consecuencias en un escenario nuevo.","estratega"]
-    ]
-  },
-  {
-    q:"Cuando aparece una vía metabólica con muchas flechas, ¿qué haces primero?",
-    a:[
-      ["Sigo el flujo e identifico dónde entra y sale energía.","ingeniero"],
-      ["Reconstruyo cada etapa para entender cómo se llegó al producto final.","arqueologo"],
-      ["Busco qué moléculas conectan una etapa con otra.","diplomatico"],
-      ["Identifico el paso limitante o la decisión crítica de la ruta.","estratega"]
-    ]
-  },
-  {
-    q:"Si una célula cambia de respiración a fermentación, ¿qué te interesa explicar primero?",
-    a:[
-      ["Qué mecanismo alternativo permite seguir produciendo ATP.","ingeniero"],
-      ["Qué evidencia muestra que cambió la condición metabólica.","arqueologo"],
-      ["Cómo se conectan oxígeno, NADH, glucólisis y ATP.","diplomatico"],
-      ["Qué consecuencia funcional tiene elegir una ruta menos eficiente.","estratega"]
-    ]
-  },
-  {
-    q:"Cuando estudias enzimas, ¿qué enfoque te acomoda más?",
-    a:[
-      ["Entender cómo bajan la energía de activación y aceleran el proceso.","ingeniero"],
-      ["Identificar sitio activo, sustrato, complejo ES y producto.","arqueologo"],
-      ["Relacionar enzima, sustrato, regulación, pH, temperatura e inhibidores.","diplomatico"],
-      ["Predecir qué pasa si inhibo o altero una enzima clave.","estratega"]
-    ]
-  },
-  {
-    q:"Si te equivocas al responder, ¿qué tipo de pista prefieres?",
-    a:[
-      ["Una pista sobre la pieza del sistema que falta.","ingeniero"],
-      ["Una pista sobre el dato o evidencia que debería revisar.","arqueologo"],
-      ["Una pista sobre la conexión que no estoy integrando.","diplomatico"],
-      ["Una pista sobre la consecuencia de mi razonamiento.","estratega"]
-    ]
-  },
-  {
-    q:"Para aprender un concepto difícil, prefieres que pVANE:",
-    a:[
-      ["Me haga probar si mi explicación funciona como mecanismo.","ingeniero"],
-      ["Me ayude a reconstruirlo desde conceptos básicos.","arqueologo"],
-      ["Me haga conversar el concepto con otros procesos.","diplomatico"],
-      ["Me ponga en escenarios donde deba decidir y justificar.","estratega"]
-    ]
-  },
-  {
-    q:"Cuando lees una pregunta de prueba, ¿qué buscas detectar primero?",
-    a:[
-      ["Qué proceso celular está funcionando o fallando.","ingeniero"],
-      ["Qué dato clave del enunciado permite resolverla.","arqueologo"],
-      ["Qué conceptos aparecen relacionados en la situación.","diplomatico"],
-      ["Qué alternativa tiene mejores consecuencias lógicas.","estratega"]
-    ]
-  },
-  {
-    q:"Si tuvieras que explicar ΔG a un compañero, partirías por:",
-    a:[
-      ["Cómo indica si una reacción puede entregar energía útil.","ingeniero"],
-      ["Qué significa el signo del cambio energético entre reactantes y productos.","arqueologo"],
-      ["Cómo conecta espontaneidad, ATP, acoplamiento y metabolismo.","diplomatico"],
-      ["Cómo permite decidir si una reacción avanza sola o requiere ayuda.","estratega"]
-    ]
-  },
-  {
-    q:"Cuando quieres saber si realmente entendiste, ¿qué prueba te haces?",
-    a:[
-      ["Intento explicar el mecanismo sin mirar apuntes.","ingeniero"],
-      ["Intento reconstruir la explicación desde la evidencia inicial.","arqueologo"],
-      ["Intento conectar el concepto con otros dos procesos celulares.","diplomatico"],
-      ["Intento predecir qué pasaría si cambia una condición del sistema.","estratega"]
-    ]
-  }
+  {q:"Cuando enfrentas un tema nuevo, ¿qué haces primero?",a:[["Busco cómo funciona y cómo podría fallar.","ingeniero"],["Busco antecedentes y evidencia.","arqueologo"],["Busco relaciones entre procesos.","diplomatico"],["Busco prioridades y consecuencias.","estratega"]]},
+  {q:"Si estudias metabolismo, ¿qué te ayuda más?",a:[["Un flujo con entradas, salidas y controles.","ingeniero"],["Una explicación paso a paso.","arqueologo"],["Una conversación que conecte conceptos.","diplomatico"],["Un caso donde deba decidir.","estratega"]]},
+  {q:"Cuando una respuesta está incompleta, prefieres:",a:[["Que indiquen qué pieza del mecanismo falla.","ingeniero"],["Que muestren qué evidencia omití.","arqueologo"],["Que pregunten qué relación falta.","diplomatico"],["Que pidan justificar la consecuencia.","estratega"]]},
+  {q:"Frente a una vía metabólica, miras primero:",a:[["Dónde entra y sale energía.","ingeniero"],["Cómo se llegó al producto final.","arqueologo"],["Qué moléculas conectan etapas.","diplomatico"],["Cuál es el paso crítico.","estratega"]]},
+  {q:"Tu mejor forma de demostrar comprensión es:",a:[["Describir el mecanismo.","ingeniero"],["Justificar con evidencia conceptual.","arqueologo"],["Conectar varios conceptos.","diplomatico"],["Predecir consecuencias nuevas.","estratega"]]},
+  {q:"Si pSINCRO te desafía, te motiva más:",a:[["¿Cómo arreglarías este sistema?","ingeniero"],["¿Qué evidencia sostiene eso?","arqueologo"],["¿Con qué proceso se conecta?","diplomatico"],["¿Qué pasa si cambia la condición?","estratega"]]},
+  {q:"Para preparar una prueba prefieres generar:",a:[["Mapa de procesos causa-efecto.","ingeniero"],["Glosario comentado.","arqueologo"],["Red de relaciones.","diplomatico"],["Lista de decisiones y consecuencias.","estratega"]]},
+  {q:"Para saber si entendiste, intentas:",a:[["Explicar el mecanismo sin apuntes.","ingeniero"],["Reconstruir desde evidencia inicial.","arqueologo"],["Conectar con otros procesos.","diplomatico"],["Predecir un escenario nuevo.","estratega"]]}
 ];
 
 const milestones = {
-  cat3_h1_termodinamica:{
-    title:"Energía celular y reacciones acopladas",
-    short:"Energía celular",
-    oa:"Unidad 3 · Energía, ΔG básico, exergónico / endergónico y acoplamiento",
-    focus:"Reconocer que algunas reacciones liberan energía, otras la requieren, y que la célula las acopla para realizar trabajo celular.",
-    prompt:"Una célula debe sintetizar proteínas o replicar ADN: ¿por qué necesita energía y de dónde puede obtenerla?",
-    next:"cat3_h2_enzimas"
-  },
-  cat3_h2_enzimas:{
-    title:"ATP, acoplamiento y REDOX",
-    short:"ATP y REDOX",
-    oa:"Unidad 3 · ATP, acoplamiento, oxidación y reducción",
-    focus:"Explicar cómo ATP y transportadores de electrones conectan energía con trabajo celular.",
-    prompt:"¿Cómo permite el ATP impulsar reacciones endergónicas y cómo se conecta esto con reacciones REDOX?",
-    next:"cat3_h3_atp_redox"
-  },
-  cat3_h3_atp_redox:{
-    title:"Enzimas y regulación",
-    short:"Enzimas",
-    oa:"Unidad 3 · Energía de activación, catálisis e inhibición",
-    focus:"Explicar cómo las enzimas aceleran reacciones sin cambiar ΔG.",
-    prompt:"¿Por qué las enzimas aceleran reacciones sin modificar el ΔG de la reacción?",
-    next:"cat3_h6_anaerobiosis_fermentacion"
-  },
-  cat3_h6_anaerobiosis_fermentacion:{
-    title:"Respiración y fermentación",
-    short:"Respiración vs fermentación",
-    oa:"Unidad 3 · Respiración aeróbica, anaerobiosis y fermentación",
-    focus:"Distinguir respiración, fermentación, rendimiento energético y regeneración de NAD⁺.",
-    prompt:"¿Cuál es la diferencia funcional entre respiración celular y fermentación?",
-    next:null
-  }
+  cat3_h1_termodinamica:{title:"Energía celular y reacciones acopladas",short:"Energía celular",focus:"Exergónico/endergónico, ΔG básico, sistemas abiertos y acoplamiento funcional.",prompt:"Una célula debe sintetizar proteínas o replicar ADN: ¿por qué necesita energía y de dónde puede obtenerla?",next:"cat3_h2_enzimas"},
+  cat3_h2_enzimas:{title:"Enzimas y regulación",short:"Enzimas",focus:"Energía de activación, especificidad, sitio activo, ajuste inducido, cofactores e inhibición.",prompt:"¿Por qué las enzimas permiten que las reacciones celulares ocurran más rápido y de forma específica?",next:"cat3_h3_atp_redox"},
+  cat3_h3_atp_redox:{title:"ATP y transporte de energía",short:"ATP / REDOX",focus:"ATP, NADH/FADH₂, oxidación, reducción y transporte de electrones.",prompt:"¿Para qué le sirve el ATP a la célula y qué papel cumplen NADH o FADH₂ en el metabolismo?",next:"cat3_h6_anaerobiosis_fermentacion"},
+  cat3_h6_anaerobiosis_fermentacion:{title:"Respiración y fermentación",short:"Respiración/Fermentación",focus:"Glicólisis, piruvato, oxígeno, fosforilación oxidativa, fermentación y NAD⁺.",prompt:"¿Cuál es la diferencia funcional entre respiración celular y fermentación?",next:null}
 };
-
-
-const cat3ValidationPolicy = {
-  level:"CAT3_READY_CBI111",
-  principle:"validar suficiencia funcional, no excelencia termoquímica",
-  validate_when:[
-    "distingue reacción exergónica y endergónica",
-    "relaciona ΔG negativo con liberación de energía o espontaneidad",
-    "relaciona ΔG positivo con necesidad de energía/acoplamiento",
-    "conecta energía con trabajo celular como síntesis, transporte, movimiento o replicación",
-    "reconoce que ATP permite acoplar procesos celulares"
-  ],
-  do_not_require:[
-    "ΔG = ΔH - TΔS",
-    "discusión de ΔH y ΔS",
-    "entropía global del universo",
-    "exportación formal de entropía",
-    "formulación fisicoquímica avanzada",
-    "profundización repetida sobre calor y segunda ley si ya explicó relación funcional",
-    "tipo exacto de enlace fosfato",
-    "mecanismo molecular de transferencia de fosfato",
-    "detalle de hidrólisis de ATP más allá de ATP entrega energía",
-    "explicar cómo cambia la energía libre de la reacción energizada",
-    "lenguaje de bioquímica intermedia sobre fosforilación si no es necesario",
-    "potencial redox estándar",
-    "rendimiento ATP exacto",
-    "detalles de Michaelis-Menten"
-  ],
-  after_validation:"refinar para pTorpedo y avanzar",
-  repair_rule:"si falta algo, hacer solo una micro-pregunta concreta y celular",
-  examples_of_sufficient:[
-    "Las reacciones exergónicas liberan energía y pueden impulsar reacciones endergónicas.",
-    "Si ΔG es negativo la reacción libera energía; si es positivo necesita energía.",
-    "La célula usa energía de ATP para sintetizar proteínas o replicar ADN.",
-    "La síntesis necesita energía porque construye moléculas más complejas.",
-    "El ATP se rompe y libera energía que ayuda a que ocurran procesos que requieren energía.",
-    "ATP entrega energía para transporte, síntesis o movimiento celular."
-  ]
-};
-
+const milestoneOrder = Object.keys(milestones);
+const levelKeys = ["reconoce","explica","integra"];
 
 const cat3ExamMatrix = {
-  version:"CAT3_REAL_202610",
-  principle:"si aparece un concepto realmente evaluado en CAT3, validar sin pedir formalización avanzada",
   triggers:[
-    {concept:"primera ley / transformación de energía", patterns:["energia no se crea","energía no se crea","solo se transforma","se transforma"], milestone:"cat3_h1_termodinamica"},
-    {concept:"sistema abierto", patterns:["sistema abierto","intercambia materia","intercambia energia","intercambia energía"], milestone:"cat3_h1_termodinamica"},
-    {concept:"reducción gana electrones", patterns:["gana electrones","incorpora electrones","se reduce"], milestone:"cat3_h3_atp_redox"},
-    {concept:"oxidación pierde electrones", patterns:["pierde electrones","se oxida"], milestone:"cat3_h3_atp_redox"},
-    {concept:"reacción exergónica libera energía", patterns:["exergonica","exergónica","libera energia","libera energía"], milestone:"cat3_h1_termodinamica"},
-    {concept:"reacción endergónica requiere energía", patterns:["endergonica","endergónica","requiere energia","requiere energía","absorbe energia","absorbe energía"], milestone:"cat3_h1_termodinamica"},
-    {concept:"ATP libera energía utilizable", patterns:["atp","adp","fosfato","pi","libera energia","libera energía","se rompe"], milestone:"cat3_h3_atp_redox"},
-    {concept:"NADH/FADH2 transportan electrones", patterns:["nadh","fadh","transporta electrones","llevan electrones","cadena respiratoria"], milestone:"cat3_h3_atp_redox"},
-    {concept:"ΔG positivo es endergónico", patterns:["dg positivo","Δg positivo","endergonica","endergónica"], milestone:"cat3_h1_termodinamica"},
-    {concept:"enzimas pierden función por desnaturalización", patterns:["desnaturaliza","desnaturalizacion","desnaturalización","pierde funcion","pierde función","estructura tridimensional","fiebre"], milestone:"cat3_h2_enzimas"},
-    {concept:"especificidad enzimática", patterns:["especificidad","sustrato especifico","sustrato específico","amilasa","almidon","almidón"], milestone:"cat3_h2_enzimas"},
-    {concept:"inhibición competitiva", patterns:["inhibidor competitivo","inhibicion competitiva","inhibición competitiva","sitio activo"], milestone:"cat3_h2_enzimas"},
-    {concept:"sitio activo", patterns:["sitio activo"], milestone:"cat3_h2_enzimas"},
-    {concept:"ajuste inducido", patterns:["ajuste inducido","cambia su forma","adapta al sustrato"], milestone:"cat3_h2_enzimas"},
-    {concept:"coenzima / cofactor", patterns:["coenzima","cofactor","molecula organica","molécula orgánica"], milestone:"cat3_h2_enzimas"},
-    {concept:"lactasa rompe lactosa", patterns:["lactasa","lactosa","monosacaridos","monosacáridos"], milestone:"cat3_h2_enzimas"},
-    {concept:"respiración aeróbica produce ATP, CO2 y agua", patterns:["respiracion aerobica","respiración aeróbica","atp co2 agua","co2 y agua"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
-    {concept:"oxígeno aceptor final de electrones", patterns:["oxigeno aceptor final","oxígeno aceptor final","aceptor final de electrones"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
-    {concept:"fosforilación oxidativa produce más ATP", patterns:["fosforilacion oxidativa","fosforilación oxidativa","mayor cantidad de atp"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
-    {concept:"ATP sintasa permite síntesis de ATP", patterns:["atp sintasa","disminucion de atp","disminución de atp"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
-    {concept:"glucólisis ocurre en citoplasma", patterns:["glucolisis","glucólisis","citoplasma","citosol"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
-    {concept:"glucólisis produce piruvato", patterns:["piruvato","dos piruvatos"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
-    {concept:"fermentación regenera NAD+", patterns:["fermentacion","fermentación","regenera nad","nad+"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
-    {concept:"fermentación láctica en músculo", patterns:["fermentacion lactica","fermentación láctica","lactato","ejercicio intenso"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
-    {concept:"ciclo de Cori", patterns:["ciclo de cori","higado","hígado","lactato en glucosa"], milestone:"cat3_h6_anaerobiosis_fermentacion"},
-    {concept:"levaduras producen etanol y CO2 sin oxígeno", patterns:["levaduras","etanol","dioxido de carbono","dióxido de carbono","sin oxigeno","sin oxígeno"], milestone:"cat3_h6_anaerobiosis_fermentacion"}
-  ],
-  forbidden_overreach:[
-    "no exigir ΔH/ΔS",
-    "no exigir entropía global",
-    "no exigir tipo exacto de enlace fosfato",
-    "no exigir Michaelis-Menten",
-    "no exigir potencial redox",
-    "no exigir rendimiento ATP exacto salvo si el estudiante lo pide"
+    {concept:"sistema abierto",patterns:["sistema abierto","intercambia materia","intercambia energia","intercambia energía"],milestone:"cat3_h1_termodinamica"},
+    {concept:"primera ley / transformación de energía",patterns:["energia no se crea","energía no se crea","solo se transforma","se transforma"],milestone:"cat3_h1_termodinamica"},
+    {concept:"reacción exergónica libera energía",patterns:["exergonica","exergónica","libera energia","libera energía"],milestone:"cat3_h1_termodinamica"},
+    {concept:"reacción endergónica requiere energía",patterns:["endergonica","endergónica","requiere energia","requiere energía","absorbe energia","absorbe energía"],milestone:"cat3_h1_termodinamica"},
+    {concept:"ΔG funcional y espontaneidad",patterns:["dg negativo","Δg negativo","espontanea","espontánea","dg positivo","Δg positivo"],milestone:"cat3_h1_termodinamica"},
+    {concept:"ATP libera energía utilizable",patterns:["atp","adp","fosfato","pi","se rompe","hidrolisis","hidrólisis"],milestone:"cat3_h3_atp_redox"},
+    {concept:"NADH/FADH₂ transportan electrones",patterns:["nadh","fadh","transporta electrones","llevan electrones","cadena respiratoria"],milestone:"cat3_h3_atp_redox"},
+    {concept:"oxidación pierde electrones",patterns:["pierde electrones","se oxida","oxidacion","oxidación"],milestone:"cat3_h3_atp_redox"},
+    {concept:"reducción gana electrones",patterns:["gana electrones","se reduce","reduccion","reducción"],milestone:"cat3_h3_atp_redox"},
+    {concept:"enzimas bajan energía de activación",patterns:["energia de activacion","energía de activación","baja la energia","baja la energía","catalizador","catalizadores"],milestone:"cat3_h2_enzimas"},
+    {concept:"sitio activo",patterns:["sitio activo"],milestone:"cat3_h2_enzimas"},
+    {concept:"especificidad enzimática",patterns:["especificidad","sustrato especifico","sustrato específico","amilasa","almidon","almidón"],milestone:"cat3_h2_enzimas"},
+    {concept:"ajuste inducido",patterns:["ajuste inducido","cambia su forma","adapta al sustrato"],milestone:"cat3_h2_enzimas"},
+    {concept:"inhibición competitiva",patterns:["inhibidor competitivo","inhibicion competitiva","inhibición competitiva"],milestone:"cat3_h2_enzimas"},
+    {concept:"desnaturalización enzimática",patterns:["desnaturaliza","desnaturalizacion","desnaturalización","fiebre","estructura tridimensional"],milestone:"cat3_h2_enzimas"},
+    {concept:"glucólisis ocurre en citoplasma",patterns:["glucolisis","glucólisis","citoplasma","citosol"],milestone:"cat3_h6_anaerobiosis_fermentacion"},
+    {concept:"glucólisis produce piruvato",patterns:["piruvato"],milestone:"cat3_h6_anaerobiosis_fermentacion"},
+    {concept:"oxígeno aceptor final de electrones",patterns:["oxigeno aceptor final","oxígeno aceptor final","aceptor final de electrones"],milestone:"cat3_h6_anaerobiosis_fermentacion"},
+    {concept:"fosforilación oxidativa produce más ATP",patterns:["fosforilacion oxidativa","fosforilación oxidativa","mayor cantidad de atp"],milestone:"cat3_h6_anaerobiosis_fermentacion"},
+    {concept:"fermentación regenera NAD⁺",patterns:["fermentacion","fermentación","regenera nad","nad+"],milestone:"cat3_h6_anaerobiosis_fermentacion"},
+    {concept:"fermentación láctica",patterns:["lactato","fermentacion lactica","fermentación láctica"],milestone:"cat3_h6_anaerobiosis_fermentacion"},
+    {concept:"levaduras producen etanol y CO₂",patterns:["levaduras","etanol","dioxido de carbono","dióxido de carbono"],milestone:"cat3_h6_anaerobiosis_fermentacion"},
+    {concept:"ciclo de Cori",patterns:["ciclo de cori","higado","hígado","lactato en glucosa"],milestone:"cat3_h6_anaerobiosis_fermentacion"}
   ]
 };
-
-function normalizeCAT3Text(text){
-  return String(text||"")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g,"")
-    .replace(/\s+/g," ")
-    .trim();
-}
-
-function detectCAT3ExamConcepts(text){
-  const t = normalizeCAT3Text(text);
-  return cat3ExamMatrix.triggers.filter(item =>
-    item.patterns.some(p => t.includes(normalizeCAT3Text(p)))
-  );
-}
-
-function applyCAT3ExamValidation(text){
-  const hits = detectCAT3ExamConcepts(text);
-  if(!hits.length) return false;
-
-  hits.forEach(hit=>{
-    pushUnique(state.ptorpedo.confirmed, hit.concept);
-    pushUnique(state.ptorpedo.progress, `CAT3 real: ${hit.concept}`);
-    resolvePendingConcept(hit.concept);
-    if(hit.milestone && state.progress && state.progress[hit.milestone]){
-      state.progress[hit.milestone].reconoce = Math.max(state.progress[hit.milestone].reconoce || 0, 1);
-      state.progress[hit.milestone].explica = Math.max(state.progress[hit.milestone].explica || 0, .75);
-      const nextId = milestones[hit.milestone]?.next;
-      if(nextId) state.unlocked[nextId] = true;
-    }
-  });
-
-  const list = hits.slice(0,3).map(h=>h.concept).join(", ");
-  addChat("award", `⭐ Evidencia CAT3 real detectada: ${list}.\nNo necesito pedir formalización avanzada para validar esto.`, "award");
-  showFanfare("star","Evidencia CAT3 real detectada","Concepto evaluado en la prueba reconocido.");
-  state.ptorpedoVisible = true;
-  return true;
-}
-
-const milestoneOrder = Object.keys(milestones);
-const levelNames = ["Reconoce","Explica","Integra"];
-const levelKeys = ["reconoce","explica","integra"];
 
 function initialState(){
   return {
     screen:"welcome",
-    quizIndex:0,
-    quizScores:{ingeniero:0, arqueologo:0, diplomatico:0, estratega:0},
-    identity:null,
-    activeMilestone:"cat3_h1_termodinamica",
-    unlocked:{cat3_h1_termodinamica:true},
+    privateProfile:null,
+    learningProfile:{pilot_id:null,nrc:null,email_hash:null,registered_at:null,consent:false},
+    quizIndex:0, quizScores:{ingeniero:0,arqueologo:0,diplomatico:0,estratega:0},
+    identity:null, activeMilestone:"cat3_h1_termodinamica", unlocked:{cat3_h1_termodinamica:true},
     progress:{
-      cat3_h1_termodinamica:{reconoce:0, explica:0, integra:0},
-      cat3_h2_enzimas:{reconoce:0, explica:0, integra:0},
-      cat3_h3_atp_redox:{reconoce:0, explica:0, integra:0},
-      cat3_h6_anaerobiosis_fermentacion:{reconoce:0, explica:0, integra:0}
+      cat3_h1_termodinamica:{reconoce:0,explica:0,integra:0},
+      cat3_h2_enzimas:{reconoce:0,explica:0,integra:0},
+      cat3_h3_atp_redox:{reconoce:0,explica:0,integra:0},
+      cat3_h6_anaerobiosis_fermentacion:{reconoce:0,explica:0,integra:0}
     },
-    chat:[],
-    ptorpedo:{confirmed:[], progress:[], next:[], pending:[], resolvedPending:[]},
-    vaneSettings:{level:"cat3_ready", fanfare:"full", maxAttempts:3},
-    obstacleMemory:{},
-    ptorpedoVisible:false,
-    ptorpedoModalShown:false,
-    simulationLog:[],
-    studentId:null
+    chat:[], ptorpedo:{confirmed:[],progress:[],next:[],pending:[],resolvedPending:[]},
+    ptorpedoVisible:false, events:[], sessions:[], vaneSettings:{level:"cat3_ready",fanfare:"full",maxAttempts:3}, obstacleMemory:{}
   };
 }
+let state = loadState(); migrateState(); saveState();
 
-let state = loadState();
-
+function loadState(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||initialState()}catch(e){return initialState()}}
+function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
 function migrateState(){
-  if(!state.ptorpedo) state.ptorpedo = {confirmed:[], progress:[], next:[], pending:[], resolvedPending:[]};
-  if(!state.ptorpedo.pending) state.ptorpedo.pending = [];
-  if(!state.ptorpedo.resolvedPending) state.ptorpedo.resolvedPending = [];
-  if(!state.vaneSettings) state.vaneSettings = {level:"cat3_ready", fanfare:"full", maxAttempts:3};
-  if(!state.vaneSettings.level) state.vaneSettings.level = "cat3_ready";
-  if(!state.vaneSettings.fanfare) state.vaneSettings.fanfare = "full";
-  if(!state.vaneSettings.maxAttempts) state.vaneSettings.maxAttempts = 3;
-  if(!state.obstacleMemory) state.obstacleMemory = {};
+  const base=initialState();
+  state.learningProfile=state.learningProfile||base.learningProfile;
+  state.progress=state.progress||base.progress;
+  state.ptorpedo=state.ptorpedo||base.ptorpedo;
+  ["pending","resolvedPending","confirmed","progress","next"].forEach(k=>state.ptorpedo[k]=state.ptorpedo[k]||[]);
+  state.events=state.events||[]; state.sessions=state.sessions||[]; state.vaneSettings=state.vaneSettings||base.vaneSettings; state.obstacleMemory=state.obstacleMemory||{};
 }
-
-migrateState();
-saveState();
-
-function loadState(){
-  try{
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return saved || initialState();
-  }catch(e){
-    return initialState();
-  }
+function root(){return document.getElementById("root")}
+function setTheme(theme){localStorage.setItem(THEME_KEY,theme==="dark"?"dark":"light");applyTheme()}
+function applyTheme(){
+  const theme=localStorage.getItem(THEME_KEY)||"light";
+  document.body.classList.toggle("dark",theme==="dark");
+  document.getElementById("lightModeBtn")?.classList.toggle("active",theme==="light");
+  document.getElementById("darkModeBtn")?.classList.toggle("active",theme==="dark");
 }
-
-function saveState(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
-
-function studentId(){
-  if(!state.studentId){
-    state.studentId = "pvane_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
-    saveState();
-  }
-  return state.studentId;
-}
-
-function root(){ return document.getElementById("root"); }
-
 function render(){
+  applyTheme();
   if(state.screen==="welcome") return renderWelcome();
+  if(state.screen==="register") return renderRegister();
+  if(state.screen==="pilotReady") return renderPilotReady();
+  if(state.screen==="return") return renderReturn();
+  if(state.screen==="recover") return renderRecover();
   if(state.screen==="quiz") return renderQuiz();
-  if(state.screen==="tour") return renderTour();
   if(state.screen==="app") return renderApp();
-  if(state.screen==="report") return renderReport();
   if(state.screen==="architect") return renderArchitect();
+  if(state.screen==="report") return renderReport();
 }
 
 function renderWelcome(){
-  root().innerHTML = `
+  root().innerHTML=`
   <div class="card center">
-    <span class="badge">CBI111 · CAT3</span>
-    <h1>Ruta de preparación CAT3</h1>
-    <p>Entorno voluntario de estudio autónomo guiado por pVANE.</p>
-    <div class="notice">
-      Participación voluntaria · Uso individual · No reemplaza evaluaciones oficiales del curso.<br>
-      Tus estrellas dependen de mérito conceptual detectado durante el diálogo.
+    <span class="badge">CBI111 · Biología celular</span>
+    <h1>pSINCRO</h1>
+    <h2>Preparación guiada para las evaluaciones CAT3 y CAT4 de Biología celular CBI111</h2>
+    <div class="ethics-hero">
+      <h2>Participación voluntaria</h2>
+      <p><strong>Este entorno no reemplaza evaluaciones oficiales ni afecta directamente tu calificación.</strong></p>
+      <p>Tus datos pedagógicos se almacenan con un <strong>código interno</strong>, no con tu nombre. Los análisis se realizarán de forma <strong>pseudonimizada y agregada</strong>.</p>
     </div>
-    <p class="small">Primero haremos un cuestionario breve para definir tu identidad de estudio. No hay respuestas buenas o malas.</p>
-    <button onclick="startQuiz()">Comenzar</button>
-    <button class="ghost" onclick="requestArchitectAccess()">⚙️ Acceso arquitecto</button>
+    <div class="grid">
+      <div class="ptorpedo-section"><strong>Qué hace</strong><p class="small">Te guía antes de CAT3/CAT4, detecta conceptos clave y construye una guía personal de estudio.</p></div>
+      <div class="ptorpedo-section"><strong>Qué no hace</strong><p class="small">No entrega nota, no reemplaza la prueba, no modifica la calificación oficial.</p></div>
+      <div class="ptorpedo-section"><strong>Cómo se registra</strong><p class="small">Usa un código piloto para guardar avance y permitir análisis NN.</p></div>
+    </div>
+    <div class="actions">
+      <button onclick="goRegister()">Entiendo y quiero continuar</button>
+      <button class="ghost" onclick="goReturn()">Ya tengo código piloto</button>
+      <button class="ghost" onclick="goRecover()">Olvidé mi código</button>
+      <button class="ghost" onclick="requestArchitectAccess()">Acceso arquitecto</button>
+    </div>
   </div>`;
+}
+
+function goRegister(){state.screen="register";saveState();render()}
+function goReturn(){state.screen="return";saveState();render()}
+function goRecover(){state.screen="recover";saveState();render()}
+
+function renderRegister(){
+  root().innerHTML=`
+  <div class="card center">
+    <span class="badge">Inscripción</span>
+    <h1>Generar código piloto</h1>
+    <div class="notice">
+      <strong>Recordatorio:</strong> Participación voluntaria. No afecta tu nota. Tus datos pedagógicos se almacenan con un código interno. Los análisis se realizarán de forma pseudonimizada y agregada.
+    </div>
+    <div class="grid">
+      <div class="field"><label>Correo usado para inscripción</label><input id="regEmail" type="email" placeholder="correo@ejemplo.cl"></div>
+      <div class="field"><label>NRC / sección</label><input id="regNrc" placeholder="Ej: NRC 9314 / Sección 102"></div>
+      <div class="field"><label>Nombre o alias local (opcional)</label><input id="regName" placeholder="Solo para que reconozcas este navegador"></div>
+    </div>
+    <div class="check">
+      <input id="consentCheck" type="checkbox">
+      <label>He leído y acepto que mi participación es voluntaria, este entorno no afecta directamente mi nota y mis datos serán utilizados de forma pseudonimizada para análisis pedagógico.</label>
+    </div>
+    <div class="actions">
+      <button onclick="createPilotId()">Generar mi código piloto</button>
+      <button class="secondary" onclick="state.screen='welcome';saveState();render()">Volver</button>
+    </div>
+  </div>`;
+}
+
+function generatePilotId(){
+  const chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let s="";
+  for(let i=0;i<5;i++) s+=chars[Math.floor(Math.random()*chars.length)];
+  return "PS-CBI111-"+s;
+}
+function simpleHash(str){
+  let h=0; str=String(str||"");
+  for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i)|0;
+  return "h"+Math.abs(h).toString(36);
+}
+function createPilotId(){
+  const email=document.getElementById("regEmail").value.trim().toLowerCase();
+  const nrc=document.getElementById("regNrc").value.trim();
+  const name=document.getElementById("regName").value.trim();
+  const ok=document.getElementById("consentCheck").checked;
+  if(!email || !nrc){alert("Ingresa correo y NRC/sección.");return}
+  if(!ok){alert("Debes aceptar el consentimiento para registrar progreso personalizado.");return}
+  const pid=state.learningProfile.pilot_id || generatePilotId();
+  state.privateProfile={email,nrc,name,local_only:true,created_at:new Date().toISOString()};
+  state.learningProfile={pilot_id:pid,nrc,email_hash:simpleHash(email),registered_at:new Date().toISOString(),consent:true};
+  logEvent("registration_created",{nrc,email_hash:state.learningProfile.email_hash});
+  state.screen="pilotReady"; saveState(); render();
+}
+function renderPilotReady(){
+  root().innerHTML=`
+  <div class="card center">
+    <span class="badge">Código piloto generado</span>
+    <h1>Guarda tu código</h1>
+    <p>Tu progreso se guardará usando este código, no tu nombre.</p>
+    <div class="pilot-code">${state.learningProfile.pilot_id}</div>
+    <div class="actions">
+      <button onclick="copyPilotId()">Copiar código</button>
+      <button class="ghost" onclick="startQuiz()">Iniciar ruta</button>
+    </div>
+    <div class="notice">Cuando conectemos Supabase, este código también podrá reenviarse al correo usado en la inscripción.</div>
+  </div>`;
+}
+function copyPilotId(){navigator.clipboard?.writeText(state.learningProfile.pilot_id);alert("Código copiado.")}
+function renderReturn(){
+  root().innerHTML=`
+  <div class="card center">
+    <span class="badge">Retomar ruta</span>
+    <h1>Ingresa tu código piloto</h1>
+    <input id="returnCode" placeholder="PS-CBI111-XXXXX">
+    <div class="actions">
+      <button onclick="resumePilot()">Continuar</button>
+      <button class="secondary" onclick="state.screen='welcome';saveState();render()">Volver</button>
+    </div>
+    <p class="small">En esta versión local, si el código coincide con el guardado en este navegador, recupera tu ruta. Con Supabase se recuperará desde la nube.</p>
+  </div>`;
+}
+function resumePilot(){
+  const code=document.getElementById("returnCode").value.trim().toUpperCase();
+  if(!code){return}
+  if(!state.learningProfile.pilot_id) state.learningProfile.pilot_id=code;
+  if(code!==state.learningProfile.pilot_id){alert("Este navegador no tiene ese código guardado aún. Con Supabase podremos recuperarlo desde la nube.");return}
+  logEvent("session_resumed",{});
+  state.screen=state.identity?"app":"quiz"; saveState(); render();
+}
+function renderRecover(){
+  root().innerHTML=`
+  <div class="card center">
+    <span class="badge">Recuperación</span>
+    <h1>Olvidé mi código piloto</h1>
+    <p>Ingresa el correo que usaste al inscribirte. Cuando conectemos Supabase, te enviaremos tu código a ese correo.</p>
+    <input id="recoverEmail" type="email" placeholder="correo@ejemplo.cl">
+    <div class="actions">
+      <button onclick="recoverPilot()">Reenviar código</button>
+      <button class="secondary" onclick="state.screen='welcome';saveState();render()">Volver</button>
+    </div>
+  </div>`;
+}
+function recoverPilot(){
+  const email=document.getElementById("recoverEmail").value.trim().toLowerCase();
+  if(!email){alert("Ingresa tu correo.");return}
+  logEvent("pilot_recovery_requested",{email_hash:simpleHash(email)});
+  if(state.privateProfile?.email===email && state.learningProfile?.pilot_id){
+    alert("Modo local: tu código guardado en este navegador es "+state.learningProfile.pilot_id+". Con Supabase se enviará por correo.");
+  }else{
+    alert("Solicitud registrada. Con Supabase, el código se reenviará al correo si existe inscripción previa.");
+  }
 }
 
 function startQuiz(){
-  state.screen="quiz";
-  state.quizIndex=0;
-  state.quizScores={ingeniero:0, arqueologo:0, diplomatico:0, estratega:0};
-  saveState();
-  render();
+  if(!state.learningProfile?.consent){alert("Primero debes completar la inscripción y consentimiento.");state.screen="register";saveState();render();return}
+  state.screen="quiz"; state.quizIndex=0; state.quizScores={ingeniero:0,arqueologo:0,diplomatico:0,estratega:0}; saveState(); render();
 }
-
 function renderQuiz(){
-  const q = quizQuestions[state.quizIndex];
-  const pct = Math.round((state.quizIndex / quizQuestions.length) * 100);
-  root().innerHTML = `
+  const q=quizQuestions[state.quizIndex], pct=Math.round((state.quizIndex/quizQuestions.length)*100);
+  root().innerHTML=`
   <div class="card center">
-    <span class="badge">Escaneo de identidad · ${state.quizIndex+1}/${quizQuestions.length}</span>
+    <span class="badge">Identidad de estudio · ${state.quizIndex+1}/${quizQuestions.length}</span>
     <h2>${q.q}</h2>
     <div class="quiz-progress"><div class="quiz-fill" style="width:${pct}%"></div></div>
-    <div>
-      ${q.a.map(([txt,id],i)=>`
-        <div class="answer-card" onclick="answerQuiz('${id}')">
-          <strong>Opción ${i+1}</strong>
-          <p class="small">${txt}</p>
-        </div>
-      `).join("")}
-    </div>
+    ${q.a.map(([txt,id],i)=>`<div class="answer-card" onclick="answerQuiz('${id}')"><strong>Opción ${i+1}</strong><p class="small">${txt}</p></div>`).join("")}
   </div>`;
 }
-
-function answerQuiz(identity){
-  state.quizScores[identity] += 1;
-  state.quizIndex += 1;
-
-  if(state.quizIndex >= quizQuestions.length){
-    const winner = Object.entries(state.quizScores).sort((a,b)=>b[1]-a[1])[0][0];
-    state.identity = winner;
-    state.screen = "tour";
-    if(state.chat.length===0){
-      addChat("vane", `Soy pVANE. Detecté una frecuencia inicial ${identities[winner].name}.\n\n${identities[winner].opener}`, "vane");
-    }
+function answerQuiz(id){
+  state.quizScores[id]+=1; state.quizIndex+=1;
+  if(state.quizIndex>=quizQuestions.length){
+    state.identity=Object.entries(state.quizScores).sort((a,b)=>b[1]-a[1])[0][0];
+    state.screen="app";
+    addChat("guide",`Soy tu Guía de preparación. Detecté una frecuencia inicial ${identities[state.identity].name}.\n\n${identities[state.identity].opener}`,"guide");
+    logEvent("identity_assigned",{identity:state.identity});
   }
-
-  saveState();
-  render();
+  saveState(); render();
 }
-
-function renderTour(){
-  const id = identities[state.identity];
-  root().innerHTML = `
-  <div class="card center">
-    <span class="badge">Identidad definida</span>
-    ${avatarSVG(state.identity)}
-    <h1>Tu identidad: ${id.name}</h1>
-    <p>${id.phrase}</p>
-
-    <div class="identity-result-card">
-      <strong>Antes de entrar:</strong>
-      <p class="small">Te mostraremos un tour breve de cómo funcionan los hitos, las estrellas, pVANE y el pTorpedo. Puedes repetirlo cuando quieras.</p>
-    </div>
-
-    <div class="actions">
-      <button onclick="showOnboardingModal()">Ver tour interactivo</button>
-      <button class="secondary" onclick="enterRoute()">Entrar directo a la ruta</button>
-    </div>
-  </div>`;
-
-  setTimeout(showOnboardingModal, 350);
-}
-
-function enterRoute(){
-  state.screen="app";
-  saveState();
-  render();
-}
-
-function avatarSVG(id){
-  const data = identities[id] || identities.ingeniero;
-  return `
-  <svg class="avatar" viewBox="0 0 100 100">
-    <circle cx="50" cy="50" r="40" fill="#fff"/>
-    <circle cx="50" cy="50" r="40" fill="${data.color}" opacity=".24"/>
-    <circle cx="38" cy="45" r="4" fill="#111827"/>
-    <circle cx="62" cy="45" r="4" fill="#111827"/>
-    <path d="M39 61 Q50 70 61 61" fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round"/>
-    <circle cx="29" cy="57" r="5" fill="#fca5a5" opacity=".9"/>
-    <circle cx="71" cy="57" r="5" fill="#fca5a5" opacity=".9"/>
-    <rect x="67" y="8" width="28" height="28" rx="8" fill="${data.color}" stroke="#111827" stroke-width="2"/>
-    <text x="81" y="29" text-anchor="middle" font-size="18">${data.emoji}</text>
-  </svg>`;
-}
-
-function readiness(){
-  const all = Object.values(state.progress).flatMap(v=>[v.reconoce,v.explica,v.integra]);
-  const total = all.reduce((a,b)=>a+Number(b||0),0);
-  return Math.round((total / 12) * 100);
-}
-
-function starChar(v){
-  v = Number(v||0);
-  if(v >= 1) return "★";
-  if(v >= .75) return "¾";
-  if(v >= .5) return "½";
-  if(v >= .25) return "¼";
-  return "☆";
-}
-
-function milestoneStars(id){
-  const p = state.progress[id];
-  return starChar(p.reconoce) + starChar(p.explica) + starChar(p.integra);
-}
-
-function isUnlocked(id){
-  return Boolean(state.unlocked[id]);
-}
-
-function activeMilestone(){
-  return milestones[state.activeMilestone] || milestones.cat3_h1_termodinamica;
-}
-
+function avatarSVG(id){const x=identities[id]||identities.ingeniero;return `<svg class="avatar" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#fff"/><circle cx="50" cy="50" r="40" fill="#60a5fa" opacity=".24"/><circle cx="38" cy="45" r="4" fill="#111827"/><circle cx="62" cy="45" r="4" fill="#111827"/><path d="M39 61 Q50 70 61 61" fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round"/><circle cx="29" cy="57" r="5" fill="#fca5a5"/><circle cx="71" cy="57" r="5" fill="#fca5a5"/><text x="50" y="28" text-anchor="middle" font-size="20">${x.emoji}</text></svg>`}
+function readiness(){const all=Object.values(state.progress).flatMap(v=>levelKeys.map(k=>v[k]||0));return Math.round((all.reduce((a,b)=>a+b,0)/12)*100)}
+function starChar(v){v=Number(v||0); if(v>=1)return"★"; if(v>=.75)return"¾"; if(v>=.5)return"½"; if(v>=.25)return"¼"; return"☆"}
+function milestoneStars(id){const p=state.progress[id]; return starChar(p.reconoce)+starChar(p.explica)+starChar(p.integra)}
+function isUnlocked(id){return !!state.unlocked[id]}
 function renderApp(){
-  const id = identities[state.identity];
-  const active = activeMilestone();
-  root().innerHTML = `
+  const id=identities[state.identity]||identities.ingeniero, m=milestones[state.activeMilestone];
+  root().innerHTML=`
   <div class="app">
     <div class="card sidebar">
-      <span class="badge">Ruta CAT3</span>
-      <div class="identity-pill">
-        <div class="identity-mini">${id.emoji}</div>
-        <div>
-          <strong>${id.name}</strong><br>
-          <span class="small">${id.phrase}</span>
-        </div>
-      </div>
-
-      <div class="progress-wrap">
-        <div class="progress"><div class="progress-fill" style="width:${readiness()}%"></div></div>
-        <p><strong>Readiness CAT3:</strong> ${readiness()}%</p>
-      </div>
-
-      <h3>Hitos de preparación</h3>
-      <div class="milestones">
-        ${milestoneOrder.map(key=>`
-          <div class="node ${state.activeMilestone===key?'active':''} ${!isUnlocked(key)?'locked':''}" onclick="selectMilestone('${key}')">
-            <div class="node-title">${isUnlocked(key) ? "🔓" : "🔒"} ${milestones[key].short}</div>
-            <div class="small">${milestones[key].oa}</div>
-            <div class="stars">${milestoneStars(key)}</div>
-            <div class="levels">${levelNames.map((l,i)=>`${l}: ${Math.round((state.progress[key][levelKeys[i]]||0)*100)}%`).join(" · ")}</div>
-          </div>
-        `).join("")}
-      </div>
-
+      <span class="badge">Ruta CAT3 · ${state.learningProfile.pilot_id||"sin código"}</span>
+      <div class="identity-pill"><div class="identity-mini">${id.emoji}</div><div><strong>${id.name}</strong><br><span class="small">${id.phrase}</span></div></div>
+      <div class="progress"><div class="progress-fill" style="width:${readiness()}%"></div></div>
+      <p><strong>Readiness CAT3:</strong> ${readiness()}%</p>
+      <h3>Hitos</h3>
+      ${milestoneOrder.map(k=>`<div class="node ${state.activeMilestone===k?'active':''} ${!isUnlocked(k)?'locked':''}" onclick="selectMilestone('${k}')"><div class="node-title">${isUnlocked(k)?"🔓":"🔒"} ${milestones[k].short}</div><div class="small">${milestones[k].focus}</div><div class="stars">${milestoneStars(k)}</div></div>`).join("")}
       <div class="actions">
-        <button onclick="changeIdentity()">Cambiar identidad</button>
-        ${architectEnabled() ? '<button class="ghost" onclick="openArchitect()">Dashboard arquitecto</button>' : ''}
-        <button class="secondary" onclick="resetAll()">Reiniciar</button>
+        <button class="ghost" onclick="state.screen='report';saveState();render()">Ver guía imprimible</button>
+        <button class="ghost" onclick="requestArchitectAccess()">Arquitecto</button>
       </div>
     </div>
-
     <div class="card chat-panel">
-      <h2>pVANE</h2>
-      <p class="small"><strong>Foco actual:</strong> ${active.title}<br>${active.focus}</p>
-      <div id="chatbox" class="chatbox">
-        ${state.chat.map(m=>`<div class="msg ${m.cls}">${escapeHTML(m.text)}</div>`).join("")}
-      </div>
-      <textarea id="userInput" placeholder="Escribe tu respuesta. pVANE evaluará Reconoce / Explica / Integra según evidencia conceptual."></textarea>
-      <div class="actions">
-        <button onclick="sendToVane()">Enviar a pVANE</button>
-        <button class="ghost" onclick="askPrompt()">Pedir pregunta guía</button>
-      </div>
-      <p class="small">Las estrellas no son botones: aparecen solo si pVANE detecta mérito conceptual.</p>
+      <h2>Guía de preparación</h2>
+      <p class="small"><strong>Foco actual:</strong> ${m.title}<br>${m.focus}</p>
+      <div id="chatbox" class="chatbox">${state.chat.map(x=>`<div class="msg ${x.cls}">${escapeHTML(x.text)}</div>`).join("")}</div>
+      <textarea id="userInput" placeholder="Escribe tu respuesta. ENTER envía · SHIFT+ENTER salto de línea"></textarea>
+      <div class="actions"><button onclick="sendToGuide()">Enviar</button><button class="ghost" onclick="askPrompt()">Pregunta guía</button></div>
     </div>
-
-    <div class="card ptorpedo-panel ${state.ptorpedoVisible ? 'visible' : ''}">
-      <span class="badge">pTorpedo</span>
-      <h2>Guía personal</h2>
-      <p class="small">Construida desde tus respuestas validadas.</p>
+    <div class="card ptorpedo-panel">
+      <span class="badge">Guía personal</span><h2>pTorpedo</h2><p class="small">Tu síntesis personalizada de estudio.</p>
       ${renderPTorpedoHTML()}
-      <div class="actions">
-        <button onclick="renderReport()">Ver versión imprimible</button>
-        <button class="ghost" onclick="showPTorpedoModal()">¿Cómo funciona?</button>
-      </div>
+      <div class="actions"><button onclick="state.screen='report';saveState();render()">Imprimir / PDF</button></div>
     </div>
   </div>`;
   scrollChat();
 }
-
 function renderPTorpedoHTML(){
-  const p = state.ptorpedo;
-  return `
-    <div class="ptorpedo-section">
-      <strong>✔ Conceptos validados</strong>
-      ${(p.confirmed.length ? p.confirmed.map(x=>`<div class="ptorpedo-item">✔ ${escapeHTML(x)}</div>`).join("") : `<div class="empty">Aún no hay conceptos validados.</div>`)}
-    </div>
-    <div class="ptorpedo-section">
-      <strong>📍 Ahora estás consolidando…</strong>
-      ${(p.progress.length ? p.progress.map(x=>`<div class="ptorpedo-item">📍 ${escapeHTML(x)}</div>`).join("") : `<div class="empty">Aparecerá el foco conceptual actual cuando avances.</div>`)}
-    </div>
-    <div class="ptorpedo-section priority">
-      <strong>🧭 ¿Qué me está faltando?</strong>
-      ${(p.next.length ? p.next.map(x=>`<div class="ptorpedo-item">🧭 ${escapeHTML(x)}</div>`).join("") : `<div class="empty">pVANE agregará aquí lo que conviene reforzar para CAT3.</div>`)}
-    </div>
-    <div class="ptorpedo-section pending">
-      <strong>🧩 Conceptos pendientes</strong>
-      ${(p.pending && p.pending.length ? p.pending.map(x=>`<div class="ptorpedo-item">🧩 ${escapeHTML(x)}</div>`).join("") : `<div class="empty">Si te quedas pegado, pVANE dejará el concepto aquí y lo retomará más adelante.</div>`)}
-      ${(p.resolvedPending && p.resolvedPending.length ? `<div class="ptorpedo-item"><strong>Resueltos:</strong> ${p.resolvedPending.map(x=>`<span class="pending-chip">⭐ ${escapeHTML(x)}</span>`).join("")}</div>` : "")}
-    </div>`;
+  const p=state.ptorpedo;
+  return `<div class="ptorpedo-section"><strong>✔ Conceptos validados</strong>${p.confirmed.length?p.confirmed.map(x=>`<div class="ptorpedo-item">✔ ${escapeHTML(x)}</div>`).join(""):`<div class="empty">Aún no hay conceptos validados.</div>`}</div>
+  <div class="ptorpedo-section"><strong>📍 Ahora estás consolidando…</strong>${p.progress.length?p.progress.map(x=>`<div class="ptorpedo-item">📍 ${escapeHTML(x)}</div>`).join(""):`<div class="empty">Aparecerá el foco conceptual actual.</div>`}</div>
+  <div class="ptorpedo-section priority"><strong>🧭 ¿Qué me está faltando?</strong>${p.next.length?p.next.map(x=>`<div class="ptorpedo-item">🧭 ${escapeHTML(x)}</div>`).join(""):`<div class="empty">Aquí aparecerán sugerencias para reforzar.</div>`}</div>
+  <div class="ptorpedo-section pending"><strong>🧩 Conceptos pendientes</strong>${p.pending.length?p.pending.map(x=>`<div class="ptorpedo-item">🧩 ${escapeHTML(x)}</div>`).join(""):`<div class="empty">Si te quedas pegado, lo dejamos aquí y avanzamos.</div>`}${p.resolvedPending.length?`<div class="ptorpedo-item"><strong>Resueltos:</strong> ${p.resolvedPending.map(x=>"⭐ "+escapeHTML(x)).join(" · ")}</div>`:""}</div>`;
 }
-
-function addChat(role, text, cls){
-  state.chat.push({role,text,cls:cls||role});
-  if(state.chat.length>60) state.chat.shift();
-  saveState();
+function selectMilestone(id){if(!isUnlocked(id)){addChat("guide","Ese hito aún está cerrado. Si te quedas pegado, lo abriremos dejando pendiente el obstáculo.","guide");saveState();render();return} state.activeMilestone=id; askPrompt();}
+function askPrompt(){const m=milestones[state.activeMilestone]; addChat("guide",`${m.prompt}\n\nResponde con lenguaje simple: concepto clave + para qué sirve en la célula.`,"guide"); logEvent("milestone_opened",{milestone:state.activeMilestone}); saveState(); render();}
+function addChat(role,text,cls){state.chat.push({role,text,cls:cls||role,ts:new Date().toISOString()}); if(state.chat.length>80)state.chat.shift();}
+function scrollChat(){setTimeout(()=>{const b=document.getElementById("chatbox"); if(b)b.scrollTop=b.scrollHeight},0)}
+function escapeHTML(str){return String(str||"").replace(/[&<>"']/g,s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[s]))}
+function normalizeText(t){return String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ").trim()}
+function detectCAT3(text){const t=normalizeText(text); return cat3ExamMatrix.triggers.filter(item=>item.patterns.some(p=>t.includes(normalizeText(p))))}
+function pushUnique(arr,val){val=String(val||"").trim(); if(val&&!arr.includes(val))arr.push(val); if(arr.length>16)arr.shift();}
+function showFanfare(type,title,sub){if(state.vaneSettings.fanfare==="off")return; let toast=document.getElementById("fanfareToast"); if(!toast){toast=document.createElement("div");toast.id="fanfareToast";toast.className="fanfare-toast";document.body.appendChild(toast)} const icon={star:"⭐",milestone:"🎺",pending:"🧩",route:"🏁"}[type]||"⭐"; toast.innerHTML=`<span class="big">${icon}</span><strong>${escapeHTML(title)}</strong><br><span class="small">${escapeHTML(sub||"")}</span>`; toast.classList.add("visible"); if(typeof confetti==="function"&&state.vaneSettings.fanfare==="full")confetti({particleCount:type==="route"?140:65,spread:80,origin:{y:.2}}); clearTimeout(window.__fan); window.__fan=setTimeout(()=>toast.classList.remove("visible"),2400);}
+function applyCAT3Validation(text){
+  const hits=detectCAT3(text); if(!hits.length)return false;
+  hits.forEach(h=>{pushUnique(state.ptorpedo.confirmed,h.concept); pushUnique(state.ptorpedo.progress,"CAT3 real: "+h.concept); if(state.progress[h.milestone]){state.progress[h.milestone].reconoce=Math.max(state.progress[h.milestone].reconoce,1); state.progress[h.milestone].explica=Math.max(state.progress[h.milestone].explica,.75); const n=milestones[h.milestone].next; if(n)state.unlocked[n]=true;} resolvePending(h.concept); logEvent("concept_validated",{concept:h.concept,milestone:h.milestone});});
+  state.ptorpedoVisible=true; addChat("award","⭐ Evidencia CAT3 real detectada: "+hits.slice(0,3).map(h=>h.concept).join(", ")+".\nValidé sin pedir formalización avanzada.","award"); showFanfare("star","Evidencia CAT3 real detectada","Concepto evaluado reconocido."); return true;
 }
-
-function scrollChat(){
-  setTimeout(()=>{
-    const box=document.getElementById("chatbox");
-    if(box) box.scrollTop = box.scrollHeight;
-  },0);
+function resolvePending(concept){const i=state.ptorpedo.pending.indexOf(concept); if(i>=0){state.ptorpedo.pending.splice(i,1); pushUnique(state.ptorpedo.resolvedPending,concept); showFanfare("pending","Concepto pendiente resuelto",concept); logEvent("pending_resolved",{concept});}}
+function maybePending(){
+  const m=state.activeMilestone, b=state.obstacleMemory[m]||{attempts:0}; b.attempts++; state.obstacleMemory[m]=b;
+  const p=state.progress[m]; if((p.reconoce>=.75&&p.explica>=.5)||b.attempts<state.vaneSettings.maxAttempts)return;
+  const concept=m==="cat3_h1_termodinamica"?"acoplamiento energético":m==="cat3_h2_enzimas"?"función de enzimas":m==="cat3_h3_atp_redox"?"ATP/REDOX funcional":"respiración vs fermentación";
+  pushUnique(state.ptorpedo.pending,concept); pushUnique(state.ptorpedo.next,"Retomar: "+concept); logEvent("concept_pending",{concept,milestone:m});
+  const next=milestones[m].next; if(next)state.unlocked[next]=true;
+  addChat("system","🧩 Dejé pendiente '"+concept+"' y avanzamos para retomarlo más adelante.","system");
 }
-
-function selectMilestone(id){
-  if(!isUnlocked(id)){
-    addChat("vane","Ese hito aún está bloqueado. Primero necesito ver evidencia suficiente en el hito anterior.","vane");
-    saveState();
-    render();
-    return;
+function sendToGuide(){
+  const input=document.getElementById("userInput"); const text=input.value.trim(); if(!text)return; input.value="";
+  addChat("user","Tú: "+text,"user"); logEvent("response_sent",{milestone:state.activeMilestone,length:text.length});
+  const hit=applyCAT3Validation(text);
+  if(hit){
+    const next=milestones[state.activeMilestone].next;
+    if(next && state.unlocked[next]) addChat("guide","Perfecto. Esto ya alcanza nivel CAT3. Lo dejé en tu guía y podemos seguir con el siguiente hito cuando quieras.","guide");
+    else addChat("guide","Perfecto. Lo dejé registrado en tu guía personal.","guide");
+  }else{
+    maybePending();
+    addChat("guide","Vamos bien, pero falta que aparezca un concepto evaluado directamente. Te doy una pista: intenta nombrar el proceso y decir para qué sirve en la célula.","guide");
+    pushUnique(state.ptorpedo.next,"Nombrar proceso + función celular.");
   }
-  state.activeMilestone = id;
-  addChat("vane", `Trabajemos este hito: ${milestones[id].title}\n\n${milestones[id].prompt}`, "vane");
-  saveState();
-  render();
+  if(readiness()>=100){showFanfare("route","Ruta CAT3 completada","Tu guía personal está lista."); logEvent("route_completed",{})}
+  saveState(); render();
 }
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&e.target?.id==="userInput"){e.preventDefault();sendToGuide()}});
 
-function askPrompt(){
-  const m = activeMilestone();
-  addChat("vane", `${identities[state.identity].emoji} ${m.prompt}\n\nResponde intentando incluir: qué proceso requiere energía, de dónde viene esa energía y qué consecuencia celular permite.`, "vane");
-  saveState();
-  render();
-}
-
-function changeIdentity(){
-  state.screen="quiz";
-  state.quizIndex=0;
-  state.quizScores={ingeniero:0, arqueologo:0, diplomatico:0, estratega:0};
-  addChat("system","Recalibrando identidad. Tus estrellas no se pierden.","system");
-  saveState();
-  render();
-}
-
-function escapeHTML(str){
-  return String(str||"").replace(/[&<>"']/g, s=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
-  }[s]));
-}
-
-function normalizeEvaluation(data){
-  const ev = data?.evaluation || data || {};
-  return {
-    reconoce: Number(ev.reconoce ?? 0),
-    explica: Number(ev.explica ?? 0),
-    integra: Number(ev.integra ?? 0),
-    star_awarded: Number(ev.star_awarded ?? 0),
-    unlock: Boolean(ev.unlock),
-    feedback: String(ev.feedback || data?.feedback || "Respuesta recibida."),
-    next_prompt: String(ev.next_prompt || ""),
-    evidence: Array.isArray(ev.evidence) ? ev.evidence : [],
-    misconception_flags: Array.isArray(ev.misconception_flags) ? ev.misconception_flags : [],
-    ptorpedo_entry: ev.ptorpedo_entry || {}
-  };
-}
-
-
-function showFanfare(type, title, subtitle){
-  const mode = state.vaneSettings?.fanfare || "full";
-  if(mode === "off") return;
-  if(mode === "minimal" && type === "star") return;
-
-  let toast = document.getElementById("fanfareToast");
-  if(!toast){
-    toast = document.createElement("div");
-    toast.id = "fanfareToast";
-    toast.className = "fanfare-toast";
-    document.body.appendChild(toast);
-  }
-
-  const icons = {
-    star:"⭐",
-    milestone:"🎺",
-    pending:"🧩",
-    route:"🏁",
-    ptorpedo:"✦"
-  };
-
-  toast.innerHTML = `<span class="big">${icons[type] || "⭐"}</span><strong>${escapeHTML(title)}</strong><br><span class="small">${escapeHTML(subtitle || "")}</span>`;
-  toast.classList.add("visible");
-
-  if(typeof confetti === "function" && mode === "full"){
-    const particleCount = type === "route" ? 160 : type === "milestone" ? 95 : 55;
-    confetti({particleCount, spread: type === "route" ? 110 : 70, origin:{y:.2}, scalar:type === "star" ? .75 : .95});
-  }
-
-  clearTimeout(window.__fanfareTimer);
-  window.__fanfareTimer = setTimeout(()=>toast.classList.remove("visible"), 2400);
-}
-
-function ensureObstacleBucket(milestone){
-  if(!state.obstacleMemory) state.obstacleMemory = {};
-  if(!state.obstacleMemory[milestone]) state.obstacleMemory[milestone] = {attempts:0, pending:[]};
-  return state.obstacleMemory[milestone];
-}
-
-function markPendingConcept(concept, reason){
-  concept = String(concept || "").trim();
-  if(!concept) return;
-  if(!state.ptorpedo.pending) state.ptorpedo.pending = [];
-  if(!state.ptorpedo.pending.includes(concept)) state.ptorpedo.pending.push(concept);
-  pushUnique(state.ptorpedo.next, reason || `Retomar: ${concept}`);
-  addChat("system", `🧩 Dejé pendiente este concepto para retomarlo después: ${concept}`, "system");
-}
-
-function resolvePendingConcept(concept){
-  concept = String(concept || "").trim();
-  if(!concept || !state.ptorpedo.pending) return false;
-  const idx = state.ptorpedo.pending.indexOf(concept);
-  if(idx < 0) return false;
-  state.ptorpedo.pending.splice(idx,1);
-  if(!state.ptorpedo.resolvedPending) state.ptorpedo.resolvedPending = [];
-  pushUnique(state.ptorpedo.resolvedPending, concept);
-  pushUnique(state.ptorpedo.confirmed, `Pendiente resuelto: ${concept}`);
-  showFanfare("pending","Concepto pendiente resuelto","Apareció más adelante en tu diálogo.");
-  addChat("award", `⭐ Concepto pendiente resuelto: ${concept}`, "award");
-  return true;
-}
-
-function detectPendingCandidates(text){
-  const t = String(text||"").toLowerCase();
-  const found = [];
-  if(/acopla|acoplamiento|exerg.*enderg|enderg.*exerg/.test(t)) found.push("acoplamiento energético");
-  if(/atp|hidr[oó]lisis|rompe|fosfato/.test(t)) found.push("ATP como moneda energética");
-  if(/enzim|energ[ií]a de activaci[oó]n|sitio activo|sustrato/.test(t)) found.push("rol funcional de enzimas");
-  if(/oxid|reducci[oó]n|redox|electrones|nadh|fadh/.test(t)) found.push("transferencia de electrones / REDOX");
-  if(/dg|Δg|delta g|espont[aá]nea|exerg[oó]nica|enderg[oó]nica/.test(t)) found.push("ΔG funcional y espontaneidad");
-  return found;
-}
-
-function retroValidatePending(text){
-  const candidates = detectPendingCandidates(text);
-  candidates.forEach(c=>resolvePendingConcept(c));
-}
-
-function maybeAdvanceWithPending(milestone, ev){
-  const bucket = ensureObstacleBucket(milestone);
-  const p = state.progress[milestone];
-  const hasEnough = (p.reconoce >= .75 && p.explica >= .5) || ev.unlock;
-
-  if(hasEnough) return;
-
-  bucket.attempts += 1;
-  const max = Number(state.vaneSettings?.maxAttempts || 3);
-  if(bucket.attempts >= max){
-    const concept = milestone === "cat3_h1_termodinamica" ? "acoplamiento energético"
-      : milestone === "cat3_h2_enzimas" ? "rol funcional de enzimas"
-      : milestone === "cat3_h3_atp_redox" ? "ATP como moneda energética"
-      : "diferencia respiración / fermentación";
-    markPendingConcept(concept, "No bloquea tu avance: lo retomaremos desde otra ruta o identidad.");
-    const nextId = milestones[milestone]?.next;
-    if(nextId && !state.unlocked[nextId]){
-      state.unlocked[nextId] = true;
-      addChat("award", `Avanzamos sin bloquearte. Dejé un concepto pendiente y desbloqueé: ${milestones[nextId].title}.`, "award");
-      showFanfare("milestone","Avance desbloqueado","Hay un concepto pendiente para retomar.");
-    }
-  }
-}
-
-function updateProgress(milestone, ev){
-  const p = state.progress[milestone];
-  p.reconoce = Math.max(Number(p.reconoce||0), clamp01(ev.reconoce));
-  p.explica = Math.max(Number(p.explica||0), clamp01(ev.explica));
-  p.integra = Math.max(Number(p.integra||0), clamp01(ev.integra));
-
-  if(!state.ptorpedoVisible && (p.reconoce > 0 || p.explica > 0 || p.integra > 0)){
-    state.ptorpedoVisible = true;
-    addChat("award", "Tu primera evidencia conceptual ya quedó registrada.\nHe activado tu pTorpedo ✦\nDesde ahora, tus avances comenzarán a organizarse automáticamente como tu guía personal de estudio.", "award");
-    celebratePTorpedoUnlock();
-    showFanfare("ptorpedo","pTorpedo activado","Tu guía personal empezó a construirse.");
-    setTimeout(showPTorpedoModal, 450);
-  }
-
-  const nextId = milestones[milestone].next;
-  if(nextId && (ev.unlock || (p.reconoce >= .75 && p.explica >= .5))){
-    if(!state.unlocked[nextId]){
-      state.unlocked[nextId] = true;
-      addChat("award", `Ya tienes evidencia suficiente en este hito.\nHe desbloqueado el siguiente: ${milestones[nextId].title}.`, "award");
-      showFanfare("milestone","Hito de sincronización alcanzado",`Nuevo hito: ${milestones[nextId].short}`);
-    }
-  }
-  maybeAdvanceWithPending(milestone, ev);
-}
-
-function clamp01(n){
-  n = Number(n);
-  if(!Number.isFinite(n)) return 0;
-  return Math.max(0, Math.min(1, n));
-}
-
-function pushUnique(arr, value){
-  value = String(value||"").trim();
-  if(!value) return;
-  if(!arr.includes(value)) arr.push(value);
-  if(arr.length > 10) arr.shift();
-}
-
-function updatePTorpedo(ev){
-  const entry = ev.ptorpedo_entry || {};
-  if(Array.isArray(entry.conceptos_validados)){
-    entry.conceptos_validados.forEach(x=>pushUnique(state.ptorpedo.confirmed,x));
-  }
-  pushUnique(state.ptorpedo.progress, entry.conexion_lograda);
-  pushUnique(state.ptorpedo.next, entry.error_a_corregir);
-  if(ev.next_prompt) pushUnique(state.ptorpedo.next, ev.next_prompt);
-}
-
-function fallbackEvaluation(text){
-  const t = text.toLowerCase();
-  const hasCore = /atp|energ|enzim|gluc|nadh|fadh|redox|ferment|respir|oxigen|delta|dg|Δg|exerg|enderg|síntesis|sintesis|replic/.test(t);
-  const hasCause = /porque|permite|entonces|depende|consecuencia|por eso|si |requiere|libera|necesita|ocurre/.test(t);
-  const hasIntegration = /relacion|conecta|sistema|proceso|metabol|catabol|anabol|gradiente|acopla|acoplamiento|trabajo celular|celula|célula/.test(t);
-
-  const h1Functional =
-    state.activeMilestone === "cat3_h1_termodinamica" &&
-    /exerg|enderg|dg|Δg|atp|energ|libera|requiere|sintesis|síntesis|replic/.test(t);
-
-  const atpFunctional =
-    state.activeMilestone === "cat3_h3_atp_redox" &&
-    /atp|energ|libera|rompe|hidr[oó]lisis|fosfato|trabajo|transporte|s[ií]ntesis|movimiento|nadh|fadh|electrones/.test(t);
-
-  return {
-    reconoce: (h1Functional || atpFunctional) ? .9 : (hasCore ? .5 : .25),
-    explica: ((h1Functional || atpFunctional) && hasCause) ? .75 : (hasCause ? .5 : 0),
-    integra: ((h1Functional || atpFunctional) && hasIntegration) ? .5 : (hasIntegration ? .25 : 0),
-    unlock:(h1Functional || atpFunctional) && (hasCause || atpFunctional),
-    feedback:h1Functional
-      ? "Modo respaldo activado: tu respuesta es suficiente para CAT3 porque conecta energía con función celular. La guardo como evidencia y avanzamos."
-      : atpFunctional
-        ? "Modo respaldo activado: tu respuesta es suficiente para CAT3 porque reconoces que ATP entrega energía utilizable para procesos celulares. La guardo y avanzamos."
-        : "Modo respaldo activado: detecté algunos elementos conceptuales, pero no pude conectar con pVANE real en este intento.",
-    next_prompt:h1Functional
-      ? "Versión pTorpedo: la célula acopla reacciones que liberan energía con procesos que la requieren, como síntesis, transporte o replicación."
-      : atpFunctional
-        ? "Versión pTorpedo: el ATP actúa como moneda energética; al hidrolizarse entrega energía que ayuda a impulsar procesos celulares como síntesis, transporte o movimiento."
-        : "Intenta responder conectando causa, proceso y consecuencia celular.",
-    ptorpedo_entry:{
-      conceptos_validados: h1Functional ? ["Energía celular y acoplamiento funcional"] : atpFunctional ? ["ATP como moneda energética funcional"] : (hasCore ? ["Concepto central identificado parcialmente"] : []),
-      conexion_lograda: h1Functional ? "Relaciona energía disponible con trabajo celular." : atpFunctional ? "Relaciona ATP con procesos celulares que requieren energía." : (hasCause ? "Hay intento de explicación causal." : ""),
-      error_a_corregir: (h1Functional || atpFunctional) ? "No profundizar en bioquímica avanzada salvo que sea necesario." : "Reintentar conexión con pVANE real o profundizar la relación conceptual.",
-      frase_util_del_estudiante: text.slice(0,120)
-    }
-  };
-}
-
-async function sendToVane(){
-  const input = document.getElementById("userInput");
-  const text = input.value.trim();
-  if(!text) return;
-
-  input.value = "";
-  addChat("user","Tú: " + text,"user");
-  retroValidatePending(text);
-  const cat3Hit = applyCAT3ExamValidation(text);
-  addChat("vane","pVANE está pensando…","vane");
-  saveState();
-  render();
-
-  let data, ev;
-  try{
-    const res = await fetch(ENDPOINT,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        student_id:studentId(),
-        milestone:state.activeMilestone,
-        identity:state.identity,
-        response:text,
-        message:text,
-        conversation_style:{
-          mode:"CAT3_ready_no_postgrado",
-          structure:"validar_suficiencia_funcional_refinar_y_avanzar",
-          avoid:[
-            "¿Puedes explicar...?","¿Podrías explicar...?","repetir la misma pregunta en cada turno",
-            "insistir en entropía global si ya hay relación funcional",
-            "pedir ΔH, ΔS o ecuación de Gibbs salvo que el estudiante lo pida",
-            "bloquear avance por no usar lenguaje termoquímico avanzado",
-            "preguntar por tipo de enlace fosfato o mecanismo molecular de ATP",
-            "pedir detalle de cambio de energía libre en reacción acoplada si el estudiante ya entendió la función"
-          ],
-          prefer:[
-            "validar cuando exista relación proceso → energía → consecuencia celular",
-            "usar micro-reparaciones de una sola pregunta",
-            "traducir la respuesta del estudiante a versión pTorpedo",
-            "conectar con síntesis, transporte, respiración, ATP o enzimas",
-            "para ATP aceptar lenguaje simple: entrega energía, se rompe, libera energía, permite trabajo celular"
-          ],
-          semantic_echo:true,
-          tone:"socrático natural, amable y de preparación CAT3"
-        },
-        validation_policy:cat3ValidationPolicy,
-        architect_settings:state.vaneSettings,
-        pending_concepts:state.ptorpedo?.pending || [],
-        cat3_exam_matrix:cat3ExamMatrix,
-        hard_rule:"Si la respuesta contiene un concepto de cat3ExamMatrix, validar y avanzar. No pedir formalización avanzada.",
-        milestone_contract:{
-          current:state.activeMilestone,
-          pass_threshold:"concepto correcto + relación funcional correcta",
-          h1_specific_rule:"En el primer hito no exigir ΔH, ΔS, entropía global ni formulación fisicoquímica avanzada. Si el estudiante distingue exergónico/endergónico, ΔG básico y acoplamiento energético, validar y avanzar.",
-          atp_specific_rule:"En ATP no exigir tipo exacto de enlace, mecanismo molecular de transferencia de fosfato ni explicación fina de energía libre. Validar si el estudiante dice que ATP se rompe/hidroliza/libera o entrega energía para procesos celulares que la requieren.",
-          enzymes_specific_rule:"En enzimas no exigir Michaelis-Menten, Km, Vmax ni cinética formal. Validar si reconoce catalizador, baja energía de activación, especificidad o regulación básica."
-        },
-        history:state.chat.slice(-8).map(m=>({
-          role:m.role==="user" ? "student" : "pvane",
-          content:m.text
-        }))
-      })
-    });
-
-    data = await res.json();
-    if(!res.ok) throw new Error(data?.details || data?.error || "Error pVANE");
-    ev = normalizeEvaluation(data);
-  }catch(error){
-    ev = normalizeEvaluation({evaluation:fallbackEvaluation(text)});
-  }
-
-  const idx = state.chat.map(m=>m.text).lastIndexOf("pVANE está pensando…");
-  if(idx >= 0) state.chat.splice(idx,1);
-
-  updateProgress(state.activeMilestone, ev);
-  updatePTorpedo(ev);
-
-  if(typeof cat3Hit !== "undefined" && cat3Hit){
-    ev.feedback = "Validé este punto porque corresponde directamente al nivel de la CAT3 real. Lo dejo registrado y seguimos avanzando.";
-    ev.next_prompt = "Siguiente paso: conecta este concepto con otro proceso celular evaluado, sin entrar en detalle termoquímico avanzado.";
-    ev.star_awarded = Math.max(ev.star_awarded || 0, 1);
-  }
-  const vaneText = `pVANE: ${ev.feedback}${ev.next_prompt ? "\n\n" + ev.next_prompt : ""}`;
-  addChat(ev.star_awarded > 0 ? "award" : "vane", vaneText, ev.star_awarded > 0 ? "award" : "vane");
-  if(ev.star_awarded > 0){
-    showFanfare("star","Evidencia conceptual registrada","Una estrella o fracción fue añadida a tu ruta.");
-  }
-  if(readiness() >= 100){
-    showFanfare("route","Ruta CAT3 completada","Tu guía personal está lista para repasar.");
-  }
-
-  saveState();
-  render();
-}
-
-function celebratePTorpedoUnlock(){
-  if(typeof confetti !== "function") return;
-  confetti({ particleCount:90, spread:70, origin:{ y:0.62 }, scalar:.9 });
-  setTimeout(()=>confetti({ particleCount:45, spread:115, origin:{ y:0.58 }, scalar:.65 }),130);
-}
-
-function showPTorpedoModal(){
-  state.ptorpedoModalShown = true;
-  saveState();
-  const modal = document.getElementById("ptorpedoModal");
-  if(modal) modal.classList.add("visible");
-}
-
-function closePTorpedoModal(event){
-  if(event && event.target && event.target.id !== "ptorpedoModal") return;
-  const modal = document.getElementById("ptorpedoModal");
-  if(modal) modal.classList.remove("visible");
-}
-
-let onboardingStep = 0;
-
-const onboardingSteps = [
-  {
-    title:"Tu identidad no cambia el contenido",
-    text:"Cambia el lenguaje de pVANE: metáforas, tipo de pistas y forma de guiarte. El estándar conceptual sigue siendo el mismo.",
-    target:"tourDemoIdentity"
-  },
-  {
-    title:"Las estrellas son evidencia, no clics",
-    text:"Reconoce, Explica e Integra suben solo cuando tu respuesta muestra mérito conceptual. No hay botones para regalar progreso.",
-    target:"tourDemoStars"
-  },
-  {
-    title:"pVANE conversa contigo",
-    text:"pVANE valida lo correcto, ajusta lo impreciso y te empuja un paso más. No busca responder por ti: busca que construyas la respuesta.",
-    target:"tourDemoChat"
-  },
-  {
-    title:"El pTorpedo aparece cuando lo mereces",
-    text:"Cuando logras tu primera evidencia validada, se activa tu guía personal. Ahí se guardan conceptos, conexiones y próximos pasos.",
-    target:"tourDemoPTorpedo"
-  },
-  {
-    title:"Aumentarlo te conviene",
-    text:"Mientras más lo alimentes con buenas explicaciones, más útil será para estudiar antes de la CAT3. Es tu síntesis personalizada.",
-    target:"tourDemoPTorpedo"
-  }
-];
-
-function showOnboardingModal(){
-  onboardingStep = 0;
-  const modal = document.getElementById("onboardingModal");
-  if(modal){
-    modal.classList.add("visible");
-    renderOnboardingStep();
-  }
-}
-
-function closeOnboardingModal(event){
-  if(event && event.target && event.target.id !== "onboardingModal") return;
-  const modal = document.getElementById("onboardingModal");
-  if(modal) modal.classList.remove("visible");
-}
-
-function renderOnboardingStep(){
-  const step = onboardingSteps[onboardingStep];
-  const title = document.getElementById("tourStepTitle");
-  const text = document.getElementById("tourStepText");
-  const count = document.getElementById("tourStepCount");
-  const next = document.getElementById("tourNextBtn");
-  const cursor = document.getElementById("tourCursor");
-  const dots = document.getElementById("tourDots");
-
-  if(title) title.innerText = step.title;
-  if(text) text.innerText = step.text;
-  if(count) count.innerText = `Paso ${onboardingStep + 1}/${onboardingSteps.length}`;
-  if(next) next.innerText = onboardingStep === onboardingSteps.length - 1 ? "Entrar a la ruta →" : "Siguiente →";
-
-  ["tourDemoIdentity","tourDemoStars","tourDemoChat","tourDemoPTorpedo"].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.classList.remove("highlight");
-  });
-
-  const target = document.getElementById(step.target);
-  if(target) target.classList.add("highlight");
-
-  if(cursor){
-    cursor.className = "tour-cursor step" + onboardingStep;
-  }
-
-  if(dots){
-    dots.innerHTML = onboardingSteps.map((_,i)=>`<div class="tour-dot ${i===onboardingStep?'active':''}"></div>`).join("");
-  }
-}
-
-function nextOnboardingStep(){
-  if(onboardingStep >= onboardingSteps.length - 1){
-    closeOnboardingModal();
-    enterRoute();
-    return;
-  }
-  onboardingStep += 1;
-  renderOnboardingStep();
-}
-
-function prevOnboardingStep(){
-  onboardingStep = Math.max(0,onboardingStep - 1);
-  renderOnboardingStep();
-}
-
-
-
-function requestArchitectAccess(){
-  const pass = prompt("Ingrese contraseña de arquitecto:");
-  if(pass === "SincroArq2026!"){
-    localStorage.setItem("ARCHITECT_ACCESS","true");
-    localStorage.setItem("architectMode","true");
-    openArchitect();
-  }else if(pass !== null){
-    alert("Acceso denegado");
-  }
-}
-
-function architectEnabled(){
-  const url = new URL(window.location.href);
-  return url.searchParams.get("architect") === "1" || localStorage.getItem("ARCHITECT_ACCESS") === "true";
-}
-
-function openArchitect(){
-  localStorage.setItem("ARCHITECT_ACCESS","true");
-  state.screen = "architect";
-  saveState();
-  render();
-}
-
-function closeArchitect(){
-  state.screen = "app";
-  saveState();
-  render();
-}
-
-function architectMetrics(){
-  const turns = state.chat.filter(m => m.role === "user").length;
-  const vaneTurns = state.chat.filter(m => m.role === "vane" || m.role === "award").length;
-  const unlocked = milestoneOrder.filter(k => isUnlocked(k)).length;
-  const p = state.ptorpedo;
-  const assets = p.confirmed.length + p.progress.length + p.next.length;
-  return {turns, vaneTurns, unlocked, assets, readiness:readiness()};
-}
-
+function logEvent(type,payload){state.events.push({event_type:type,pilot_id:state.learningProfile?.pilot_id||null,ts:new Date().toISOString(),payload:payload||{}}); if(state.events.length>500)state.events.shift();}
+function requestArchitectAccess(){const pass=prompt("Clave arquitecto:"); if(pass===ARCH_PASS){localStorage.setItem("ARCHITECT_ACCESS","true"); state.screen="architect"; saveState(); render();}else if(pass!==null)alert("Acceso denegado");}
 function renderArchitect(){
-  const m = architectMetrics();
-  const rows = milestoneOrder.map(k=>{
-    const p = state.progress[k];
-    return `
-      <tr>
-        <td>${milestones[k].short}</td>
-        <td>${isUnlocked(k) ? "🔓 abierto" : "🔒 cerrado"}</td>
-        <td>${milestoneStars(k)}</td>
-        <td>${Math.round((p.reconoce||0)*100)}%</td>
-        <td>${Math.round((p.explica||0)*100)}%</td>
-        <td>${Math.round((p.integra||0)*100)}%</td>
-      </tr>`;
-  }).join("");
-
-  root().innerHTML = `
-  <div class="card center" style="max-width:1180px">
-    <span class="badge">Acceso arquitecto · modo local</span>
-    <h1>Dashboard simple del pre-parásito</h1>
-    <p class="small">Panel temporal para probar ruta, botones, diálogos y futura integración Supabase. Los datos mostrados vienen de este navegador.</p>
-    <p class="small"><strong>Calibración actual:</strong> CAT3-ready + matriz CAT3 real. pVANE debe validar suficiencia funcional y no insistir en fisicoquímica avanzada en el primer hito.</p>
-
-    <div class="arch-warning">
-      <strong>Modo prueba:</strong> este dashboard no es para estudiantes. Para abrirlo usa <code>?architect=1</code> en la URL.
-    </div>
-
+  root().innerHTML=`<div class="card center" style="max-width:1200px">
+    <span class="badge">Arquitecto · datos locales</span><h1>Dashboard pSINCRO</h1>
+    <p class="small">CSV NN exporta código piloto y métricas pedagógicas, sin nombre ni correo.</p>
     <div class="arch-grid">
-      <div class="arch-metric"><strong>Readiness</strong><div class="value">${m.readiness}%</div></div>
-      <div class="arch-metric"><strong>Hitos abiertos</strong><div class="value">${m.unlocked}/${milestoneOrder.length}</div></div>
-      <div class="arch-metric"><strong>Turnos estudiante</strong><div class="value">${m.turns}</div></div>
-      <div class="arch-metric"><strong>Entradas pTorpedo</strong><div class="value">${m.assets}</div></div>
+      <div class="arch-metric"><strong>Pilot ID</strong><div class="value" style="font-size:20px">${state.learningProfile.pilot_id||"—"}</div></div>
+      <div class="arch-metric"><strong>Readiness</strong><div class="value">${readiness()}%</div></div>
+      <div class="arch-metric"><strong>Eventos</strong><div class="value">${state.events.length}</div></div>
+      <div class="arch-metric"><strong>Pendientes</strong><div class="value">${state.ptorpedo.pending.length}</div></div>
     </div>
-
-    <h3>Estado de hitos</h3>
-    <table class="arch-table">
-      <thead><tr><th>Hito</th><th>Estado</th><th>Estrellas</th><th>Reconoce</th><th>Explica</th><th>Integra</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-
-    <h3>Control arquitecto</h3>
     <div class="arch-grid">
-      <div class="arch-control">
-        <strong>Nivel pVANE</strong>
-        <select onchange="setVaneLevel(this.value)">
-          <option value="exploratorio" ${state.vaneSettings?.level==='exploratorio'?'selected':''}>Exploratorio</option>
-          <option value="cat3_ready" ${state.vaneSettings?.level==='cat3_ready'?'selected':''}>CAT3-ready</option>
-          <option value="cat3_plus" ${state.vaneSettings?.level==='cat3_plus'?'selected':''}>CAT3+ N+S</option>
-          <option value="docente" ${state.vaneSettings?.level==='docente'?'selected':''}>Docente profundo</option>
-        </select>
-      </div>
-      <div class="arch-control">
-        <strong>Fanfarria</strong>
-        <select onchange="setFanfareMode(this.value)">
-          <option value="off" ${state.vaneSettings?.fanfare==='off'?'selected':''}>OFF</option>
-          <option value="minimal" ${state.vaneSettings?.fanfare==='minimal'?'selected':''}>Mínima</option>
-          <option value="full" ${state.vaneSettings?.fanfare==='full'?'selected':''}>Completa</option>
-        </select>
-      </div>
-      <div class="arch-control">
-        <strong>Intentos antes de pendiente</strong>
-        <select onchange="setMaxAttempts(this.value)">
-          <option value="2" ${Number(state.vaneSettings?.maxAttempts)===2?'selected':''}>2</option>
-          <option value="3" ${Number(state.vaneSettings?.maxAttempts)===3?'selected':''}>3</option>
-          <option value="4" ${Number(state.vaneSettings?.maxAttempts)===4?'selected':''}>4</option>
-        </select>
-      </div>
+      <div class="arch-control"><strong>Nivel guía</strong><select onchange="state.vaneSettings.level=this.value;saveState();render()"><option value="cat3_ready">CAT3-ready</option><option value="exploratorio">Exploratorio</option><option value="cat3_plus">CAT3+ N+S</option></select></div>
+      <div class="arch-control"><strong>Fanfarria</strong><select onchange="state.vaneSettings.fanfare=this.value;saveState();render()"><option value="full">Completa</option><option value="minimal">Mínima</option><option value="off">OFF</option></select></div>
+      <div class="arch-control"><strong>Intentos antes de pendiente</strong><select onchange="state.vaneSettings.maxAttempts=Number(this.value);saveState();render()"><option>2</option><option selected>3</option><option>4</option></select></div>
     </div>
-
     <h3>Acceso directo</h3>
-    <div class="actions">
-      <button class="ghost" onclick="jumpToMilestone('cat3_h1_termodinamica')">RDA1 · Energía</button>
-      <button class="ghost" onclick="jumpToMilestone('cat3_h2_enzimas')">RDA2 · Enzimas</button>
-      <button class="ghost" onclick="jumpToMilestone('cat3_h3_atp_redox')">RDA3 · ATP/REDOX</button>
-      <button class="ghost" onclick="jumpToMilestone('cat3_h6_anaerobiosis_fermentacion')">RDA4 · Respiración/Fermentación</button>
-    </div>
-
-    <h3>Pendientes</h3>
-    <div class="arch-control">
-      <strong>Agregar pendiente manual</strong>
-      <input id="manualPendingConcept" placeholder="Ej: acoplamiento energético">
-      <button onclick="addManualPending()">Agregar pendiente</button>
-      <button class="ghost" onclick="resolveFirstPending()">Resolver primer pendiente</button>
-    </div>
-
-    <h3>Simulación</h3>
-    <p class="small">Simula una ruta completa sin depender de respuestas reales. Sirve para revisar desbloqueos, pTorpedo, fanfarria, diálogo y luego conexión Supabase.</p>
-    <div class="actions">
-      <button onclick="simulateFullRoute()">Simular ruta completa</button>
-      <button class="ghost" onclick="simulateOneStep()">Simular solo un paso</button>
-      <button class="secondary" onclick="clearSimulation()">Limpiar simulación</button>
-      <button class="ghost" onclick="backFromArchitect()">Volver a la ruta</button>
-    </div>
-
-    <h3>Log de simulación</h3>
-    <div class="arch-log">${escapeHTML((state.simulationLog||[]).join("\\n") || "Aún no hay simulaciones.")}</div>
+    <div class="actions">${milestoneOrder.map(k=>`<button class="ghost" onclick="jumpToMilestone('${k}')">${milestones[k].short}</button>`).join("")}</div>
+    <h3>Exportación</h3>
+    <div class="actions"><button onclick="downloadNNCSV()">Descargar CSV NN</button><button class="ghost" onclick="downloadEventsCSV()">Descargar eventos NN</button><button class="secondary" onclick="state.screen='app';saveState();render()">Volver</button></div>
+    <table class="arch-table"><thead><tr><th>Hito</th><th>Estado</th><th>Estrellas</th></tr></thead><tbody>${milestoneOrder.map(k=>`<tr><td>${milestones[k].short}</td><td>${isUnlocked(k)?"abierto":"cerrado"}</td><td>${milestoneStars(k)}</td></tr>`).join("")}</tbody></table>
   </div>`;
 }
-
-function backFromArchitect(){
-  state.screen = state.identity ? "app" : "welcome";
-  saveState();
-  render();
+function jumpToMilestone(k){if(!state.identity)state.identity="ingeniero"; state.unlocked[k]=true; state.activeMilestone=k; state.screen="app"; addChat("system","Modo arquitecto: acceso directo a "+milestones[k].title,"system"); saveState(); render(); setTimeout(askPrompt,100)}
+function csvEscape(v){return `"${String(v??"").replace(/"/g,'""')}"`}
+function downloadFile(name,content){const blob=new Blob([content],{type:"text/csv;charset=utf-8"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href)}
+function downloadNNCSV(){
+  const row={pilot_id:state.learningProfile.pilot_id,nrc:state.learningProfile.nrc,identity:state.identity,readiness:readiness(),hitos_abiertos:milestoneOrder.filter(isUnlocked).length,conceptos_validados:state.ptorpedo.confirmed.length,pendientes:state.ptorpedo.pending.length,pendientes_resueltos:state.ptorpedo.resolvedPending.length,eventos:state.events.length};
+  const headers=Object.keys(row); downloadFile("psincro_export_NN.csv",headers.join(",")+"\n"+headers.map(h=>csvEscape(row[h])).join(","));
 }
-
-function logSim(txt){
-  if(!state.simulationLog) state.simulationLog = [];
-  const stamp = new Date().toLocaleTimeString();
-  state.simulationLog.push(`[${stamp}] ${txt}`);
-  if(state.simulationLog.length > 80) state.simulationLog.shift();
+function downloadEventsCSV(){
+  const headers=["pilot_id","ts","event_type","payload"];
+  const rows=state.events.map(e=>[e.pilot_id,e.ts,e.event_type,JSON.stringify(e.payload)].map(csvEscape).join(","));
+  downloadFile("psincro_eventos_NN.csv",headers.join(",")+"\n"+rows.join("\n"));
 }
-
-function applySimulatedEvaluation(milestone, level){
-  state.activeMilestone = milestone;
-  const p = state.progress[milestone];
-
-  const evByLevel = {
-    reconoce:{
-      reconoce:.75, explica:0, integra:0, star_awarded:.25, unlock:false,
-      feedback:"Simulación: el estudiante reconoció conceptos base del hito.",
-      next_prompt:"Siguiente paso simulado: pedir explicación causal.",
-      ptorpedo_entry:{
-        conceptos_validados:[`Reconocimiento base en ${milestones[milestone].short}`],
-        conexion_lograda:"",
-        error_a_corregir:`Profundizar explicación causal en ${milestones[milestone].short}`
-      }
-    },
-    explica:{
-      reconoce:1, explica:.75, integra:.25, star_awarded:.5, unlock:true,
-      feedback:"Simulación: el estudiante explicó causa y consecuencia con mérito suficiente.",
-      next_prompt:"Siguiente paso simulado: integrar con otro proceso celular.",
-      ptorpedo_entry:{
-        conceptos_validados:[`Explicación funcional en ${milestones[milestone].short}`],
-        conexion_lograda:`Relación causal lograda en ${milestones[milestone].short}`,
-        error_a_corregir:"Aumentar integración entre hitos."
-      }
-    },
-    integra:{
-      reconoce:1, explica:1, integra:1, star_awarded:1, unlock:true,
-      feedback:"Simulación: el estudiante integró el hito con procesos celulares relacionados.",
-      next_prompt:"Hito simulado estabilizado.",
-      ptorpedo_entry:{
-        conceptos_validados:[`Integración completa en ${milestones[milestone].short}`],
-        conexion_lograda:`Conexión sistémica lograda en ${milestones[milestone].short}`,
-        error_a_corregir:"Revisar precisión terminológica antes de CAT3."
-      }
-    }
-  };
-
-  const ev = evByLevel[level];
-  addChat("user", `Tú: [simulación] respuesta nivel ${level} para ${milestones[milestone].short}`, "user");
-  updateProgress(milestone, ev);
-  updatePTorpedo(ev);
-  addChat("award", `pVANE: ${ev.feedback}\\n\\n${ev.next_prompt}`, "award");
-  logSim(`Aplicado ${level} en ${milestones[milestone].short}`);
-}
-
-function simulateOneStep(){
-  if(!state.identity){
-    state.identity = "ingeniero";
-    addChat("vane", "Simulación: identidad asignada como Ingeniero.", "system");
-  }
-  const current = milestoneOrder.find(k => {
-    const p = state.progress[k];
-    return isUnlocked(k) && (p.integra||0) < 1;
-  }) || "cat3_h1_termodinamica";
-
-  const p = state.progress[current];
-  if((p.reconoce||0) < 1) applySimulatedEvaluation(current,"reconoce");
-  else if((p.explica||0) < 1) applySimulatedEvaluation(current,"explica");
-  else applySimulatedEvaluation(current,"integra");
-
-  saveState();
-  state.screen="architect";
-  render();
-}
-
-function simulateFullRoute(){
-  if(!state.identity){
-    state.identity = "ingeniero";
-    addChat("vane", "Simulación: identidad asignada como Ingeniero.", "system");
-  }
-
-  milestoneOrder.forEach(k=>{
-    state.unlocked[k] = true;
-    applySimulatedEvaluation(k,"reconoce");
-    applySimulatedEvaluation(k,"explica");
-    applySimulatedEvaluation(k,"integra");
-  });
-
-  state.ptorpedoVisible = true;
-  state.ptorpedoModalShown = true;
-  logSim("Ruta completa simulada: hitos, estrellas, pTorpedo y desbloqueos.");
-  saveState();
-  state.screen="architect";
-  render();
-}
-
-function clearSimulation(){
-  const keepAccess = localStorage.getItem("ARCHITECT_ACCESS");
-  localStorage.removeItem(STORAGE_KEY);
-  state = initialState();
-  state.screen = "architect";
-  state.simulationLog = ["Simulación limpiada."];
-  if(keepAccess) localStorage.setItem("ARCHITECT_ACCESS", keepAccess);
-  saveState();
-  render();
-}
-
-
-function setVaneLevel(value){
-  if(!state.vaneSettings) state.vaneSettings = {};
-  state.vaneSettings.level = value;
-  logSim("Nivel pVANE cambiado a: " + value);
-  saveState();
-  render();
-}
-
-function setFanfareMode(value){
-  if(!state.vaneSettings) state.vaneSettings = {};
-  state.vaneSettings.fanfare = value;
-  logSim("Fanfarria cambiada a: " + value);
-  saveState();
-  render();
-}
-
-function setMaxAttempts(value){
-  if(!state.vaneSettings) state.vaneSettings = {};
-  state.vaneSettings.maxAttempts = Number(value);
-  logSim("Intentos antes de pendiente: " + value);
-  saveState();
-  render();
-}
-
-function addManualPending(){
-  const input = document.getElementById("manualPendingConcept");
-  const value = input ? input.value.trim() : "";
-  if(!value) return;
-  markPendingConcept(value, "Pendiente agregado manualmente por arquitecto.");
-  logSim("Pendiente manual agregado: " + value);
-  saveState();
-  render();
-}
-
-function resolveFirstPending(){
-  const first = state.ptorpedo?.pending?.[0];
-  if(first) resolvePendingConcept(first);
-  else logSim("No había pendientes para resolver.");
-  saveState();
-  render();
-}
-
-function jumpToMilestone(milestoneId){
-  if(!state.identity) state.identity = "ingeniero";
-  state.activeMilestone = milestoneId;
-  state.unlocked[milestoneId] = true;
-  state.screen = "app";
-  addChat("system", `Modo arquitecto: acceso directo a ${milestones[milestoneId]?.title || milestoneId}.`, "system");
-  saveState();
-  render();
-  setTimeout(()=>askPrompt(),150);
-}
-
 function renderReport(){
-  state.screen="report";
-  saveState();
-
-  const id = identities[state.identity] || identities.ingeniero;
-  const lines = [];
-  lines.push("pTorpedo · Ruta CAT3 CBI111");
-  lines.push("");
-  lines.push("Identidad activa: " + id.name);
-  lines.push("Readiness CAT3: " + readiness() + "%");
-  lines.push("");
-  lines.push("Matriz CAT3 real activa: sí");
-  lines.push("");
-  lines.push("Hitos:");
-  milestoneOrder.forEach(k=>{
-    lines.push("- " + milestones[k].title + " · " + milestoneStars(k));
-  });
-  lines.push("");
-  lines.push("Conceptos validados:");
-  if(state.ptorpedo.confirmed.length) state.ptorpedo.confirmed.forEach(x=>lines.push("✔ " + x));
-  else lines.push("Aún no hay conceptos validados.");
-  lines.push("");
-  lines.push("Relaciones en progreso:");
-  if(state.ptorpedo.progress.length) state.ptorpedo.progress.forEach(x=>lines.push("△ " + x));
-  else lines.push("Aún no hay relaciones registradas.");
-  lines.push("");
-  lines.push("¿Qué me está faltando?");
-  if(state.ptorpedo.next.length) state.ptorpedo.next.forEach(x=>lines.push("✱ " + x));
-  else lines.push("Aún no hay próximos pasos registrados.");
-  lines.push("");
-  lines.push("Conceptos pendientes:");
-  if(state.ptorpedo.pending && state.ptorpedo.pending.length) state.ptorpedo.pending.forEach(x=>lines.push("🧩 " + x));
-  else lines.push("No hay conceptos pendientes activos.");
-  lines.push("");
-  lines.push("Pendientes resueltos:");
-  if(state.ptorpedo.resolvedPending && state.ptorpedo.resolvedPending.length) state.ptorpedo.resolvedPending.forEach(x=>lines.push("⭐ " + x));
-  else lines.push("Aún no hay pendientes resueltos.");
-
-  root().innerHTML = `
-  <div class="card center">
-    <span class="badge">pTorpedo</span>
-    <h1>Guía personal de estudio</h1>
-    <div class="report">${escapeHTML(lines.join("\n"))}</div>
-    <div class="actions">
-      <button onclick="window.print()">Imprimir / guardar PDF</button>
-      <button class="secondary" onclick="backToApp()">Volver</button>
-    </div>
-  </div>`;
+  const lines=[]; lines.push("pSINCRO · Guía personal CBI111"); lines.push("Pilot ID: "+(state.learningProfile.pilot_id||"—")); lines.push("Identidad: "+(identities[state.identity]?.name||"—")); lines.push("Readiness CAT3: "+readiness()+"%"); lines.push(""); lines.push("Conceptos validados:"); state.ptorpedo.confirmed.forEach(x=>lines.push("✔ "+x)); lines.push(""); lines.push("¿Qué me está faltando?"); state.ptorpedo.next.forEach(x=>lines.push("🧭 "+x)); lines.push(""); lines.push("Pendientes:"); state.ptorpedo.pending.forEach(x=>lines.push("🧩 "+x));
+  root().innerHTML=`<div class="card center"><span class="badge">Guía imprimible</span><h1>Guía personal de estudio</h1><div class="report">${escapeHTML(lines.join("\n"))}</div><div class="actions"><button onclick="window.print()">Imprimir / PDF</button><button class="secondary" onclick="state.screen='app';saveState();render()">Volver</button></div></div>`;
 }
-
-function backToApp(){
-  state.screen="app";
-  saveState();
-  render();
-}
-
-function resetAll(){
-  if(confirm("¿Reiniciar la ruta local de este navegador?")){
-    localStorage.removeItem(STORAGE_KEY);
-    state = initialState();
-    render();
-  }
-}
-
-
-document.addEventListener("keydown", function(event){
-  if(event.key === "Enter" && !event.shiftKey && event.target && event.target.id === "userInput"){
-    event.preventDefault();
-    sendToVane();
-  }
-});
-
-applyTheme();
 render();
-
 </script>
-
-<!-- Parasite v0.5 CAT3-fastmode patch -->
-<script>
-/*
-CAT3-fastmode:
-If a nuclear concept keyword appears, immediately mark conceptual closure hint.
-This reduces redundant prompting loops in pVANE.
-*/
-function vaneFastModeDetect(text){
-  const t = String(text||"").toLowerCase();
-  const nuclear = [
-    "sistema abierto",
-    "intercambia energia",
-    "intercambia materia",
-    "dg negativo",
-    "exerg",
-    "enderg",
-    "atp",
-    "acopla",
-    "redox"
-  ];
-  return nuclear.some(k=>t.includes(k));
-}
-
-if(typeof sendToVane === "function"){
-  const originalSendToVane = sendToVane;
-  sendToVane = function(){
-    const input = document.getElementById("userInput");
-    if(input && vaneFastModeDetect(input.value)){
-      if(window.showFanfare){
-        showFanfare("star","Evidencia nuclear detectada","Avance conceptual acelerado (modo CAT3‑rápido).");
-      }
-    }
-    return originalSendToVane.apply(this, arguments);
-  }
-}
-</script>
-
 </body>
 </html>
