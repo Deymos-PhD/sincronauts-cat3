@@ -995,6 +995,13 @@ body.dark .pending-chip{
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://vogdknwdrbzabvfekhpg.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_0FqxLuaRhzPMLHjO4f-dWA_i7-pl7AD";
+const pSINCROdb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js">
 </script>
 
@@ -1305,7 +1312,15 @@ function initialState(){
     ptorpedoVisible:false,
     ptorpedoModalShown:false,
     simulationLog:[],
-    studentId:null
+    studentId:null,
+    studentEmail:null,
+    studentName:null,
+    studentLastName:null,
+    studentNrc:null,
+    sincroCode:null,
+    supabaseStudentId:null,
+    supabaseJourneyId:null,
+    supabaseSyncedEntries:[]
   };
 }
 
@@ -1320,6 +1335,7 @@ function migrateState(){
   if(!state.vaneSettings.fanfare) state.vaneSettings.fanfare = "full";
   if(!state.vaneSettings.maxAttempts) state.vaneSettings.maxAttempts = 3;
   if(!state.obstacleMemory) state.obstacleMemory = {};
+  if(!state.supabaseSyncedEntries) state.supabaseSyncedEntries = [];
 }
 
 migrateState();
@@ -1340,10 +1356,185 @@ function saveState(){
 
 function studentId(){
   if(!state.studentId){
-    state.studentId = "pvane_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    state.studentId = "psincro_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
     saveState();
   }
   return state.studentId;
+}
+
+
+function makeSincroCode(){
+  return "SC-" + Math.random().toString(36).slice(2,6).toUpperCase() + "-" + Date.now().toString(36).slice(-4).toUpperCase();
+}
+
+async function captureAndRegisterStudent(){
+  const first = document.getElementById("studentFirstName")?.value?.trim() || state.studentName || "";
+  const last = document.getElementById("studentLastName")?.value?.trim() || state.studentLastName || "";
+  const email = document.getElementById("studentEmail")?.value?.trim().toLowerCase() || state.studentEmail || "";
+  const nrc = document.getElementById("studentNrc")?.value?.trim() || state.studentNrc || "";
+
+  state.studentName = first;
+  state.studentLastName = last;
+  state.studentEmail = email;
+  state.studentNrc = nrc;
+  if(!state.sincroCode) state.sincroCode = makeSincroCode();
+  saveState();
+
+  if(!email){
+    alert("Ingresa un correo para poder recuperar tu ruta después.");
+    return null;
+  }
+
+  return await ensureSupabaseStudent();
+}
+
+async function ensureSupabaseStudent(){
+  if(state.supabaseStudentId) return state.supabaseStudentId;
+  if(!state.studentEmail) return null;
+
+  try{
+    const existing = await pSINCROdb
+      .from("students")
+      .select("id,email,first_name,last_name,nrc,sincro_code")
+      .eq("email", state.studentEmail)
+      .maybeSingle();
+
+    if(existing.data){
+      state.supabaseStudentId = existing.data.id;
+      state.sincroCode = existing.data.sincro_code || state.sincroCode || makeSincroCode();
+      state.studentName = existing.data.first_name || state.studentName;
+      state.studentLastName = existing.data.last_name || state.studentLastName;
+      state.studentNrc = existing.data.nrc || state.studentNrc;
+      saveState();
+      return state.supabaseStudentId;
+    }
+
+    const inserted = await pSINCROdb
+      .from("students")
+      .insert([{ email:state.studentEmail, first_name:state.studentName, last_name:state.studentLastName, nrc:state.studentNrc, sincro_code:state.sincroCode }])
+      .select()
+      .single();
+
+    if(inserted.error) throw inserted.error;
+    state.supabaseStudentId = inserted.data.id;
+    state.sincroCode = inserted.data.sincro_code;
+    saveState();
+    return state.supabaseStudentId;
+  }catch(err){
+    console.error("Supabase student error", err);
+    alert("No pude guardar el registro en Supabase. La ruta seguirá local por ahora.");
+    return null;
+  }
+}
+
+async function ensureSupabaseJourney(){
+  const sid = await ensureSupabaseStudent();
+  if(!sid) return null;
+  if(state.supabaseJourneyId) return state.supabaseJourneyId;
+
+  try{
+    const existing = await pSINCROdb
+      .from("journeys")
+      .select("id")
+      .eq("student_id", sid)
+      .order("created_at", { ascending:false })
+      .limit(1)
+      .maybeSingle();
+
+    if(existing.data){
+      state.supabaseJourneyId = existing.data.id;
+      saveState();
+      return state.supabaseJourneyId;
+    }
+
+    const inserted = await pSINCROdb
+      .from("journeys")
+      .insert([{ student_id:sid, identity:state.identity, readiness:readiness() }])
+      .select()
+      .single();
+
+    if(inserted.error) throw inserted.error;
+    state.supabaseJourneyId = inserted.data.id;
+    saveState();
+    return state.supabaseJourneyId;
+  }catch(err){
+    console.error("Supabase journey error", err);
+    return null;
+  }
+}
+
+async function syncJourney(){
+  const jid = await ensureSupabaseJourney();
+  if(!jid) return;
+  await pSINCROdb
+    .from("journeys")
+    .update({ identity:state.identity, readiness:readiness(), updated_at:new Date().toISOString() })
+    .eq("id", jid);
+}
+
+async function syncMilestoneProgress(milestoneKey){
+  const jid = await ensureSupabaseJourney();
+  if(!jid || !milestoneKey || !state.progress[milestoneKey]) return;
+  const p = state.progress[milestoneKey];
+  const payload = { journey_id:jid, milestone_key:milestoneKey, reconoce:p.reconoce||0, explica:p.explica||0, integra:p.integra||0, unlocked:!!state.unlocked[milestoneKey], updated_at:new Date().toISOString() };
+
+  const existing = await pSINCROdb
+    .from("milestone_progress")
+    .select("id")
+    .eq("journey_id", jid)
+    .eq("milestone_key", milestoneKey)
+    .maybeSingle();
+
+  if(existing.data){
+    await pSINCROdb.from("milestone_progress").update(payload).eq("id", existing.data.id);
+  }else{
+    await pSINCROdb.from("milestone_progress").insert([payload]);
+  }
+}
+
+async function syncPTorpedoEntry(type, content, status="active"){
+  content = String(content||"").trim();
+  if(!content) return;
+  const key = `${type}::${content}`;
+  if(state.supabaseSyncedEntries?.includes(key)) return;
+  const jid = await ensureSupabaseJourney();
+  if(!jid) return;
+  const { error } = await pSINCROdb.from("ptorpedo_entries").insert([{ journey_id:jid, type, content, status }]);
+  if(!error){
+    state.supabaseSyncedEntries.push(key);
+    saveState();
+  }
+}
+
+async function syncVaneLog(role, content, evaluation=null){
+  const jid = await ensureSupabaseJourney();
+  if(!jid) return;
+  await pSINCROdb.from("vane_logs").insert([{ journey_id:jid, milestone_key:state.activeMilestone, role, content, evaluation }]);
+}
+
+async function recoverAccessByEmail(){
+  const email = (document.getElementById("studentEmail")?.value || prompt("Correo usado en pSINCRO:") || "").trim().toLowerCase();
+  if(!email) return;
+  const { data, error } = await pSINCROdb
+    .from("students")
+    .select("id,email,first_name,last_name,nrc,sincro_code")
+    .eq("email", email)
+    .maybeSingle();
+
+  if(error || !data){
+    alert("No encontré una ruta asociada a ese correo.");
+    return;
+  }
+
+  state.studentEmail = data.email;
+  state.studentName = data.first_name || "";
+  state.studentLastName = data.last_name || "";
+  state.studentNrc = data.nrc || "";
+  state.sincroCode = data.sincro_code;
+  state.supabaseStudentId = data.id;
+  saveState();
+  alert("Código interno recuperado: " + state.sincroCode);
+  render();
 }
 
 function root(){ return document.getElementById("root"); }
@@ -1368,14 +1559,27 @@ function renderWelcome(){
       No afecta tu nota. Tus datos pedagógicos se almacenan con un código interno. Los análisis se realizarán de forma pseudonimizada y agregada.<br>
       Tus estrellas dependen de mérito conceptual detectado durante el diálogo.
     </div>
+
+    <div class="identity-result-card">
+      <strong>Ingreso del estudiante</strong>
+      <p class="small">Usaremos tu correo solo para recuperar tu código interno y retomar la ruta.</p>
+      <input id="studentFirstName" placeholder="Nombre" value="${escapeHTML(state.studentName||'')}" style="width:100%;margin:6px 0;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--card);color:var(--text)">
+      <input id="studentLastName" placeholder="Apellido" value="${escapeHTML(state.studentLastName||'')}" style="width:100%;margin:6px 0;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--card);color:var(--text)">
+      <input id="studentEmail" placeholder="Correo institucional o personal" value="${escapeHTML(state.studentEmail||'')}" style="width:100%;margin:6px 0;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--card);color:var(--text)">
+      <input id="studentNrc" placeholder="NRC / sección" value="${escapeHTML(state.studentNrc||'')}" style="width:100%;margin:6px 0;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--card);color:var(--text)">
+      ${state.sincroCode ? `<p class="small"><strong>Código interno:</strong> ${escapeHTML(state.sincroCode)}</p>` : ''}
+    </div>
+
     <p class="small">Primero haremos un cuestionario breve para definir tu identidad de estudio. No hay respuestas buenas o malas.</p>
     <button onclick="startQuiz()">Comenzar</button>
+    <button class="ghost" onclick="recoverAccessByEmail()">Reenviar / recuperar acceso</button>
     <button class="ghost" onclick="requestArchitectAccess()">⚙️ Acceso arquitecto</button>
     <p class="small" style="margin-top:18px">Este recurso fue diseñado por el Dr. Alex Elías · Académico transversal · Instituto de Ciencias Naturales · Piloto de innovación pedagógica · 2026</p>
   </div>`;
 }
 
-function startQuiz(){
+async function startQuiz(){
+  await captureAndRegisterStudent();
   state.screen="quiz";
   state.quizIndex=0;
   state.quizScores={ingeniero:0, arqueologo:0, diplomatico:0, estratega:0};
@@ -1409,6 +1613,7 @@ function answerQuiz(identity){
   if(state.quizIndex >= quizQuestions.length){
     const winner = Object.entries(state.quizScores).sort((a,b)=>b[1]-a[1])[0][0];
     state.identity = winner;
+    syncJourney();
     state.screen = "tour";
     if(state.chat.length===0){
       addChat("vane", `Soy VANE. Detecté una frecuencia inicial ${identities[winner].name}.\n\n${identities[winner].opener}`, "vane");
@@ -1445,6 +1650,8 @@ function renderTour(){
 function enterRoute(){
   state.screen="app";
   saveState();
+  syncJourney();
+  milestoneOrder.forEach(k=>syncMilestoneProgress(k));
   render();
 }
 
@@ -1585,6 +1792,9 @@ function addChat(role, text, cls){
   state.chat.push({role,text,cls:cls||role});
   if(state.chat.length>60) state.chat.shift();
   saveState();
+  if(role === "user" || role === "vane" || role === "system" || role === "award"){
+    syncVaneLog(role, text);
+  }
 }
 
 function scrollChat(){
@@ -1771,6 +1981,8 @@ function updateProgress(milestone, ev){
     }
   }
   maybeAdvanceWithPending(milestone, ev);
+  syncJourney();
+  syncMilestoneProgress(milestone);
 }
 
 function clamp01(n){
@@ -1789,11 +2001,19 @@ function pushUnique(arr, value){
 function updatePTorpedo(ev){
   const entry = ev.ptorpedo_entry || {};
   if(Array.isArray(entry.conceptos_validados)){
-    entry.conceptos_validados.forEach(x=>pushUnique(state.ptorpedo.confirmed,x));
+    entry.conceptos_validados.forEach(x=>{
+      pushUnique(state.ptorpedo.confirmed,x);
+      syncPTorpedoEntry("confirmed", x);
+    });
   }
   pushUnique(state.ptorpedo.progress, entry.conexion_lograda);
+  syncPTorpedoEntry("progress", entry.conexion_lograda);
   pushUnique(state.ptorpedo.next, entry.error_a_corregir);
-  if(ev.next_prompt) pushUnique(state.ptorpedo.next, ev.next_prompt);
+  syncPTorpedoEntry("next", entry.error_a_corregir);
+  if(ev.next_prompt){
+    pushUnique(state.ptorpedo.next, ev.next_prompt);
+    syncPTorpedoEntry("next", ev.next_prompt);
+  }
 }
 
 function fallbackEvaluation(text){
@@ -1916,6 +2136,7 @@ async function sendToVane(){
   if(readiness() >= 100){
     showFanfare("route","Ruta CAT3 completada","Tu guía personal está lista para repasar.");
   }
+  syncVaneLog("evaluation", JSON.stringify({milestone:state.activeMilestone, readiness:readiness()}), ev);
 
   saveState();
   render();
