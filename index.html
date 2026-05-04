@@ -1449,7 +1449,12 @@ async function ensureSupabaseJourney(){
 
     const inserted = await pSINCROdb
       .from("journeys")
-      .insert([{ student_id:sid, identity:state.identity, readiness:readiness() }])
+      .insert([{ 
+  student_id:sid, 
+  identity:state.identity, 
+  readiness:readiness(),
+  mode: window.isArchitectMode ? "simulation" : "real"
+}])
       .select()
       .single();
 
@@ -1468,7 +1473,12 @@ async function syncJourney(){
   if(!jid) return;
   await pSINCROdb
     .from("journeys")
-    .update({ identity:state.identity, readiness:readiness(), updated_at:new Date().toISOString() })
+    .update({ 
+  identity:state.identity, 
+  readiness:readiness(), 
+  mode: window.isArchitectMode ? "simulation" : "real",
+  updated_at:new Date().toISOString() 
+})
     .eq("id", jid);
 }
 
@@ -2271,18 +2281,13 @@ function architectEnabled(){
 }
 
 function openArchitect(){
+  window.isArchitectMode = true;  // 👈 AQUÍ
+
   localStorage.setItem("ARCHITECT_ACCESS","true");
   state.screen = "architect";
   saveState();
   render();
 }
-
-function closeArchitect(){
-  state.screen = "app";
-  saveState();
-  render();
-}
-
 function architectMetrics(){
   const turns = state.chat.filter(m => m.role === "user").length;
   const vaneTurns = state.chat.filter(m => m.role === "vane" || m.role === "award").length;
