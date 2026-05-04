@@ -1000,6 +1000,7 @@ body.dark .pending-chip{
 const SUPABASE_URL = "https://vogdknwdrbzabvfekhpg.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_0FqxLuaRhzPMLHjO4f-dWA_i7-pl7AD";
 const pSINCROdb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+window.isArchitectMode = false;
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js">
@@ -2264,6 +2265,32 @@ function prevOnboardingStep(){
 
 
 
+
+async function ensureSimulationContext(forceNew=false){
+  window.isArchitectMode = true;
+  localStorage.setItem("ARCHITECT_ACCESS","true");
+  localStorage.setItem("architectMode","true");
+
+  if(!state.identity) state.identity = "ingeniero";
+
+  if(forceNew || !state.studentEmail || !String(state.studentEmail).endsWith("@simulation.psincro.local")){
+    const stamp = Date.now().toString(36).toUpperCase();
+    state.studentName = "Simulación";
+    state.studentLastName = "Arquitecto " + stamp;
+    state.studentEmail = `sim-${stamp.toLowerCase()}@simulation.psincro.local`;
+    state.studentNrc = "SIM";
+    state.sincroCode = "SIM-" + stamp;
+    state.supabaseStudentId = null;
+    state.supabaseJourneyId = null;
+    state.supabaseSyncedEntries = [];
+    saveState();
+  }
+
+  await ensureSupabaseStudent();
+  await syncJourney();
+  return state.supabaseJourneyId;
+}
+
 function requestArchitectAccess(){
   const pass = prompt("Ingrese contraseña de arquitecto:");
   if(pass === "SincroArq2026!"){
@@ -2453,7 +2480,8 @@ function applySimulatedEvaluation(milestone, level){
   logSim(`Aplicado ${level} en ${milestones[milestone].short}`);
 }
 
-function simulateOneStep(){
+async function simulateOneStep(){
+  await ensureSimulationContext(false);
   if(!state.identity){
     state.identity = "ingeniero";
     addChat("vane", "Simulación: identidad asignada como Ingeniero.", "system");
@@ -2473,7 +2501,8 @@ function simulateOneStep(){
   render();
 }
 
-function simulateFullRoute(){
+async function simulateFullRoute(){
+  await ensureSimulationContext(true);
   if(!state.identity){
     state.identity = "ingeniero";
     addChat("vane", "Simulación: identidad asignada como Ingeniero.", "system");
@@ -2489,6 +2518,8 @@ function simulateFullRoute(){
   state.ptorpedoVisible = true;
   state.ptorpedoModalShown = true;
   logSim("Ruta completa simulada: hitos, estrellas, pTorpedo y desbloqueos.");
+  await syncJourney();
+  for (const k of milestoneOrder) await syncMilestoneProgress(k);
   saveState();
   state.screen="architect";
   render();
