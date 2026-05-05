@@ -1085,6 +1085,11 @@ body.dark .sincro-alert.ok{background:#052e16;color:#bbf7d0;border-color:#166534
 const SUPABASE_URL = "https://vogdknwdrbzabvfekhpg.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_0FqxLuaRhzPMLHjO4f-dWA_i7-pl7AD";
 const pSINCROdb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+// Modo demostración: permite mostrar toda la experiencia sin escribir en Supabase.
+window.demoNoSaveMode = localStorage.getItem("PSINCRO_DEMO_NO_SAVE") === "true";
+window.isArchitectMode = localStorage.getItem("architectMode") === "true";
+function isDemoNoSave(){ return window.demoNoSaveMode === true || localStorage.getItem("PSINCRO_DEMO_NO_SAVE") === "true"; }
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1476,6 +1481,16 @@ async function captureAndRegisterStudent(){
 }
 
 async function ensureSupabaseStudent(){
+  if(isDemoNoSave()){
+    if(!state.studentEmail) state.studentEmail = "demo-local@nosave.psincro.local";
+    if(!state.studentName) state.studentName = "Alex";
+    if(!state.studentLastName) state.studentLastName = "Demo sin registro";
+    if(!state.studentNrc) state.studentNrc = "DEMO";
+    if(!state.sincroCode) state.sincroCode = "DEMO-NOSAVE";
+    state.supabaseStudentId = "demo-local-student";
+    saveState();
+    return state.supabaseStudentId;
+  }
   if(state.supabaseStudentId) return state.supabaseStudentId;
   if(!state.studentEmail) return null;
 
@@ -1515,6 +1530,11 @@ async function ensureSupabaseStudent(){
 }
 
 async function ensureSupabaseJourney(){
+  if(isDemoNoSave()){
+    state.supabaseJourneyId = "demo-local-journey";
+    saveState();
+    return state.supabaseJourneyId;
+  }
   const sid = await ensureSupabaseStudent();
   if(!sid) return null;
   if(state.supabaseJourneyId) return state.supabaseJourneyId;
@@ -1556,6 +1576,7 @@ async function ensureSupabaseJourney(){
 }
 
 async function syncJourney(){
+  if(isDemoNoSave()) return;
   const jid = await ensureSupabaseJourney();
   if(!jid) return;
   await pSINCROdb
@@ -1570,6 +1591,7 @@ async function syncJourney(){
 }
 
 async function syncMilestoneProgress(milestoneKey){
+  if(isDemoNoSave()) return;
   const jid = await ensureSupabaseJourney();
   if(!jid || !milestoneKey || !state.progress[milestoneKey]) return;
   const p = state.progress[milestoneKey];
@@ -1590,6 +1612,7 @@ async function syncMilestoneProgress(milestoneKey){
 }
 
 async function syncPTorpedoEntry(type, content, status="active"){
+  if(isDemoNoSave()) return;
   content = String(content||"").trim();
   if(!content) return;
   const key = `${type}::${content}`;
@@ -1604,6 +1627,7 @@ async function syncPTorpedoEntry(type, content, status="active"){
 }
 
 async function syncVaneLog(role, content, evaluation=null){
+  if(isDemoNoSave()) return;
   const jid = await ensureSupabaseJourney();
   if(!jid) return;
   await pSINCROdb.from("vane_logs").insert([{ journey_id:jid, milestone_key:state.activeMilestone, role, content, evaluation }]);
@@ -1656,6 +1680,7 @@ function renderWelcome(){
       No afecta tu nota. Tus datos pedagógicos se almacenan con un código interno. Los análisis se realizarán de forma pseudonimizada y agregada.<br>
       Tus estrellas dependen de mérito conceptual detectado durante el diálogo.
     </div>
+    ${isDemoNoSave() ? `<div class="arch-warning"><strong>Modo demostración sin registro activo.</strong><br>Esta sesión funciona solo en este navegador y no escribe datos en Supabase.</div>` : ''}
 
     <div class="identity-result-card">
       <strong>Ingreso del estudiante</strong>
@@ -1671,6 +1696,8 @@ function renderWelcome(){
     <button onclick="startQuiz()">Comenzar</button>
     <button class="ghost" onclick="recoverAccessByEmail()">Reenviar / recuperar acceso</button>
     <button class="ghost" onclick="requestArchitectAccess()">⚙️ Acceso arquitecto</button>
+    ${architectEnabled() ? `<button class="ghost" onclick="startDemoNoSaveMode()">🧪 Demo sin guardar</button>` : ''}
+    ${isDemoNoSave() ? `<button class="secondary" onclick="clearDemoLocal()">Limpiar demo local</button>` : ''}
     <p class="small" style="margin-top:18px">Este recurso fue diseñado por el Dr. Alex Elías · Académico transversal · Instituto de Ciencias Naturales · Piloto de innovación pedagógica · 2026</p>
   </div>`;
 }
@@ -2410,6 +2437,17 @@ function renderArchitect(){
       <strong>Modo prueba:</strong> este dashboard no es para estudiantes. Para abrirlo usa la clave de arquitecto o <code>?architect=1</code> en la URL.
     </div>
 
+    <div class="arch-control" style="border-color:${isDemoNoSave() ? '#22c55e' : 'var(--line)'}">
+      <strong>Modo demostración sin registro</strong>
+      <p class="small">Permite mostrar registro, test, diálogo, pTorpedo, fanfarria y rutas sin escribir en Supabase. Ideal para mostrar el flujo a varios cursos sin contaminar datos.</p>
+      <div class="actions">
+        <button onclick="startDemoNoSaveMode()">🧪 Iniciar demo sin guardar</button>
+        <button class="secondary" onclick="clearDemoLocal()">Limpiar demo local</button>
+        <button class="ghost" onclick="exitDemoNoSaveMode()">Salir de demo</button>
+      </div>
+      <p class="small"><strong>Estado:</strong> ${isDemoNoSave() ? 'ACTIVO · no se guardará nada en Supabase' : 'Inactivo · las rutas se guardan normalmente si hay conexión'}</p>
+    </div>
+
     <div class="arch-grid">
       <div class="arch-metric"><strong>Readiness</strong><div class="value">${m.readiness}%</div></div>
       <div class="arch-metric"><strong>Hitos abiertos</strong><div class="value">${m.unlocked}/${milestoneOrder.length}</div></div>
@@ -2642,6 +2680,55 @@ function clearSimulation(){
   state.screen = "architect";
   state.simulationLog = ["Simulación limpiada."];
   if(keepAccess) localStorage.setItem("ARCHITECT_ACCESS", keepAccess);
+  saveState();
+  render();
+}
+
+function startDemoNoSaveMode(){
+  const keepAccess = localStorage.getItem("ARCHITECT_ACCESS") || "true";
+  localStorage.setItem("ARCHITECT_ACCESS", keepAccess);
+  localStorage.setItem("architectMode", "true");
+  localStorage.setItem("PSINCRO_DEMO_NO_SAVE", "true");
+  window.demoNoSaveMode = true;
+  window.isArchitectMode = true;
+  localStorage.removeItem(STORAGE_KEY);
+  state = initialState();
+  state.screen = "welcome";
+  state.studentName = "Alex";
+  state.studentLastName = "Demo sin registro";
+  state.studentEmail = "demo-local@nosave.psincro.local";
+  state.studentNrc = "DEMO";
+  state.sincroCode = "DEMO-NOSAVE";
+  state.simulationLog = ["Modo demostración sin registro activado. Nada se escribirá en Supabase."];
+  saveState();
+  render();
+}
+
+function clearDemoLocal(){
+  const keepAccess = localStorage.getItem("ARCHITECT_ACCESS") || "true";
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.setItem("ARCHITECT_ACCESS", keepAccess);
+  localStorage.setItem("architectMode", "true");
+  localStorage.setItem("PSINCRO_DEMO_NO_SAVE", "true");
+  window.demoNoSaveMode = true;
+  window.isArchitectMode = true;
+  state = initialState();
+  state.screen = "architect";
+  state.studentName = "Alex";
+  state.studentLastName = "Demo sin registro";
+  state.studentEmail = "demo-local@nosave.psincro.local";
+  state.studentNrc = "DEMO";
+  state.sincroCode = "DEMO-NOSAVE";
+  state.simulationLog = ["Demo local limpiada. Supabase no fue modificado."];
+  saveState();
+  render();
+}
+
+function exitDemoNoSaveMode(){
+  localStorage.removeItem("PSINCRO_DEMO_NO_SAVE");
+  window.demoNoSaveMode = false;
+  state.simulationLog = state.simulationLog || [];
+  state.simulationLog.push("Modo demostración sin registro desactivado.");
   saveState();
   render();
 }
