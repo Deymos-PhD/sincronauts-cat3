@@ -870,6 +870,91 @@ body.dark .pending-chip{
   color:#fde68a;
 }
 
+
+
+/* Full SINCRO dashboard */
+.sincro-dashboard{
+  margin-top:28px;
+  text-align:left;
+  border:1px solid var(--line);
+  background:var(--soft-card);
+  border-radius:22px;
+  padding:18px;
+}
+.sincro-dashboard h3,.sincro-dashboard h4{ text-align:left; margin:14px 0 10px; }
+.dash-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 16px;}
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:12px;
+  margin:14px 0;
+}
+.kpi-card{
+  border:1px solid var(--line);
+  background:var(--card);
+  border-radius:18px;
+  padding:14px;
+}
+.kpi-label{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.04em;}
+.kpi-number{font-size:28px;font-weight:950;margin-top:6px;}
+.chart-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:14px;
+  margin:14px 0;
+}
+.chart-card{
+  border:1px solid var(--line);
+  background:var(--card);
+  border-radius:18px;
+  padding:14px;
+  min-height:310px;
+}
+.chart-card canvas{max-height:260px;}
+.heatmap-grid{
+  display:grid;
+  grid-template-columns:minmax(160px,1.2fr) repeat(3,1fr);
+  gap:6px;
+  align-items:stretch;
+  margin-top:10px;
+}
+.heat-head,.heat-cell,.heat-label{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:10px;
+  font-size:13px;
+}
+.heat-head{font-weight:900;background:var(--surface);text-align:center;}
+.heat-label{font-weight:900;background:var(--card);}
+.heat-cell{text-align:center;font-weight:900;}
+.heat-low{background:#fee2e2;color:#7f1d1d;}
+.heat-mid{background:#fef3c7;color:#78350f;}
+.heat-high{background:#dcfce7;color:#14532d;}
+.alert-list{display:grid;gap:10px;margin-top:10px;}
+.sincro-alert{
+  border:1px solid #fecaca;
+  background:#fef2f2;
+  color:#7f1d1d;
+  border-radius:16px;
+  padding:12px;
+  font-weight:800;
+}
+.sincro-alert.ok{
+  border-color:#bbf7d0;
+  background:#ecfdf5;
+  color:#14532d;
+}
+.recent-table{
+  width:100%;border-collapse:collapse;margin-top:10px;font-size:13px;
+}
+.recent-table th,.recent-table td{border-bottom:1px solid var(--line);padding:9px;text-align:left;}
+body.dark .kpi-card,body.dark .chart-card,body.dark .heat-label{background:var(--card);} 
+body.dark .heat-low{background:#450a0a;color:#fecaca;}
+body.dark .heat-mid{background:#451a03;color:#fde68a;}
+body.dark .heat-high{background:#052e16;color:#bbf7d0;}
+body.dark .sincro-alert{background:#450a0a;color:#fecaca;border-color:#7f1d1d;}
+body.dark .sincro-alert.ok{background:#052e16;color:#bbf7d0;border-color:#166534;}
+
 @media(max-width:1100px){
   body{padding:14px}
   .app{grid-template-columns:1fr; max-width:820px}
@@ -1000,9 +1085,9 @@ body.dark .pending-chip{
 const SUPABASE_URL = "https://vogdknwdrbzabvfekhpg.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_0FqxLuaRhzPMLHjO4f-dWA_i7-pl7AD";
 const pSINCROdb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-window.isArchitectMode = false;
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js">
 </script>
 
@@ -1038,6 +1123,7 @@ function setTheme(theme){
 
 const STORAGE_KEY = "PSINCRO_CAT3_V0_7_ARQ";
 const ENDPOINT = "/.netlify/functions/pvane-evaluate";
+window.isArchitectMode = false;
 
 const identities = {
   ingeniero:{
@@ -2265,32 +2351,6 @@ function prevOnboardingStep(){
 
 
 
-
-async function ensureSimulationContext(forceNew=false){
-  window.isArchitectMode = true;
-  localStorage.setItem("ARCHITECT_ACCESS","true");
-  localStorage.setItem("architectMode","true");
-
-  if(!state.identity) state.identity = "ingeniero";
-
-  if(forceNew || !state.studentEmail || !String(state.studentEmail).endsWith("@simulation.psincro.local")){
-    const stamp = Date.now().toString(36).toUpperCase();
-    state.studentName = "Simulación";
-    state.studentLastName = "Arquitecto " + stamp;
-    state.studentEmail = `sim-${stamp.toLowerCase()}@simulation.psincro.local`;
-    state.studentNrc = "SIM";
-    state.sincroCode = "SIM-" + stamp;
-    state.supabaseStudentId = null;
-    state.supabaseJourneyId = null;
-    state.supabaseSyncedEntries = [];
-    saveState();
-  }
-
-  await ensureSupabaseStudent();
-  await syncJourney();
-  return state.supabaseJourneyId;
-}
-
 function requestArchitectAccess(){
   const pass = prompt("Ingrese contraseña de arquitecto:");
   if(pass === "SincroArq2026!"){
@@ -2419,7 +2479,39 @@ function renderArchitect(){
 
     <h3>Log de simulación</h3>
     <div class="arch-log">${escapeHTML((state.simulationLog||[]).join("\\n") || "Aún no hay simulaciones.")}</div>
+
+    <section class="sincro-dashboard">
+      <h3>📊 Dashboard Full SINCRO · datos reales</h3>
+      <p class="small">Lectura directa desde Supabase. Filtra simulaciones y rutas reales usando la columna <code>mode</code>.</p>
+      <div class="dash-actions">
+        <button onclick="loadSincroDashboard()">Actualizar dashboard</button>
+        <button class="ghost" onclick="deleteSimulationData()">Limpiar simulaciones Supabase</button>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-label">Journeys totales</div><div id="kpi-total" class="kpi-number">—</div></div>
+        <div class="kpi-card"><div class="kpi-label">Rutas reales</div><div id="kpi-real" class="kpi-number">—</div></div>
+        <div class="kpi-card"><div class="kpi-label">Simulaciones</div><div id="kpi-sim" class="kpi-number">—</div></div>
+        <div class="kpi-card"><div class="kpi-label">Readiness promedio</div><div id="kpi-avg" class="kpi-number">—</div></div>
+        <div class="kpi-card"><div class="kpi-label">CAT3-ready</div><div id="kpi-ready" class="kpi-number">—</div></div>
+      </div>
+
+      <div id="sincroAlerts" class="alert-list"></div>
+
+      <div class="chart-grid">
+        <div class="chart-card"><h4>Identidades</h4><canvas id="identityChart"></canvas></div>
+        <div class="chart-card"><h4>Readiness por tipo</h4><canvas id="modeChart"></canvas></div>
+        <div class="chart-card"><h4>Promedio por hito</h4><canvas id="milestoneChart"></canvas></div>
+      </div>
+
+      <h4>Heatmap de sincronización por hito</h4>
+      <div id="sincroHeatmap" class="heatmap-grid"></div>
+
+      <h4>Actividad reciente</h4>
+      <div id="recentActivity" class="small">Cargando…</div>
+    </section>
   </div>`;
+  setTimeout(loadSincroDashboard, 450);
 }
 
 function backFromArchitect(){
@@ -2480,8 +2572,26 @@ function applySimulatedEvaluation(milestone, level){
   logSim(`Aplicado ${level} en ${milestones[milestone].short}`);
 }
 
+
+async function ensureSimulationStudent(){
+  window.isArchitectMode = true;
+  if(!state.studentEmail || !state.studentEmail.endsWith("@simulation.psincro.local")){
+    const token = Math.random().toString(36).slice(2,10).toUpperCase();
+    state.studentName = "Simulación";
+    state.studentLastName = "Arquitecto " + token;
+    state.studentEmail = `sim-${token.toLowerCase()}@simulation.psincro.local`;
+    state.studentNrc = "SIM";
+    state.sincroCode = "SIM-" + token;
+    state.supabaseStudentId = null;
+    state.supabaseJourneyId = null;
+    saveState();
+  }
+  await ensureSupabaseStudent();
+  await ensureSupabaseJourney();
+}
+
 async function simulateOneStep(){
-  await ensureSimulationContext(false);
+  await ensureSimulationStudent();
   if(!state.identity){
     state.identity = "ingeniero";
     addChat("vane", "Simulación: identidad asignada como Ingeniero.", "system");
@@ -2502,7 +2612,7 @@ async function simulateOneStep(){
 }
 
 async function simulateFullRoute(){
-  await ensureSimulationContext(true);
+  await ensureSimulationStudent();
   if(!state.identity){
     state.identity = "ingeniero";
     addChat("vane", "Simulación: identidad asignada como Ingeniero.", "system");
@@ -2519,7 +2629,7 @@ async function simulateFullRoute(){
   state.ptorpedoModalShown = true;
   logSim("Ruta completa simulada: hitos, estrellas, pTorpedo y desbloqueos.");
   await syncJourney();
-  for (const k of milestoneOrder) await syncMilestoneProgress(k);
+  for(const k of milestoneOrder){ await syncMilestoneProgress(k); }
   saveState();
   state.screen="architect";
   render();
@@ -2588,6 +2698,276 @@ function jumpToMilestone(milestoneId){
   saveState();
   render();
   setTimeout(()=>askPrompt(),150);
+}
+
+
+/* =========================================================
+   Dashboard Full SINCRO conectado a Supabase + Chart.js
+   ========================================================= */
+let sincroCharts = {};
+const milestoneLabels = {
+  cat3_h1_termodinamica:"Energía",
+  cat3_h2_enzimas:"ATP/REDOX",
+  cat3_h3_atp_redox:"Enzimas",
+  cat3_h6_anaerobiosis_fermentacion:"Resp./Ferm."
+};
+
+async function fetchSincroDashboardData(){
+  const [journeysRes, milestonesRes, studentsRes, logsRes] = await Promise.all([
+    pSINCROdb.from("journeys").select("id, student_id, identity, readiness, mode, created_at, updated_at").order("created_at", {ascending:false}),
+    pSINCROdb.from("milestone_progress").select("journey_id, milestone_key, reconoce, explica, integra, unlocked, updated_at"),
+    pSINCROdb.from("students").select("id, email, first_name, last_name, nrc, sincro_code, created_at"),
+    pSINCROdb.from("vane_logs").select("journey_id, milestone_key, role, created_at").order("created_at", {ascending:false}).limit(50)
+  ]);
+
+  if(journeysRes.error) throw journeysRes.error;
+  if(milestonesRes.error) throw milestonesRes.error;
+
+  return {
+    journeys: journeysRes.data || [],
+    milestones: milestonesRes.data || [],
+    students: studentsRes.data || [],
+    logs: logsRes.data || []
+  };
+}
+
+function computeDashboardModel(raw){
+  const journeys = raw.journeys || [];
+  const milestones = raw.milestones || [];
+  const total = journeys.length;
+  const real = journeys.filter(j=>j.mode === "real").length;
+  const simulation = journeys.filter(j=>j.mode === "simulation").length;
+  const avgReadiness = total ? Math.round(journeys.reduce((a,j)=>a+Number(j.readiness||0),0)/total) : 0;
+  const readyCount = journeys.filter(j=>Number(j.readiness||0) >= 80).length;
+  const readyPercent = total ? Math.round((readyCount/total)*100) : 0;
+
+  const identityDist = {};
+  journeys.forEach(j=>{
+    const key = j.identity || "sin identidad";
+    identityDist[key] = (identityDist[key] || 0) + 1;
+  });
+
+  const modeAvg = {real:[], simulation:[]};
+  journeys.forEach(j=>{
+    const mode = j.mode || "real";
+    if(!modeAvg[mode]) modeAvg[mode] = [];
+    modeAvg[mode].push(Number(j.readiness||0));
+  });
+  const modeReadiness = Object.fromEntries(Object.entries(modeAvg).map(([k,arr])=>[
+    k, arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : 0
+  ]));
+
+  const milestoneMap = {};
+  milestones.forEach(m=>{
+    if(!milestoneMap[m.milestone_key]) milestoneMap[m.milestone_key] = {reconoce:[], explica:[], integra:[], avg:[]};
+    const r = Number(m.reconoce||0);
+    const e = Number(m.explica||0);
+    const i = Number(m.integra||0);
+    milestoneMap[m.milestone_key].reconoce.push(r);
+    milestoneMap[m.milestone_key].explica.push(e);
+    milestoneMap[m.milestone_key].integra.push(i);
+    milestoneMap[m.milestone_key].avg.push((r+e+i)/3);
+  });
+
+  const milestoneSummary = {};
+  Object.entries(milestoneMap).forEach(([key,obj])=>{
+    const mean = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0;
+    milestoneSummary[key] = {
+      reconoce: Math.round(mean(obj.reconoce)*100),
+      explica: Math.round(mean(obj.explica)*100),
+      integra: Math.round(mean(obj.integra)*100),
+      avg: Math.round(mean(obj.avg)*100)
+    };
+  });
+
+  const alerts = buildSincroAlerts({journeys, milestoneSummary, total, readyPercent});
+  const recent = journeys.slice(0,10).map(j=>{
+    const student = (raw.students||[]).find(s=>s.id === j.student_id);
+    return {
+      identity:j.identity || "—",
+      mode:j.mode || "real",
+      readiness:Number(j.readiness||0),
+      student: student ? `${student.first_name||""} ${student.last_name||""}`.trim() || student.email : "—",
+      created_at:j.created_at
+    };
+  });
+
+  return {kpis:{total, real, simulation, avgReadiness, readyPercent, readyCount}, identityDist, modeReadiness, milestoneSummary, alerts, recent};
+}
+
+function buildSincroAlerts(model){
+  const alerts = [];
+  Object.entries(model.milestoneSummary || {}).forEach(([key,val])=>{
+    const failure = 100 - Number(val.avg||0);
+    if(failure >= 70){
+      alerts.push({level:"critical", text:`${milestoneLabels[key] || key} está fallando en ${failure}%: intervención docente prioritaria.`});
+    }else if(failure >= 45){
+      alerts.push({level:"warn", text:`${milestoneLabels[key] || key} muestra brecha de ${failure}%: conviene reforzar antes de CAT3.`});
+    }
+  });
+  if(model.kpis?.total === 0){
+    alerts.push({level:"ok", text:"Aún no hay trayectorias registradas. Ejecuta una simulación o espera ingresos reales."});
+  }else if((model.kpis?.readyPercent || 0) >= 75){
+    alerts.push({level:"ok", text:`Convergencia saludable: ${model.kpis.readyPercent}% de rutas están en CAT3-ready.`});
+  }
+  if(!alerts.length) alerts.push({level:"ok", text:"Sin alertas críticas por ahora. El sistema muestra sincronización estable."});
+  return alerts;
+}
+
+async function loadSincroDashboard(){
+  const rootDash = document.getElementById("kpi-total");
+  if(!rootDash) return;
+  try{
+    rootDash.innerText = "…";
+    const raw = await fetchSincroDashboardData();
+    const model = computeDashboardModel(raw);
+    renderSincroDashboard(model);
+  }catch(err){
+    console.error("SINCRO dashboard error", err);
+    const alerts = document.getElementById("sincroAlerts");
+    if(alerts) alerts.innerHTML = `<div class="sincro-alert">No pude cargar el dashboard desde Supabase: ${escapeHTML(err.message || err)}</div>`;
+  }
+}
+
+function renderSincroDashboard(model){
+  setText("kpi-total", model.kpis.total);
+  setText("kpi-real", model.kpis.real);
+  setText("kpi-sim", model.kpis.simulation);
+  setText("kpi-avg", model.kpis.avgReadiness + "%");
+  setText("kpi-ready", model.kpis.readyPercent + "%");
+
+  const alerts = document.getElementById("sincroAlerts");
+  if(alerts){
+    alerts.innerHTML = model.alerts.map(a=>`<div class="sincro-alert ${a.level==='ok'?'ok':''}">${escapeHTML(a.text)}</div>`).join("");
+  }
+
+  renderIdentityChart(model.identityDist);
+  renderModeChart(model.modeReadiness);
+  renderMilestoneChart(model.milestoneSummary);
+  renderHeatmap(model.milestoneSummary);
+  renderRecentActivity(model.recent);
+}
+
+function setText(id, value){
+  const el = document.getElementById(id);
+  if(el) el.innerText = value;
+}
+
+function destroyChart(id){
+  if(sincroCharts[id]){
+    sincroCharts[id].destroy();
+    delete sincroCharts[id];
+  }
+}
+
+function chartCanvas(id){
+  const el = document.getElementById(id);
+  return el ? el.getContext("2d") : null;
+}
+
+function renderIdentityChart(dist){
+  const ctx = chartCanvas("identityChart");
+  if(!ctx || typeof Chart === "undefined") return;
+  destroyChart("identityChart");
+  const labels = Object.keys(dist || {});
+  const values = labels.map(k=>dist[k]);
+  sincroCharts.identityChart = new Chart(ctx, {
+    type:"doughnut",
+    data:{labels:labels.length?labels:["sin datos"], datasets:[{data:values.length?values:[1]}]},
+    options:{responsive:true,plugins:{legend:{position:"bottom"}}}
+  });
+}
+
+function renderModeChart(modeReadiness){
+  const ctx = chartCanvas("modeChart");
+  if(!ctx || typeof Chart === "undefined") return;
+  destroyChart("modeChart");
+  const labels = Object.keys(modeReadiness || {});
+  const values = labels.map(k=>modeReadiness[k]);
+  sincroCharts.modeChart = new Chart(ctx, {
+    type:"bar",
+    data:{labels:labels.length?labels:["sin datos"], datasets:[{label:"Readiness promedio (%)", data:values.length?values:[0]}]},
+    options:{responsive:true,scales:{y:{min:0,max:100}}}
+  });
+}
+
+function renderMilestoneChart(summary){
+  const ctx = chartCanvas("milestoneChart");
+  if(!ctx || typeof Chart === "undefined") return;
+  destroyChart("milestoneChart");
+  const keys = Object.keys(summary || {});
+  const labels = keys.map(k=>milestoneLabels[k] || k);
+  const values = keys.map(k=>summary[k].avg || 0);
+  sincroCharts.milestoneChart = new Chart(ctx, {
+    type:"bar",
+    data:{labels:labels.length?labels:["sin datos"], datasets:[{label:"Promedio N+S por hito (%)", data:values.length?values:[0]}]},
+    options:{responsive:true,scales:{y:{min:0,max:100}}}
+  });
+}
+
+function heatClass(v){
+  v = Number(v||0);
+  if(v < 45) return "heat-low";
+  if(v < 75) return "heat-mid";
+  return "heat-high";
+}
+
+function renderHeatmap(summary){
+  const el = document.getElementById("sincroHeatmap");
+  if(!el) return;
+  const keys = Object.keys(summary || {});
+  let html = `
+    <div class="heat-head">Hito</div>
+    <div class="heat-head">Reconoce</div>
+    <div class="heat-head">Explica</div>
+    <div class="heat-head">Integra</div>`;
+  if(!keys.length){
+    html += `<div class="heat-label">Sin datos</div><div class="heat-cell heat-low">0%</div><div class="heat-cell heat-low">0%</div><div class="heat-cell heat-low">0%</div>`;
+  }else{
+    keys.forEach(k=>{
+      const v = summary[k];
+      html += `
+        <div class="heat-label">${escapeHTML(milestoneLabels[k] || k)}</div>
+        <div class="heat-cell ${heatClass(v.reconoce)}">${v.reconoce}%</div>
+        <div class="heat-cell ${heatClass(v.explica)}">${v.explica}%</div>
+        <div class="heat-cell ${heatClass(v.integra)}">${v.integra}%</div>`;
+    });
+  }
+  el.innerHTML = html;
+}
+
+function renderRecentActivity(recent){
+  const el = document.getElementById("recentActivity");
+  if(!el) return;
+  if(!recent || !recent.length){
+    el.innerHTML = "Sin actividad reciente.";
+    return;
+  }
+  el.innerHTML = `
+    <table class="recent-table">
+      <thead><tr><th>Estudiante</th><th>Identidad</th><th>Modo</th><th>Readiness</th><th>Fecha</th></tr></thead>
+      <tbody>${recent.map(r=>`<tr><td>${escapeHTML(r.student)}</td><td>${escapeHTML(r.identity)}</td><td>${escapeHTML(r.mode)}</td><td>${r.readiness}%</td><td>${new Date(r.created_at).toLocaleString()}</td></tr>`).join("")}</tbody>
+    </table>`;
+}
+
+async function deleteSimulationData(){
+  if(!confirm("¿Eliminar datos de simulación en Supabase? No tocará rutas reales.")) return;
+  try{
+    const { data:jids, error } = await pSINCROdb.from("journeys").select("id").eq("mode","simulation");
+    if(error) throw error;
+    const ids = (jids || []).map(x=>x.id);
+    if(ids.length){
+      await pSINCROdb.from("vane_logs").delete().in("journey_id", ids);
+      await pSINCROdb.from("ptorpedo_entries").delete().in("journey_id", ids);
+      await pSINCROdb.from("milestone_progress").delete().in("journey_id", ids);
+      await pSINCROdb.from("journeys").delete().in("id", ids);
+    }
+    await pSINCROdb.from("students").delete().like("email", "%@simulation.psincro.local");
+    logSim("Simulaciones Supabase limpiadas.");
+    await loadSincroDashboard();
+  }catch(err){
+    alert("No pude limpiar simulaciones: " + (err.message || err));
+  }
 }
 
 function renderReport(){
