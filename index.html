@@ -1,215 +1,475 @@
 <!doctype html>
-<html lang="es" data-theme="dark">
+<html lang="es">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>pSINCRO · Biología Celular CBI111</title>
-  <meta name="theme-color" content="#080b1f" />
+  <meta name="theme-color" content="#07111f" />
   <style>
     :root{
-      --bg:#080b1f; --bg2:#101a36; --card:rgba(14,21,48,.78); --card2:rgba(18,28,58,.72);
-      --text:#f7fbff; --muted:#b7c3d9; --line:rgba(255,255,255,.13);
-      --accent:#28c8ff; --accent2:#ff38d1; --accent3:#8b5cf6; --paper:#fff;
-      --chip:rgba(255,255,255,.07); --shadow:0 24px 70px rgba(0,0,0,.38); --r:28px;
-      --factGlowA:rgba(40,200,255,.58); --factGlowB:rgba(255,56,209,.54);
-      --ok:#38dca7; --warn:#ffe187;
+      color-scheme: dark;
+      --bg:#07111f;
+      --bg2:#0b1024;
+      --surface:rgba(20,31,55,.78);
+      --surface2:rgba(26,38,67,.92);
+      --text:#f8fafc;
+      --muted:#b8c3d8;
+      --line:rgba(255,255,255,.14);
+      --blue:#38bdf8;
+      --violet:#a78bfa;
+      --pink:#ec4899;
+      --cyan:#22d3ee;
+      --amber:#fde68a;
+      --danger:#f87171;
+      --shadow:0 18px 55px rgba(0,0,0,.38);
+      --radius:28px;
+      --body-gradient:
+        radial-gradient(circle at 8% 0%, rgba(56,189,248,.22), transparent 32%),
+        radial-gradient(circle at 92% 14%, rgba(236,72,153,.18), transparent 34%),
+        linear-gradient(135deg,#07111f,#090b1d 60%,#12051f);
     }
-    html[data-theme="light"]{
-      --bg:#f8fbff; --bg2:#eef4ff; --card:rgba(255,255,255,.80); --card2:rgba(255,255,255,.94);
-      --text:#10172d; --muted:#59677f; --line:rgba(20,30,60,.12);
-      --accent:#158bff; --accent2:#e840cf; --accent3:#8057f5; --paper:#10172d;
-      --chip:rgba(20,40,90,.04); --shadow:0 22px 60px rgba(54,74,120,.14);
-      --factGlowA:rgba(21,139,255,.30); --factGlowB:rgba(232,64,207,.24);
+
+    body.light{
+      color-scheme: light;
+      --bg:#f8fafc;
+      --bg2:#eef2ff;
+      --surface:rgba(255,255,255,.82);
+      --surface2:rgba(255,255,255,.94);
+      --text:#0f172a;
+      --muted:#596579;
+      --line:rgba(15,23,42,.12);
+      --blue:#0ea5e9;
+      --violet:#8b5cf6;
+      --pink:#d946ef;
+      --cyan:#06b6d4;
+      --amber:#f59e0b;
+      --danger:#dc2626;
+      --shadow:0 18px 55px rgba(15,23,42,.12);
+      --body-gradient:
+        radial-gradient(circle at 8% 0%, rgba(56,189,248,.18), transparent 34%),
+        radial-gradient(circle at 92% 14%, rgba(217,70,239,.15), transparent 36%),
+        linear-gradient(135deg,#ffffff,#f8fbff 62%,#f5f0ff);
     }
+
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
-    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
-    body:before{content:"";position:fixed;inset:0;z-index:-3;background:
-      radial-gradient(circle at 16% 0%, rgba(40,200,255,.22), transparent 28%),
-      radial-gradient(circle at 100% 28%, rgba(255,56,209,.18), transparent 34%),
-      linear-gradient(140deg,var(--bg),var(--bg2));}
-    body:after{content:"";position:fixed;inset:0;z-index:-2;background:
-      radial-gradient(circle at 86% 22%, rgba(139,92,246,.16) 0 1px, transparent 2px),
-      radial-gradient(circle at 60% 55%, rgba(40,200,255,.12) 0 1px, transparent 2px);
-      background-size:170px 170px,230px 230px;opacity:.65;animation:floatBg 18s linear infinite;pointer-events:none}
-    @keyframes floatBg{from{transform:translate3d(0,0,0)}to{transform:translate3d(-32px,18px,0)}}
+    body{
+      margin:0;
+      min-height:100dvh;
+      background:var(--body-gradient);
+      color:var(--text);
+      font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      transition:background .35s ease,color .35s ease;
+      overflow-x:hidden;
+    }
+    body:before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 22% 24%, rgba(56,189,248,.10), transparent 2px),
+        radial-gradient(circle at 66% 18%, rgba(236,72,153,.10), transparent 2px),
+        radial-gradient(circle at 78% 72%, rgba(167,139,250,.10), transparent 2px);
+      background-size:190px 190px,240px 240px,310px 310px;
+      opacity:.8;
+      animation:drift 28s linear infinite;
+    }
+    @keyframes drift{to{transform:translate3d(-60px,40px,0)}}
+
     button,input,textarea{font:inherit}
-    button{border:0;cursor:pointer;color:inherit}
-    .app{width:min(900px,100%);margin:0 auto;min-height:100dvh;padding:16px 16px 110px}
-    .top{position:sticky;top:0;z-index:30;padding:10px 0 14px;background:linear-gradient(180deg,var(--bg),rgba(8,11,31,.72),transparent);backdrop-filter:blur(16px)}
-    html[data-theme="light"] .top{background:linear-gradient(180deg,rgba(248,251,255,.96),rgba(248,251,255,.72),transparent)}
-    .bar{display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:11px}
-    .logo{width:44px;height:44px;border-radius:50%;position:relative;background:radial-gradient(circle at 35% 30%,#eaf8ff 0 16%,#22d3ee 17% 36%,#4658ff 37% 57%,#ff3bd5 58% 76%,#1b1130 77%);box-shadow:0 0 0 3px rgba(255,255,255,.08),0 0 28px rgba(255,56,209,.33)}
-    .brand h1{font-size:18px;margin:0;letter-spacing:-.02em}.brand h1 span{color:var(--accent3)}.brand p{font-size:12px;color:var(--muted);margin:2px 0 0;line-height:1.25}
-    .theme{display:flex;align-items:center;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.06)}.theme button{width:38px;height:34px;border-radius:999px;background:transparent;opacity:.55}.theme button.active{background:linear-gradient(135deg,var(--accent),var(--accent2));opacity:1;color:white;box-shadow:0 0 18px var(--factGlowA)}
-    .hero{padding:20px 0 10px;position:relative}.hero:before{content:"";position:absolute;left:7px;top:40px;width:4px;height:112px;border-radius:20px;background:linear-gradient(180deg,var(--accent),var(--accent2));box-shadow:0 0 22px var(--factGlowA)}.hero-inner{padding-left:32px}.hero h2{font-size:clamp(34px,7vw,58px);line-height:1.02;letter-spacing:-1.7px;margin:10px 0 12px;max-width:720px}.hero h2 .grad{background:linear-gradient(100deg,var(--accent),var(--accent3),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}.lead{font-size:16px;line-height:1.48;color:var(--muted);max-width:650px;margin:0}
-    .mini-pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:8px 12px;background:rgba(255,255,255,.06);font-size:13px;color:var(--muted)}
-    html[data-theme="light"] .mini-pill{background:rgba(255,255,255,.72)}
-    .card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:20px;margin:16px 0;backdrop-filter:blur(16px)}
-    .factobox{position:relative;overflow:hidden;min-height:186px;display:grid;grid-template-columns:92px 1fr;gap:18px;align-items:center;border-color:rgba(40,200,255,.48);box-shadow:0 0 0 1px rgba(255,56,209,.24),0 0 32px var(--factGlowA),0 0 54px rgba(255,56,209,.20);transition:transform .18s ease, box-shadow .35s ease, border-color .35s ease}.factobox:hover{transform:translateY(-1px)}.factobox.pulse{animation:factPulse .72s ease}.factobox:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 12% 50%,var(--factGlowA),transparent 22%),radial-gradient(circle at 90% 6%,var(--factGlowB),transparent 28%);opacity:.55;pointer-events:none}.factobox:after{content:"";position:absolute;inset:-20%;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.10),transparent 70%);transform:translateX(-70%);animation:shine 7s ease-in-out infinite;pointer-events:none}
-    @keyframes shine{0%,45%{transform:translateX(-72%)}65%,100%{transform:translateX(72%)}}@keyframes factPulse{0%{box-shadow:0 0 0 1px rgba(255,56,209,.24),0 0 32px var(--factGlowA)}55%{box-shadow:0 0 0 2px rgba(255,56,209,.72),0 0 52px var(--factGlowA),0 0 82px var(--factGlowB)}100%{box-shadow:0 0 0 1px rgba(255,56,209,.24),0 0 32px var(--factGlowA)}}
-    .dna{position:relative;z-index:2;width:82px;height:82px;border-radius:50%;display:grid;place-items:center;font-size:40px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);box-shadow:inset 0 0 24px rgba(40,200,255,.15),0 0 28px var(--factGlowB)}
-    .fact-content{position:relative;z-index:2}.fact-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.tag{font-size:13px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}.fact-type{font-size:13px;color:var(--accent2);font-weight:800}.fact-text{font-size:clamp(22px,4.5vw,32px);line-height:1.08;margin:0 0 12px;font-weight:900;letter-spacing:-.6px}.fact-sub{font-size:15px;color:var(--muted);line-height:1.4;margin:0 0 14px}.fact-action{display:inline-flex;align-items:center;gap:8px;font-weight:900;color:var(--accent);font-size:14px}.dots{display:flex;gap:7px;margin-top:13px}.dot{width:20px;height:4px;border-radius:99px;background:rgba(255,255,255,.18)}.dot.active{background:linear-gradient(90deg,var(--accent),var(--accent2));box-shadow:0 0 12px var(--factGlowA)}
-    .section-title{font-size:26px;margin:0 0 8px;letter-spacing:-.4px}.hint{font-size:15px;color:var(--muted);line-height:1.55;margin:0 0 16px}.small{font-size:13px;color:var(--muted);line-height:1.4}.hidden{display:none!important}
-    .photo-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}.photo-btn{border:1.5px dashed rgba(40,200,255,.62);border-radius:22px;padding:18px 14px;min-height:112px;text-align:center;display:grid;place-items:center;background:rgba(40,200,255,.06);font-weight:950;color:var(--accent);font-size:18px}.photo-btn span{display:block;color:var(--muted);font-size:13px;margin-top:6px;font-weight:700}.photo-btn input{display:none}.photo-btn:hover{box-shadow:0 0 0 4px rgba(40,200,255,.08)}
-    .evidence{display:grid;grid-template-columns:98px 1fr;gap:14px;align-items:center;border:1px solid var(--line);border-radius:22px;padding:12px;background:rgba(255,255,255,.05);margin:12px 0 0}.evidence img{width:98px;height:98px;border-radius:18px;object-fit:cover;border:1px solid var(--line)}.evidence h4{margin:0 0 4px;font-size:18px}.evidence .change{margin-top:8px;display:inline-flex;gap:10px;flex-wrap:wrap}.tiny-btn{border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.06);padding:8px 11px;color:var(--text);font-size:13px;font-weight:800}.tiny-btn input{display:none}
-    .bridge{border:1px solid rgba(40,200,255,.25);background:linear-gradient(135deg,rgba(40,200,255,.10),rgba(255,56,209,.06));border-radius:22px;padding:15px;margin:16px 0}.bridge h4{margin:0 0 6px;font-size:18px}.bridge p{margin:0;color:var(--muted);line-height:1.45;font-size:14px}
-    .from-title{font-size:22px;font-weight:950;letter-spacing:-.4px;margin:18px 0 10px}.conversation-list{display:grid;gap:10px}.conversation-card{position:relative;text-align:left;width:100%;border:1px solid var(--line);border-radius:22px;padding:15px;background:rgba(255,255,255,.055);display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease}.conversation-card:hover{transform:translateY(-1px);border-color:rgba(40,200,255,.45)}.conversation-card.active{border-color:rgba(40,200,255,.75);box-shadow:0 0 0 3px rgba(40,200,255,.12),0 0 24px rgba(40,200,255,.18)}.conversation-card .ico{width:40px;height:40px;border-radius:15px;display:grid;place-items:center;background:rgba(40,200,255,.12);font-size:22px}.conversation-card h4{margin:0 0 3px;font-size:17px}.conversation-card p{margin:0;color:var(--muted);font-size:13px;line-height:1.35}.manual-start{margin-top:12px;border-top:1px solid var(--line);padding-top:14px}.q{display:block;font-size:20px;font-weight:950;letter-spacing:-.3px;margin:0 0 10px}textarea{width:100%;min-height:112px;resize:vertical;border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.065);color:var(--text);padding:16px;outline:none;font-size:16px;line-height:1.42}textarea:focus{border-color:rgba(40,200,255,.8);box-shadow:0 0 0 4px rgba(40,200,255,.10)}textarea::placeholder{color:rgba(183,195,217,.78)}html[data-theme="light"] textarea::placeholder{color:rgba(89,103,127,.70)}
-    .primary{width:100%;border-radius:24px;padding:17px 16px;background:linear-gradient(100deg,var(--accent),var(--accent3),var(--accent2));color:white;font-weight:1000;font-size:18px;box-shadow:0 16px 32px rgba(255,56,209,.22);margin-top:14px}.primary:active{transform:translateY(1px)}.ghost{background:transparent;color:var(--accent);font-weight:900;padding:10px 2px;margin-top:6px}
-    .minirow{display:flex;gap:10px;justify-content:space-between;align-items:center}.status{font-size:12px;color:var(--muted)}.chat{display:flex;flex-direction:column;gap:10px;max-height:48dvh;overflow:auto;padding-right:2px}.msg{padding:12px 14px;border-radius:18px;line-height:1.45;font-size:15px}.msg.user{background:rgba(40,200,255,.16);align-self:flex-end;border-bottom-right-radius:6px;max-width:88%}.msg.vane{background:rgba(255,255,255,.075);align-self:flex-start;border-bottom-left-radius:6px;max-width:92%;border:1px solid var(--line)}
-    .composer{position:fixed;left:0;right:0;bottom:0;z-index:20;background:linear-gradient(180deg,transparent,rgba(8,11,31,.92) 22%,rgba(8,11,31,.98));padding:18px 16px calc(14px + env(safe-area-inset-bottom))}html[data-theme="light"] .composer{background:linear-gradient(180deg,transparent,rgba(248,251,255,.92) 22%,rgba(248,251,255,.98))}.composer-inner{width:min(900px,100%);margin:0 auto;display:grid;grid-template-columns:1fr 54px;gap:8px;align-items:end}.composer textarea{min-height:52px;max-height:124px;border-radius:18px}.send{width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--accent2));font-weight:1000;color:white}.stuck{position:fixed;right:16px;bottom:102px;z-index:25;width:82px;height:82px;border-radius:50%;background:rgba(255,255,255,.075);border:1px solid rgba(255,56,209,.55);box-shadow:0 0 30px rgba(255,56,209,.35);font-weight:900;font-size:12px;line-height:1.1;backdrop-filter:blur(14px)}.footer-note{font-size:12px;color:rgba(183,195,217,.78);text-align:center;line-height:1.55;margin:22px 10px 0}html[data-theme="light"] .footer-note{color:#67748a}
-    @media (max-width:640px){.app{padding:12px 12px 108px}.brand h1{font-size:17px}.brand p{font-size:12px}.logo{width:40px;height:40px}.hero{padding-top:12px}.hero-inner{padding-left:26px}.hero h2{font-size:37px}.hero:before{height:104px}.factobox{grid-template-columns:1fr;gap:10px;min-height:0}.dna{width:74px;height:74px;font-size:36px}.photo-actions{grid-template-columns:1fr}.evidence{grid-template-columns:86px 1fr}.evidence img{width:86px;height:86px}.section-title{font-size:25px}.card{padding:18px;border-radius:25px}.from-title{font-size:21px}.conversation-card{grid-template-columns:36px 1fr}.conversation-card .ico{width:36px;height:36px;border-radius:13px}.theme button{width:34px;height:32px}.stuck{width:74px;height:74px;bottom:98px}}
+    button{border:0;cursor:pointer}
+    .app{width:min(820px,100%);margin:0 auto;min-height:100dvh;padding:16px 16px 112px}
+    .top{
+      position:sticky;top:0;z-index:30;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:14px 0 12px;
+      background:linear-gradient(180deg, color-mix(in srgb, var(--bg) 96%, transparent), color-mix(in srgb, var(--bg) 72%, transparent), transparent);
+      backdrop-filter:blur(18px);
+    }
+    .brand{display:flex;align-items:center;gap:12px;min-width:0}
+    .logo{
+      width:54px;height:54px;border-radius:50%;position:relative;flex:0 0 auto;
+      background:conic-gradient(from 210deg,var(--cyan),var(--blue),var(--violet),var(--pink),var(--cyan));
+      box-shadow:0 0 26px color-mix(in srgb, var(--pink) 38%, transparent), inset 0 0 0 5px rgba(255,255,255,.10);
+    }
+    .logo:after{content:"";position:absolute;inset:11px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #fff 0 16%, var(--cyan) 18% 42%, var(--violet) 43% 100%);filter:saturate(1.2)}
+    .brand h1{font-size:22px;line-height:1;margin:0;font-weight:900;letter-spacing:-.03em}
+    .brand h1 span{color:var(--violet)}
+    .brand p{font-size:13px;color:var(--muted);margin:5px 0 0;line-height:1.22}
+    .theme-toggle{
+      display:flex;align-items:center;gap:4px;padding:6px;border-radius:999px;min-width:96px;justify-content:space-between;
+      background:color-mix(in srgb, var(--surface2) 82%, transparent);border:1px solid var(--line);box-shadow:var(--shadow)
+    }
+    .theme-toggle span{width:38px;height:38px;border-radius:999px;display:grid;place-items:center;font-size:20px;opacity:.62;transition:.25s}
+    body:not(.light) .theme-toggle .moon, body.light .theme-toggle .sun{opacity:1;background:linear-gradient(135deg,var(--blue),var(--violet));box-shadow:0 0 20px color-mix(in srgb, var(--blue) 40%, transparent)}
+
+    .hero{padding:18px 0 10px;position:relative}
+    .date-pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:9px 14px;font-weight:800;font-size:14px;background:color-mix(in srgb, var(--surface2) 82%, transparent);border:1px solid color-mix(in srgb, var(--pink) 35%, var(--line));box-shadow:0 0 26px color-mix(in srgb, var(--pink) 12%, transparent)}
+    .hero h2{font-size:clamp(37px,10vw,68px);line-height:.98;letter-spacing:-.06em;margin:18px 0 12px;font-weight:950}
+    .hero h2 .grad{background:linear-gradient(90deg,var(--blue),var(--violet),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .lead{font-size:18px;line-height:1.55;color:var(--muted);margin:0;max-width:680px}
+
+    .card{
+      background:linear-gradient(180deg, color-mix(in srgb, var(--surface2) 86%, transparent), color-mix(in srgb, var(--surface) 92%, transparent));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:22px;
+      margin:18px 0;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(18px);
+    }
+
+    .factobox{
+      position:relative;overflow:hidden;min-height:190px;display:grid;grid-template-columns:92px 1fr;gap:22px;align-items:center;
+      border-color:color-mix(in srgb, var(--blue) 55%, var(--pink) 45%);
+      box-shadow:0 0 0 1px color-mix(in srgb, var(--blue) 45%, transparent), 0 0 38px color-mix(in srgb, var(--pink) 32%, transparent), var(--shadow);
+      cursor:pointer;
+      transition:transform .18s ease, box-shadow .35s ease, border-color .35s ease;
+    }
+    .factobox:hover{transform:translateY(-1px)}
+    .factobox:active{transform:scale(.992)}
+    .factobox.pulse{animation:factPulse .72s ease}
+    @keyframes factPulse{50%{box-shadow:0 0 0 2px var(--blue),0 0 60px color-mix(in srgb, var(--pink) 55%, transparent),var(--shadow)}}
+    .factobox:before{
+      content:"";position:absolute;inset:0;pointer-events:none;
+      background:
+        radial-gradient(circle at 16% 50%, color-mix(in srgb, var(--blue) 28%, transparent), transparent 26%),
+        radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--pink) 20%, transparent), transparent 32%),
+        linear-gradient(110deg, transparent, rgba(255,255,255,.06), transparent);
+      opacity:.8;
+    }
+    .orbit{position:absolute;right:-60px;top:-28px;width:260px;height:260px;border:1px solid color-mix(in srgb, var(--violet) 25%, transparent);border-radius:50%;opacity:.7}
+    .orbit:after{content:"";position:absolute;inset:35px;border:1px solid color-mix(in srgb, var(--blue) 18%, transparent);border-radius:50%}
+    .dna-badge{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;font-size:46px;position:relative;z-index:1;background:radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--blue) 28%, transparent), color-mix(in srgb, var(--violet) 15%, transparent));border:1px solid color-mix(in srgb, var(--blue) 50%, transparent);box-shadow:0 0 30px color-mix(in srgb, var(--blue) 28%, transparent)}
+    .fact-content{position:relative;z-index:1;transition:opacity .35s ease, transform .35s ease}
+    .fact-content.fade{opacity:0;transform:translateY(6px)}
+    .fact-row{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px}
+    .fact-label{font-size:13px;font-weight:950;color:var(--cyan);letter-spacing:.05em;text-transform:uppercase}
+    .fact-type{font-size:13px;font-weight:800;color:var(--violet)}
+    .fact-title{font-size:clamp(23px,6vw,34px);line-height:1.08;margin:0 0 12px;font-weight:950;letter-spacing:-.035em}
+    .fact-sub{font-size:15px;color:var(--muted);line-height:1.35;margin:0 0 12px}
+    .fact-cta{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:900;color:var(--blue)}
+    .dots{display:flex;gap:6px;margin-top:10px}.dot{width:18px;height:5px;border-radius:99px;background:color-mix(in srgb, var(--muted) 35%, transparent)}.dot.active{background:linear-gradient(90deg,var(--blue),var(--pink))}
+
+    .section-title{font-size:28px;line-height:1.08;margin:0 0 12px;font-weight:950;letter-spacing:-.04em}
+    .hint{color:var(--muted);font-size:17px;line-height:1.48;margin:0 0 18px}
+    .evidence-actions{display:grid;grid-template-columns:1fr;gap:12px}
+    .file-input{display:none}
+    .big-action{
+      min-height:112px;border-radius:24px;padding:18px;text-align:center;display:grid;place-items:center;gap:6px;
+      border:2px dashed color-mix(in srgb, var(--blue) 54%, transparent);
+      background:color-mix(in srgb, var(--blue) 10%, transparent);color:var(--text);font-weight:950;font-size:22px;
+    }
+    .big-action small{display:block;color:var(--muted);font-size:15px;font-weight:800}
+    .mini-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .pill-btn{border-radius:999px;padding:14px 16px;background:color-mix(in srgb, var(--surface2) 82%, transparent);border:1px solid var(--line);color:var(--text);font-weight:900;box-shadow:0 10px 22px color-mix(in srgb, #000 10%, transparent)}
+    .evidence-loaded{display:none;grid-template-columns:142px 1fr;gap:18px;align-items:center}
+    .thumb{width:142px;height:112px;border-radius:22px;object-fit:cover;border:1px solid var(--line);box-shadow:0 10px 30px color-mix(in srgb, #000 22%, transparent)}
+    .evidence-loaded h3{font-size:24px;margin:0 0 8px}.evidence-loaded p{color:var(--muted);font-size:16px;line-height:1.35;margin:0 0 14px}
+
+    .observe-card{display:none;border-color:color-mix(in srgb, var(--blue) 35%, var(--line));box-shadow:0 0 25px color-mix(in srgb, var(--blue) 14%, transparent),var(--shadow)}
+    .observe-card .spinner{width:28px;height:28px;border-radius:50%;border:3px solid color-mix(in srgb, var(--blue) 20%, transparent);border-top-color:var(--blue);animation:spin 1s linear infinite;display:inline-block;vertical-align:-7px;margin-right:10px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .paths-section{display:none;margin-top:24px}
+    .paths-title{font-size:32px;line-height:1.08;font-weight:950;letter-spacing:-.05em;margin:0 0 16px}
+    .path-list{display:grid;gap:14px}
+    .path-card{
+      display:grid;grid-template-columns:62px 1fr;gap:16px;align-items:center;width:100%;text-align:left;color:var(--text);
+      background:color-mix(in srgb, var(--surface2) 86%, transparent);border:1px solid var(--line);border-radius:28px;padding:18px;box-shadow:0 12px 30px color-mix(in srgb, #000 14%, transparent);transition:.2s ease;
+    }
+    .path-card:hover,.path-card.selected{border-color:var(--blue);box-shadow:0 0 0 2px color-mix(in srgb, var(--blue) 45%, transparent),0 0 34px color-mix(in srgb, var(--blue) 20%, transparent);transform:translateY(-1px)}
+    .path-ico{width:62px;height:62px;border-radius:20px;display:grid;place-items:center;font-size:30px;background:color-mix(in srgb, var(--blue) 15%, transparent)}
+    .path-card h4{margin:0 0 5px;font-size:23px;line-height:1.1}.path-card p{margin:0;color:var(--muted);font-size:17px;line-height:1.25}
+
+    .conversation-start{display:none;border-top:1px solid var(--line);padding-top:22px;margin-top:22px}
+    .conversation-start h3{font-size:28px;line-height:1.12;margin:0 0 14px;letter-spacing:-.04em}
+    textarea{width:100%;min-height:132px;resize:vertical;border-radius:26px;border:1px solid var(--line);background:color-mix(in srgb, var(--surface2) 70%, transparent);color:var(--text);padding:20px;font-size:18px;line-height:1.38;outline:none;transition:.2s}
+    textarea:focus{border-color:var(--blue);box-shadow:0 0 0 4px color-mix(in srgb, var(--blue) 16%, transparent)}
+    .primary{width:100%;border-radius:999px;padding:18px 20px;font-size:20px;color:white;font-weight:950;background:linear-gradient(90deg,var(--blue),var(--violet),var(--pink));box-shadow:0 18px 38px color-mix(in srgb, var(--pink) 25%, transparent);margin-top:14px}.primary:active{transform:scale(.99)}
+
+    .chat-card{display:none}.chat{display:flex;flex-direction:column;gap:12px;max-height:48dvh;overflow:auto;padding-right:2px}.msg{padding:15px 16px;border-radius:22px;font-size:17px;line-height:1.42}.msg.system{background:color-mix(in srgb, var(--blue) 12%, transparent);border:1px solid color-mix(in srgb, var(--blue) 28%, transparent);align-self:flex-start;max-width:94%}.msg.user{background:linear-gradient(135deg,color-mix(in srgb, var(--blue) 28%, transparent),color-mix(in srgb, var(--violet) 20%, transparent));align-self:flex-end;max-width:88%;border-bottom-right-radius:8px}.msg.guide{background:color-mix(in srgb, var(--surface2) 85%, transparent);border:1px solid var(--line);align-self:flex-start;max-width:94%;border-bottom-left-radius:8px}.composer{position:fixed;left:0;right:0;bottom:0;z-index:35;background:linear-gradient(180deg,transparent, color-mix(in srgb, var(--bg) 90%, transparent) 20%, var(--bg));padding:18px 16px calc(16px + env(safe-area-inset-bottom));display:none}.composer-inner{width:min(820px,100%);margin:0 auto;display:grid;grid-template-columns:1fr 58px;gap:10px}.composer textarea{min-height:58px;max-height:130px;border-radius:22px;font-size:16px;padding:16px}.send{border-radius:22px;color:white;font-weight:950;background:linear-gradient(135deg,var(--blue),var(--violet));font-size:24px}
+
+    .stuck{position:fixed;right:18px;bottom:96px;z-index:40;width:88px;height:88px;border-radius:50%;display:grid;place-items:center;text-align:center;color:var(--text);font-weight:950;font-size:13px;line-height:1.1;background:color-mix(in srgb, var(--surface2) 88%, transparent);border:1px solid color-mix(in srgb, var(--pink) 55%, var(--line));box-shadow:0 0 30px color-mix(in srgb, var(--pink) 24%, transparent),var(--shadow)}
+    .footer{font-size:13px;color:var(--muted);text-align:center;line-height:1.45;margin:24px auto;max-width:620px}
+    .hidden{display:none!important}.show{display:block!important}.show-grid{display:grid!important}
+
+    @media (max-width:560px){
+      .app{padding:12px 14px 112px}.logo{width:50px;height:50px}.brand h1{font-size:20px}.brand p{font-size:12px}.theme-toggle{min-width:86px}.theme-toggle span{width:34px;height:34px;font-size:18px}.hero{padding-top:8px}.lead{font-size:17px}.card{padding:18px;border-radius:26px;margin:16px 0}.factobox{grid-template-columns:1fr;gap:12px;min-height:0}.dna-badge{width:74px;height:74px;font-size:36px}.fact-title{font-size:26px}.evidence-loaded{grid-template-columns:1fr;text-align:center}.thumb{margin:auto;width:150px;height:112px}.mini-actions{grid-template-columns:1fr}.path-card{grid-template-columns:54px 1fr;padding:16px;border-radius:24px}.path-ico{width:54px;height:54px;border-radius:18px}.path-card h4{font-size:22px}.path-card p{font-size:16px}.stuck{width:78px;height:78px;right:14px;bottom:92px;font-size:12px}.paths-title{font-size:30px}.section-title{font-size:27px}}
   </style>
 </head>
 <body>
   <main class="app">
     <header class="top">
-      <div class="bar">
-        <div class="brand"><div class="logo" aria-hidden="true"></div><div><h1>pSINCRO <span>CAT4</span></h1><p>Preparación guiada · Biología Celular CBI111</p></div></div>
-        <div class="theme" aria-label="Modo claro u oscuro"><button id="darkBtn" aria-label="Modo oscuro">🌙</button><button id="lightBtn" aria-label="Modo claro">☀️</button></div>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>pSINCRO <span>CAT4</span></h1>
+          <p>Preparación guiada · Biología Celular CBI111</p>
+        </div>
       </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Cambiar modo claro u oscuro"><span class="moon">🌙</span><span class="sun">☀️</span></button>
     </header>
 
-    <section class="hero">
-      <div class="hero-inner">
-        <span class="mini-pill">📍 Lunes 15 · CAT4</span>
-        <h2>La conversación no <span class="grad">termina</span> cuando termina <span class="grad">la clase.</span></h2>
-        <p class="lead">Trae una foto de tu pizarra, tu cuaderno, un esquema o una idea a medio construir. <b>Construimos desde ahí.</b></p>
+    <section class="hero" id="hero">
+      <span class="date-pill">📍 Lunes 15 · CAT4</span>
+      <h2>La conversación no <span class="grad">termina</span> cuando termina la clase.</h2>
+      <p class="lead">Trae una foto de tu pizarra, tu cuaderno, un esquema o una idea a medio construir. Construimos desde ahí.</p>
+    </section>
+
+    <section class="card factobox" id="factobox" role="button" tabindex="0" aria-label="Seguir conversación desde este FACTO">
+      <div class="orbit" aria-hidden="true"></div>
+      <div class="dna-badge" id="factIcon">🧬</div>
+      <div class="fact-content" id="factContent">
+        <div class="fact-row"><span class="fact-label">FACTObox</span><span class="fact-type" id="factType">FACTOClase</span></div>
+        <h3 class="fact-title" id="factTitle">Toda proteína comenzó siendo información genética.</h3>
+        <p class="fact-sub" id="factSub">No memorices nombres: sigue qué ocurre con la información.</p>
+        <span class="fact-cta">👉 Seguimos desde esta idea</span>
+        <div class="dots" id="factDots"></div>
       </div>
     </section>
 
-    <section class="card factobox" id="factobox" role="button" tabindex="0" aria-label="Seguir conversando desde este FACTO">
-      <div class="dna" aria-hidden="true">🧬</div>
-      <div class="fact-content">
-        <div class="fact-head"><span class="tag">FACTObox</span><span class="fact-type" id="factType">FACTOClase</span></div>
-        <p class="fact-text" id="factText">Toda proteína comenzó siendo información genética.</p>
-        <p class="fact-sub" id="factSub">Sigue el flujo: DNA → RNA → proteína → función.</p>
-        <span class="fact-action">👉 Seguimos desde esta idea</span>
-        <div class="dots" id="dots"></div>
-      </div>
-    </section>
-
-    <section class="card" id="startCard">
-      <h3 class="section-title">📷 Traigo mis apuntes</h3>
+    <section class="card" id="evidenceCard">
+      <h2 class="section-title">📷 Traigo mis apuntes</h2>
       <p class="hint">Trae una evidencia de cómo estás pensando este tema. Puede ser pizarra, cuaderno, esquema, dibujo o una idea a medio construir.</p>
 
-      <div id="photoZone">
-        <div class="photo-actions" id="photoActions">
-          <label class="photo-btn" for="galleryInput">🖼️ Elegir de galería<span>foto ya tomada</span><input id="galleryInput" type="file" accept="image/*"></label>
-          <label class="photo-btn" for="cameraInput">📷 Sacar foto<span>abrir cámara</span><input id="cameraInput" type="file" accept="image/*" capture="environment"></label>
-        </div>
-        <div class="evidence hidden" id="evidenceCard">
-          <img id="previewImg" alt="Tu evidencia de estudio">
-          <div>
-            <h4>Tu evidencia</h4>
-            <p class="small">No buscamos respuestas todavía. Buscamos un punto de partida.</p>
-            <div class="change">
-              <label class="tiny-btn" for="galleryInput2">Cambiar desde galería<input id="galleryInput2" type="file" accept="image/*"></label>
-              <label class="tiny-btn" for="cameraInput2">Sacar otra foto<input id="cameraInput2" type="file" accept="image/*" capture="environment"></label>
-            </div>
+      <div class="evidence-actions" id="initialEvidenceActions">
+        <label class="big-action" for="galleryInput">🖼️ Elegir de galería<small>pizarra · cuaderno · esquema · dibujo</small></label>
+        <button class="big-action" id="cameraBtn" type="button">📷 Sacar foto<small>abrir cámara</small></button>
+      </div>
+
+      <input class="file-input" id="galleryInput" type="file" accept="image/*">
+      <input class="file-input" id="cameraInput" type="file" accept="image/*" capture="environment">
+
+      <div class="evidence-loaded" id="evidenceLoaded">
+        <img class="thumb" id="thumb" alt="Tu evidencia">
+        <div>
+          <h3>Tu evidencia</h3>
+          <p>No buscamos respuestas todavía. Buscamos un punto de partida.</p>
+          <div class="mini-actions">
+            <label class="pill-btn" for="galleryInput">Cambiar desde galería</label>
+            <button class="pill-btn" id="cameraBtn2" type="button">Sacar otra foto</button>
           </div>
         </div>
       </div>
+    </section>
 
-      <div class="bridge hidden" id="bridge">
-        <h4>Perfecto. Miremos esto como punto de partida.</h4>
-        <p>Veo varias conversaciones posibles para seguir estudiando desde tu evidencia.</p>
-      </div>
+    <section class="card observe-card" id="observeCard">
+      <p class="hint" id="observeThinking"><span class="spinner"></span>Mirando tu evidencia...</p>
+      <h2 class="section-title" id="observeTitle">Perfecto. Miremos esto como punto de partida.</h2>
+      <p class="hint" id="observeText">Podemos seguir por varios caminos. Elige el que más te ayude hoy.</p>
+    </section>
 
-      <div class="from-title" id="fromTitle">¿Desde dónde seguimos?</div>
-      <div class="conversation-list" id="conversations"></div>
+    <section class="paths-section" id="pathsSection">
+      <h2 class="paths-title">Podemos seguir por varios caminos.</h2>
+      <div class="path-list" id="pathList"></div>
 
-      <div class="manual-start">
-        <label class="q" for="imageNote" id="questionLabel">¿Qué parte de esta idea quieres seguir conversando?</label>
-        <textarea id="imageNote" placeholder="Escribe una duda, una conexión, una predicción o una idea a medio construir..."></textarea>
-        <button class="primary" id="beginBtn">➡️ Construimos desde aquí</button>
+      <div class="conversation-start" id="conversationStart">
+        <h3 id="questionTitle">¿Qué parte de esta idea quieres seguir conversando?</h3>
+        <textarea id="topicNote" placeholder="Ej: ¿qué está cambiando aquí?, ¿qué parte no entiendo?, ¿qué significa esta flecha?"></textarea>
+        <button class="primary" id="startConversationBtn">➡️ Construimos desde aquí</button>
       </div>
     </section>
 
-    <section class="card hidden" id="conversationCard">
-      <div class="minirow"><h3 class="section-title">Construimos desde aquí</h3><span class="status" id="status">listo</span></div>
+    <section class="card chat-card" id="chatCard">
+      <h2 class="section-title" id="chatTitle">Seguimos desde aquí</h2>
       <div class="chat" id="chat"></div>
-      <button class="ghost" id="newStartBtn">Traer otros apuntes</button>
     </section>
 
-    <p class="footer-note"><b>La conversación no termina cuando termina la clase.</b><br>Entorno voluntario de preparación guiada para Biología Celular CBI111.<br>Diseñado por Dr. Alex Elías · Instituto de Ciencias Naturales · UDLA · Piloto 2026.</p>
+    <p class="footer"><strong>La conversación no termina cuando termina la clase.</strong><br>Entorno voluntario de preparación guiada para Biología Celular CBI111.<br>Diseñado por Dr. Alex Elías · Instituto de Ciencias Naturales · UDLA · Piloto 2026.</p>
   </main>
 
-  <button class="stuck hidden" id="stuckBtn">🆘<br>Me quedé<br>pegado</button>
-  <div class="composer hidden" id="composer"><div class="composer-inner"><textarea id="messageInput" placeholder="¿Qué parte seguimos conversando?"></textarea><button class="send" id="sendBtn">↗</button></div></div>
+  <button class="stuck" id="stuckBtn">🆘<br>Me quedé<br>pegado</button>
+  <div class="composer" id="composer"><div class="composer-inner"><textarea id="messageInput" placeholder="¿Qué parte seguimos conversando?"></textarea><button class="send" id="sendBtn">↗</button></div></div>
 
 <script>
-const FACTOS=[
- {topic:'Dogma central',icon:'🧬',type:'FACTOClase',text:'Toda proteína comenzó siendo información genética.',sub:'Sigue el flujo: DNA → RNA → proteína → función.',tags:['dogma','dna','adn','rna','arn','proteína','proteina','función','funcion']},
- {topic:'Replicación',icon:'🧪',type:'FACTOClase',text:'La replicación ocurre antes de la división celular.',sub:'Antes de repartir información, la célula debe copiarla.',tags:['replicación','replicacion','adn','dna','fase s','copia']},
- {topic:'Transcripción',icon:'✍️',type:'FACTOClase',text:'El RNA es una forma de seguir usando información sin mover el DNA.',sub:'No memorices el nombre: pregunta qué cambia de formato.',tags:['transcripción','transcripcion','rna','arn','mensajero','mrna','adn','dna']},
- {topic:'Traducción',icon:'🔤',type:'FACTOClase',text:'Traducir es cambiar lenguaje: de nucleótidos a aminoácidos.',sub:'La pregunta clave es cómo una secuencia termina afectando una función.',tags:['traducción','traduccion','ribosoma','aminoácido','aminoacido','proteína','proteina','trna','rrna']},
- {topic:'Cromatina',icon:'🧵',type:'FACTOClase',text:'No todos los genes están activos al mismo tiempo.',sub:'La cromatina ayuda a decidir qué información queda disponible.',tags:['cromatina','eucromatina','heterocromatina','gen','expresión','expresion','regulación','regulacion']},
- {topic:'Mutaciones',icon:'🔴',type:'FACTOClase',text:'Una mutación no es automáticamente una enfermedad.',sub:'Primero pregunta qué cambió, dónde cambió y si afecta una función.',tags:['mutación','mutacion','proofreading','mismatch','reparación','reparacion','error']},
- {topic:'Mitosis',icon:'↔️',type:'FACTOClase',text:'La mitosis busca conservar la información al repartirla.',sub:'No te pierdas en fases: pregunta qué intenta lograr la célula.',tags:['mitosis','cromosoma','división','division','célula hija','celula hija']},
- {topic:'Meiosis',icon:'🔀',type:'FACTOProfe',text:'La meiosis NO es una mitosis con pasos extra.',sub:'Pregunta qué cambia con la información genética.',tags:['meiosis','gameto','reducción','reduccion','variabilidad','cromosoma']},
- {topic:'Checkpoints',icon:'🛑',type:'FACTOClase',text:'Los puntos de control no decoran el ciclo celular: deciden si la célula puede seguir.',sub:'Ciclinas y CDK ayudan a ordenar ese avance.',tags:['checkpoint','punto de control','ciclina','cdk','ciclo celular']},
- {topic:'Ciclinas/CDK',icon:'⚙️',type:'FACTOClase',text:'Ciclinas y CDK funcionan como permisos de avance.',sub:'La célula no avanza porque sí: verifica condiciones.',tags:['ciclina','cdk','ciclo celular','checkpoint','avance']},
- {topic:'Ciclo celular',icon:'🔁',type:'FACTOClase',text:'El ciclo celular no es una lista de fases: es una secuencia regulada de decisiones.',sub:'Pregunta qué necesita revisar la célula antes de avanzar.',tags:['ciclo celular','interfase','g1','s','g2','división','division']}
+const FACTOS = [
+  {type:'FACTOClase', icon:'🧬', title:'Toda proteína comenzó siendo información genética.', sub:'No memorices nombres: sigue qué ocurre con la información.', tags:['dogma','dna','rna','proteina','proteína','traduccion','transcripcion']},
+  {type:'FACTOProfe', icon:'🔁', title:'La meiosis NO es una mitosis con pasos extra.', sub:'Pregunta qué cambia con la información genética.', tags:['meiosis','mitosis','cromosoma','homologos','homólogos']},
+  {type:'FACTOClase', icon:'📋', title:'La replicación ocurre antes de la división celular.', sub:'Antes de repartir información, la célula debe copiarla.', tags:['replicacion','replicación','fase s','ciclo celular','adn']},
+  {type:'FACTOClase', icon:'🧵', title:'No todos los genes están activos al mismo tiempo.', sub:'Regular expresión génica es decidir qué información se usa.', tags:['cromatina','gen','expresion','expresión','eucromatina','heterocromatina']},
+  {type:'FACTOProfe', icon:'✏️', title:'Si puedes dibujarlo, probablemente ya empezaste a entenderlo.', sub:'Ahora conversemos qué representa cada flecha.', tags:['dibujo','esquema','pizarra','cuaderno','evidencia']},
+  {type:'FACTOClase', icon:'🛑', title:'Los puntos de control no decoran el ciclo celular.', sub:'Deciden si la célula puede seguir avanzando.', tags:['checkpoint','checkpoints','ciclina','cdk','ciclo']},
+  {type:'FACTOClase', icon:'⚡', title:'Una mutación no es automáticamente una enfermedad.', sub:'Primero pregunta qué cambió, dónde cambió y si afecta una función.', tags:['mutacion','mutación','proofreading','mismatch','reparacion','reparación']}
 ];
-const CONVOS={
- 'Ciclo celular':{icon:'🔁',title:'Ciclo celular',sub:'Interfase + división celular',prompt:'¿Qué parte del ciclo celular quieres seguir conversando?',place:'Ej: ¿qué pasa en G1, S y G2?, ¿por qué primero se prepara y después se divide?'},
- 'Ciclinas/CDK':{icon:'⚙️',title:'Ciclinas y CDK',sub:'¿Quién regula el avance?',prompt:'¿Qué parte de ciclinas y CDK quieres seguir conversando?',place:'Ej: ¿son como interruptores?, ¿qué permisos dan?, ¿cómo se conectan con checkpoints?'},
- 'Checkpoints':{icon:'🛑',title:'Checkpoints',sub:'¿Qué ocurre si algo falla?',prompt:'¿Qué parte de los checkpoints quieres seguir conversando?',place:'Ej: ¿qué revisa la célula antes de avanzar?, ¿qué pasa si el ADN no está listo?'},
- 'Mitosis':{icon:'↔️',title:'Mitosis',sub:'Repartir información conservada',prompt:'¿Qué parte de mitosis quieres seguir conversando?',place:'Ej: ¿qué intenta conservar la mitosis?, ¿por qué las células hijas quedan parecidas?'},
- 'Meiosis':{icon:'🔀',title:'Meiosis',sub:'No es mitosis con pasos extra',prompt:'¿Qué parte de meiosis quieres seguir conversando?',place:'Ej: ¿por qué baja el número cromosómico?, ¿por qué genera variabilidad?'},
- 'Dogma central':{icon:'🧬',title:'Dogma central',sub:'DNA → RNA → proteína → función',prompt:'¿Qué parte del dogma central quieres seguir conversando?',place:'Ej: ¿por qué aparece RNA?, ¿qué cambia entre DNA y proteína?, ¿cómo se llega a función?'},
- 'Replicación':{icon:'🧪',title:'Replicación',sub:'Copiar antes de dividir',prompt:'¿Qué parte de replicación quieres seguir conversando?',place:'Ej: ¿por qué se copia antes de dividir?, ¿qué pasa si hay errores?'},
- 'Transcripción':{icon:'✍️',title:'Transcripción',sub:'DNA a RNA',prompt:'¿Qué parte de transcripción quieres seguir conversando?',place:'Ej: ¿por qué el DNA no sale del núcleo?, ¿qué hace el mRNA?'},
- 'Traducción':{icon:'🔤',title:'Traducción',sub:'RNA a proteína',prompt:'¿Qué parte de traducción quieres seguir conversando?',place:'Ej: ¿qué hacen ribosoma, tRNA y rRNA?, ¿cómo aparecen aminoácidos?'},
- 'Cromatina':{icon:'🧵',title:'Cromatina',sub:'Información disponible o compactada',prompt:'¿Qué parte de cromatina quieres seguir conversando?',place:'Ej: ¿eucromatina vs heterocromatina?, ¿cómo se regula un gen?'},
- 'Mutaciones':{icon:'🔴',title:'Mutaciones',sub:'Cambios en información',prompt:'¿Qué parte de mutaciones quieres seguir conversando?',place:'Ej: ¿toda mutación es mala?, ¿cómo llega a afectar proteína o función?'}
-};
-let imageData=null, currentTopic='Ciclo celular', currentFact=FACTOS.find(f=>f.topic==='Ciclo celular'), factIndex=0, conversationStarted=false, evidenceLoaded=false;
-const $=id=>document.getElementById(id);
-function norm(s){return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
-function setTheme(t){document.documentElement.dataset.theme=t;localStorage.setItem('psincroTheme',t);$('darkBtn').classList.toggle('active',t==='dark');$('lightBtn').classList.toggle('active',t==='light');document.querySelector('meta[name="theme-color"]').setAttribute('content',t==='dark'?'#080b1f':'#f8fbff')}
-function pulseFact(){const b=$('factobox');b.classList.remove('pulse');void b.offsetWidth;b.classList.add('pulse')}
-function showFact(f){currentFact=f||FACTOS[0]; $('factType').textContent=currentFact.type; $('factText').textContent=currentFact.text; $('factSub').textContent=currentFact.sub; pulseFact(); renderDots();}
-function pickFact(context){const c=norm(context);let best=currentFact||FACTOS[0],score=-1;for(const f of FACTOS){const sc=f.tags.reduce((a,t)=>a+(c.includes(norm(t))?1:0),0)+(f.topic===currentTopic?0.8:0); if(sc>score){score=sc;best=f}}return best}
-function renderDots(){const dots=$('dots');dots.innerHTML=FACTOS.slice(0,7).map((_,i)=>`<span class="dot ${FACTOS.indexOf(currentFact)%7===i?'active':''}"></span>`).join('')}
-function evidenceTopics(context=''){
-  const c=norm(context);
-  let base=['Ciclo celular','Ciclinas/CDK','Checkpoints','Mitosis','Meiosis'];
-  if(c.includes('dogma')||c.includes('dna')||c.includes('rna')||c.includes('prote')) base=['Dogma central','Transcripción','Traducción','Mutaciones','Cromatina'];
-  if(c.includes('replic')) base=['Replicación','Ciclo celular','Checkpoints','Mutaciones','Dogma central'];
-  return [...new Set([...base,'Dogma central','Mutaciones'])].slice(0,6);
+
+const PATHS = [
+  {id:'ciclo', icon:'🔄', title:'Ciclo celular', sub:'Interfase + división celular', fact:'Los puntos de control no decoran el ciclo celular.', prompt:'¿Qué parte del ciclo celular quieres seguir conversando?', ph:'Ej: ¿qué pasa en G1?, ¿por qué existe fase S?, ¿cuándo ocurre la división celular?'},
+  {id:'cdk', icon:'⚙️', title:'Ciclinas y CDK', sub:'¿Quién regula el avance?', fact:'Ciclinas y CDK ayudan a ordenar el avance del ciclo celular.', prompt:'¿Qué parte de ciclinas y CDK quieres seguir conversando?', ph:'Ej: ¿son como interruptores?, ¿qué regula a qué?, ¿cómo se relacionan con checkpoints?'},
+  {id:'checkpoints', icon:'🛑', title:'Checkpoints', sub:'¿Qué ocurre si algo falla?', fact:'Un checkpoint no es una etapa: es una decisión.', prompt:'¿Qué parte de checkpoints quieres seguir conversando?', ph:'Ej: ¿qué revisa la célula?, ¿qué pasa si el ADN está dañado?, ¿por qué no avanza?'},
+  {id:'mitosis', icon:'↔️', title:'Mitosis', sub:'Repartir información conservada', fact:'En mitosis, la célula intenta conservar la información.', prompt:'¿Qué parte de mitosis quieres seguir conversando?', ph:'Ej: ¿qué se reparte?, ¿qué significa conservar información?, ¿cómo se diferencia de meiosis?'},
+  {id:'meiosis', icon:'🔀', title:'Meiosis', sub:'No es mitosis con pasos extra', fact:'La meiosis NO es una mitosis con pasos extra.', prompt:'¿Qué parte de meiosis quieres seguir conversando?', ph:'Ej: ¿por qué reduce cromosomas?, ¿qué cambia en la información?, ¿qué son homólogos?'},
+  {id:'dogma', icon:'🧬', title:'Dogma central', sub:'DNA → RNA → proteína → función', fact:'Toda proteína comenzó siendo información genética.', prompt:'¿Qué parte del dogma central quieres seguir conversando?', ph:'Ej: ¿por qué aparece RNA?, ¿qué cambia entre DNA y proteína?, ¿cómo se llega a función?'},
+  {id:'cromatina', icon:'🧵', title:'Cromatina', sub:'Información empaquetada y regulada', fact:'No todos los genes están activos al mismo tiempo.', prompt:'¿Qué parte de cromatina quieres seguir conversando?', ph:'Ej: ¿qué cambia entre eucromatina y heterocromatina?, ¿qué significa empaquetar información?'},
+  {id:'mutaciones', icon:'⚡', title:'Mutaciones', sub:'Cambios en la información', fact:'Una mutación no es automáticamente una enfermedad.', prompt:'¿Qué parte de mutaciones quieres seguir conversando?', ph:'Ej: ¿cuándo afecta una proteína?, ¿qué es reparación?, ¿qué significa proofreading?'}
+];
+
+let factIndex = 0;
+let selectedPath = null;
+let evidenceData = null;
+const $ = id => document.getElementById(id);
+const norm = s => (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+
+function setTheme(light){
+  document.body.classList.toggle('light', light);
+  localStorage.setItem('psincro-theme', light ? 'light' : 'dark');
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', light ? '#f8fafc' : '#07111f');
 }
-function renderConversations(topics){
-  $('conversations').innerHTML=topics.map(t=>{const c=CONVOS[t];return `<button class="conversation-card ${t===currentTopic?'active':''}" data-topic="${t}"><span class="ico">${c.icon}</span><span><h4>${c.title}</h4><p>${c.sub}</p></span></button>`}).join('');
+(function initTheme(){
+  const saved = localStorage.getItem('psincro-theme');
+  setTheme(saved ? saved === 'light' : window.matchMedia('(prefers-color-scheme: light)').matches);
+})();
+$('themeToggle').addEventListener('click',()=>setTheme(!document.body.classList.contains('light')));
+
+function renderDots(){
+  $('factDots').innerHTML = FACTOS.map((_,i)=>`<span class="dot ${i===factIndex?'active':''}"></span>`).join('');
 }
-function updateTopic(topic){
-  currentTopic=topic;
-  document.querySelectorAll('.conversation-card').forEach(b=>b.classList.toggle('active',b.dataset.topic===topic));
-  showFact(FACTOS.find(x=>x.topic===topic)||pickFact(topic));
-  const c=CONVOS[topic]||CONVOS['Dogma central'];
-  $('questionLabel').textContent=c.prompt;
-  $('imageNote').placeholder=c.place;
-  $('beginBtn').textContent=`➡️ Construimos desde ${c.title}`;
+function setFact(f, pulse=true){
+  const content = $('factContent');
+  content.classList.add('fade');
+  setTimeout(()=>{
+    $('factIcon').textContent = f.icon || '💡';
+    $('factType').textContent = f.type || 'FACTOClave';
+    $('factTitle').textContent = f.title || f.fact || '';
+    $('factSub').textContent = f.sub || 'Podemos seguir conversando desde esta idea.';
+    content.classList.remove('fade');
+    if(pulse){$('factobox').classList.remove('pulse'); void $('factobox').offsetWidth; $('factobox').classList.add('pulse');}
+    renderDots();
+  },220);
 }
-function addMsg(role,text){const d=document.createElement('div');d.className='msg '+role;d.textContent=text;$('chat').appendChild(d);$('chat').scrollTop=$('chat').scrollHeight}
-function startConversation(seed){if(!conversationStarted){conversationStarted=true;$('startCard').classList.add('hidden');$('conversationCard').classList.remove('hidden');$('composer').classList.remove('hidden');$('stuckBtn').classList.remove('hidden');} if(seed){addMsg('user',seed)} }
-function localReply(message,stuck=false){const c=norm(message+' '+currentTopic+' '+currentFact.text); if(stuck) return 'Vamos a destrabarlo sin saltar a la respuesta. Tomemos una sola flecha o palabra de tu esquema: ¿qué ocurre antes y qué ocurre después?'; if(c.includes('meiosis')) return 'Partamos por el propósito: ¿qué necesita lograr la meiosis que la mitosis no necesita lograr?'; if(c.includes('mitosis')) return 'Miremos la idea central: ¿la célula intenta conservar la misma información o generar combinaciones nuevas?'; if(c.includes('replic')) return 'Antes de dividir, la célula debe copiar información. En tu esquema, ¿dónde pondrías “copiar” y dónde pondrías “repartir”?'; if(c.includes('transcri')||c.includes('rna')||c.includes('arn')) return 'Pensemos al RNA como puente. ¿Qué permite hacer el RNA que el DNA no hace directamente?'; if(c.includes('tradu')||c.includes('ribosoma')||c.includes('prote')) return 'Sigamos la información hasta la función: ¿qué cambia cuando pasamos de una secuencia de RNA a una cadena de aminoácidos?'; if(c.includes('cromatina')||c.includes('heterocromatina')||c.includes('eucromatina')) return 'No todos los genes están igual de disponibles. ¿Qué crees que cambia cuando una zona de cromatina está más compacta?'; if(c.includes('ciclina')||c.includes('cdk')||c.includes('checkpoint')) return 'No memoricemos nombres todavía. ¿Qué tendría que revisar una célula antes de avanzar a la siguiente etapa del ciclo?'; if(c.includes('ciclo celular')||c.includes('interfase')||c.includes('g1')||c.includes('g2')) return 'Pensemos el ciclo como decisiones ordenadas. ¿Qué debe estar listo antes de pasar de preparación a división?'; if(c.includes('mut')) return 'Una mutación es un cambio en información. ¿Qué tendría que pasar para que ese cambio llegue a afectar una proteína o una función?'; return 'Tomemos esa idea como punto de partida. ¿Qué palabra, flecha o zona de tus apuntes te genera más duda?'}
-async function askVane(message,stuck=false){$('status').textContent='pensando…'; showFact(pickFact(message+' '+currentTopic)); try{const res=await fetch('/api/vane',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,stuck,topic:currentTopic,facto:currentFact,imageData})}); if(!res.ok) throw new Error('api'); const data=await res.json(); addMsg('vane',data.reply||localReply(message,stuck));}catch(e){addMsg('vane',localReply(message,stuck));} finally{$('status').textContent='listo'} }
-function handleImage(file){if(!file)return; const r=new FileReader(); r.onload=()=>{imageData=r.result;evidenceLoaded=true;$('previewImg').src=imageData;$('photoActions').classList.add('hidden');$('evidenceCard').classList.remove('hidden');$('bridge').classList.remove('hidden');$('fromTitle').textContent='Veo varias conversaciones posibles'; const note=$('imageNote').value; const topics=evidenceTopics(note); renderConversations(topics); updateTopic(topics[0]); setTimeout(()=>document.getElementById('bridge').scrollIntoView({behavior:'smooth',block:'center'}),120);}; r.readAsDataURL(file)}
-function init(){
- const saved=localStorage.getItem('psincroTheme') || (matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'); setTheme(saved); $('darkBtn').onclick=()=>setTheme('dark'); $('lightBtn').onclick=()=>setTheme('light');
- renderConversations(evidenceTopics()); updateTopic(currentTopic);
- $('conversations').addEventListener('click',e=>{const b=e.target.closest('.conversation-card'); if(!b)return; updateTopic(b.dataset.topic); $('imageNote').focus();});
- ['galleryInput','cameraInput','galleryInput2','cameraInput2'].forEach(id=>$(id).addEventListener('change',e=>handleImage(e.target.files[0])));
- $('imageNote').addEventListener('input',e=>{showFact(pickFact(e.target.value+' '+currentTopic)); if(!evidenceLoaded){renderConversations(evidenceTopics(e.target.value));}});
- $('factobox').addEventListener('click',async()=>{startConversation('Quiero seguir conversando sobre este FACTO.'); addMsg('vane','Perfecto. Sigamos desde esta idea: '+currentFact.text+' ¿Qué parte te gustaría mirar primero?')}); $('factobox').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('factobox').click()}});
- $('beginBtn').addEventListener('click',async()=>{const note=$('imageNote').value.trim(); const c=CONVOS[currentTopic]; startConversation(note||`Quiero seguir desde ${c.title}.`); addMsg('vane',`Perfecto. Sigamos desde ${c.title}. No busquemos una respuesta perfecta todavía: tomemos una idea de tus apuntes y avancemos paso a paso.`); if(note) await askVane(note,false);});
- $('sendBtn').addEventListener('click',async()=>{const m=$('messageInput').value.trim(); if(!m)return; $('messageInput').value=''; addMsg('user',m); await askVane(m,false)}); $('messageInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('sendBtn').click()}});
- $('stuckBtn').addEventListener('click',async()=>{startConversation(); addMsg('user','Me quedé pegado.'); await askVane('Me quedé pegado',true)}); $('newStartBtn').onclick=()=>location.reload();
- setInterval(()=>{if(conversationStarted) return; factIndex=(factIndex+1)%FACTOS.length; showFact(FACTOS[factIndex]);},16000);
+function cycleFact(){
+  factIndex = (factIndex + 1) % FACTOS.length;
+  setFact(FACTOS[factIndex], false);
 }
-init();
+renderDots();
+setInterval(cycleFact, 24000);
+
+function chooseFactByText(text){
+  const c = norm(text);
+  let best = FACTOS[0], score = -1;
+  FACTOS.forEach(f=>{
+    const s = f.tags.reduce((a,t)=>a+(c.includes(norm(t))?1:0),0);
+    if(s > score){ score = s; best = f; }
+  });
+  factIndex = FACTOS.indexOf(best);
+  setFact(best);
+}
+
+function renderPaths(paths = PATHS){
+  $('pathList').innerHTML = paths.map(p=>`<button class="path-card" data-id="${p.id}"><span class="path-ico">${p.icon}</span><span><h4>${p.title}</h4><p>${p.sub}</p></span></button>`).join('');
+}
+renderPaths();
+
+function inferPathsFromNote(){
+  // MVP: sin Vision real todavía. Simula una observación editorial razonable y prioriza ciclo celular para CAT4.
+  return ['ciclo','cdk','checkpoints','mitosis','meiosis','dogma'].map(id=>PATHS.find(p=>p.id===id));
+}
+
+function handleEvidence(file){
+  if(!file) return;
+  const r = new FileReader();
+  r.onload = () => {
+    evidenceData = r.result;
+    $('thumb').src = evidenceData;
+    $('initialEvidenceActions').classList.add('hidden');
+    $('evidenceLoaded').classList.add('show-grid');
+    $('observeCard').classList.add('show');
+    $('observeThinking').classList.remove('hidden');
+    $('observeTitle').textContent = 'Perfecto. Miremos esto como punto de partida.';
+    $('observeText').textContent = 'Un momento: estoy preparando algunas conversaciones posibles desde tu evidencia.';
+    $('pathsSection').classList.remove('show');
+    $('conversationStart').classList.remove('show');
+    setTimeout(()=>{
+      $('observeThinking').classList.add('hidden');
+      $('observeTitle').textContent = 'Miré tu evidencia y encontré varias conversaciones posibles.';
+      $('observeText').textContent = 'No tienes que seguir una en particular. Elige la que más te ayude hoy.';
+      renderPaths(inferPathsFromNote());
+      $('pathsSection').classList.add('show');
+      $('pathsSection').scrollIntoView({behavior:'smooth', block:'start'});
+      chooseFactByText('dibujo esquema evidencia ciclo celular cromosomas');
+    }, 1400);
+  };
+  r.readAsDataURL(file);
+}
+
+$('galleryInput').addEventListener('change', e => handleEvidence(e.target.files[0]));
+$('cameraInput').addEventListener('change', e => handleEvidence(e.target.files[0]));
+$('cameraBtn').addEventListener('click', ()=>$('cameraInput').click());
+$('cameraBtn2').addEventListener('click', ()=>$('cameraInput').click());
+
+$('pathList').addEventListener('click', e=>{
+  const card = e.target.closest('.path-card');
+  if(!card) return;
+  document.querySelectorAll('.path-card').forEach(c=>c.classList.remove('selected'));
+  card.classList.add('selected');
+  selectedPath = PATHS.find(p=>p.id === card.dataset.id);
+  chooseFactByText(selectedPath.title + ' ' + selectedPath.sub + ' ' + selectedPath.fact);
+  $('questionTitle').textContent = selectedPath.prompt;
+  $('topicNote').placeholder = selectedPath.ph;
+  $('startConversationBtn').textContent = `➡️ Construimos desde ${selectedPath.title}`;
+  $('conversationStart').classList.add('show');
+  $('conversationStart').scrollIntoView({behavior:'smooth', block:'center'});
+});
+
+function addMsg(type, text){
+  const div = document.createElement('div');
+  div.className = 'msg ' + type;
+  div.textContent = text;
+  $('chat').appendChild(div);
+  $('chat').scrollTop = $('chat').scrollHeight;
+}
+function localReply(message, stuck=false){
+  const topic = selectedPath ? selectedPath.id : 'general';
+  if(stuck) return 'Vamos a destrabarlo sin saltar a la respuesta. Mira tu evidencia y elige una flecha o palabra. ¿Qué cambia antes y después de esa parte?';
+  if(topic==='cdk') return 'Partamos sin memorizar nombres. Si las ciclinas y CDK regulan el avance, ¿qué crees que necesita comprobar la célula antes de pasar a la siguiente etapa?';
+  if(topic==='checkpoints') return 'Pensemos en el checkpoint como una pregunta de seguridad. ¿Qué tendría que estar listo para que la célula pueda avanzar?';
+  if(topic==='meiosis') return 'Buena elección. No la pensemos como mitosis con más pasos: ¿qué necesita lograr la meiosis respecto a la cantidad y combinación de información?';
+  if(topic==='mitosis') return 'En mitosis la idea central es conservar y repartir. ¿Qué información debe llegar a cada célula hija?';
+  if(topic==='dogma') return 'Sigamos el flujo de información: DNA → RNA → proteína → función. ¿En qué flecha se te corta la historia?';
+  if(topic==='cromatina') return 'La cromatina no es solo empaque. Pregunta clave: ¿qué cambia cuando una zona queda más abierta o más compacta?';
+  if(topic==='mutaciones') return 'Una mutación es un cambio en información. Antes de pensar en enfermedad, ¿ese cambio llega a modificar una proteína o una función?';
+  return 'Perfecto. Sigamos desde tu evidencia. Dime qué palabra, flecha o zona quieres entender primero.';
+}
+async function ask(message, stuck=false){
+  addMsg('user', message);
+  addMsg('guide', localReply(message, stuck));
+}
+
+$('startConversationBtn').addEventListener('click', ()=>{
+  if(!selectedPath){return}
+  const note = $('topicNote').value.trim();
+  $('chatCard').classList.add('show');
+  $('composer').style.display = 'block';
+  $('chatTitle').textContent = `Seguimos desde ${selectedPath.title}`;
+  if(!$('chat').children.length){
+    addMsg('system', `Perfecto. Sigamos desde ${selectedPath.title}. No busquemos una respuesta perfecta todavía: construyamos la idea paso a paso.`);
+  }
+  if(note) ask(note);
+  $('chatCard').scrollIntoView({behavior:'smooth', block:'start'});
+});
+$('sendBtn').addEventListener('click', ()=>{
+  const m = $('messageInput').value.trim();
+  if(!m) return;
+  $('messageInput').value='';
+  ask(m);
+});
+$('messageInput').addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){e.preventDefault(); $('sendBtn').click();} });
+$('stuckBtn').addEventListener('click', ()=>{
+  $('chatCard').classList.add('show');
+  $('composer').style.display='block';
+  if(!$('chat').children.length) addMsg('system','Estoy aquí para destrabar, no para darte una respuesta cerrada. Volvamos un paso atrás.');
+  ask('Me quedé pegado.', true);
+  $('chatCard').scrollIntoView({behavior:'smooth', block:'start'});
+});
+$('factobox').addEventListener('click', ()=>{
+  selectedPath = selectedPath || PATHS.find(p=>p.id==='dogma');
+  $('chatCard').classList.add('show');
+  $('composer').style.display = 'block';
+  addMsg('system', 'Perfecto. Sigamos desde esta idea del FACTObox. ¿Qué parte te gustaría conectar con tus apuntes?');
+  $('chatCard').scrollIntoView({behavior:'smooth', block:'start'});
+});
+$('factobox').addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); $('factobox').click(); }});
 </script>
 </body>
 </html>
