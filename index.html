@@ -273,7 +273,7 @@ function updateGravityFromText(text){
   for(const k of lex){ if(c.includes(norm(k))) additions.push(k); }
   currentKeywords=[...new Set([...currentKeywords, ...additions])].slice(-24);
 }
-function inferContextFromText(text){const c=norm(text); if(/cromos|cromatid|centrom|homolog|meiosis|gameto|entrecruz|crossing|sinapsis|recombin/.test(c)) return CONTEXTS.chromosomes; if(/ciclo|ciclina|cdk|checkpoint|interfase|mitosis|fase s|g1|g2/.test(c)) return CONTEXTS.cellcycle; if(/dna|adn|rna|arn|prote|dogma|transcrip|tradu|gen\b/.test(c)) return CONTEXTS.dogma; return CONTEXTS.general;}
+function inferContextFromText(text){const c=norm(text); if(/cromos|cromatid|centrom|cinetocor|homolog|meiosis|gameto|entrecruz|crossing|sinapsis|recombin/.test(c)) return CONTEXTS.chromosomes; if(/ciclo|ciclina|cdk|checkpoint|interfase|mitosis|fase s|g1|g2/.test(c)) return CONTEXTS.cellcycle; if(/dna|adn|rna|arn|prote|dogma|transcrip|tradu|gen\b/.test(c)) return CONTEXTS.dogma; return CONTEXTS.general;}
 function inferContextFromImageName(file){return inferContextFromText((file&&file.name)||'');}
 function renderContextCard(ctx){
   $('contextTitle').textContent=ctx.title;
@@ -355,7 +355,7 @@ function handleEvidence(file){
     persistFactoClave(lastFactoClave);
     $('observeThinking').classList.add('hidden');
     $('observeTitle').textContent='Miré tu evidencia.';
-    $('observeText').textContent='Abrí una conversación sin asumir de más. FACTObox queda respirando como eco conceptual de fondo.';
+    $('observeText').textContent='Abrí una conversación sin asumir de más.';
     setTimeout(()=>openSituatedChat(result.reply),450);
   };
   r.readAsDataURL(file);
@@ -370,6 +370,7 @@ function addMsg(type,text){
   setTimeout(()=>{
     d.scrollIntoView({behavior:'smooth', block:'end'});
   },40);
+  return d;
 }
 function ensureContextFromMessage(message){
   const inferred = inferContextFromText(message);
@@ -428,6 +429,12 @@ function localReply(message, stuck=false){
   }
 
   // CAT4: cromosomas, mitosis, meiosis
+  if(mentionsAny(c,['centromero','centrómero','cinetocoro','cinetocoros'])){
+    if(mentionsAny(c,['cinetocoro','cinetocoros'])){
+      return 'Buen punto, pero mantengámoslo en techo CAT4. El cinetocoro puede pensarse como la zona funcional asociada al centrómero que permite enganchar y separar cromosomas durante la división. No necesitamos detalle molecular: la pregunta clave es si ayuda a repartir cromátidas u homólogos correctamente. En tu dibujo, ¿lo estás usando para explicar unión o separación?';
+    }
+    return 'Bien: el centrómero es la región que mantiene unidas a las cromátidas hermanas en un cromosoma duplicado. Para CAT4, úsalo como pista visual para distinguir “un cromosoma duplicado” de “dos cromosomas distintos”. En tu dibujo, ¿el centrómero une copias o marca dónde se separarán?';
+  }
   if(mentionsAny(c,['cromosomas duplicados','duplicados','duplicado'])){
     return 'Bien: “duplicado” significa que el cromosoma ya copió su ADN y por eso queda formado por dos cromátidas hermanas unidas. La idea clave para CAT4 es esta: duplicado no significa “dos cromosomas distintos”, sino un cromosoma con dos copias. En tu dibujo, ¿dónde estaría la unión entre esas cromátidas?';
   }
@@ -494,7 +501,7 @@ function localReply(message, stuck=false){
 }
 function shouldPreferLocal(message, localText, apiText){
   const c=norm(message);
-  const strongKeywords=/(cromosoma|cromatida|homolog|meiosis|mitosis|sinapsis|entrecruz|crossing|checkpoint|ciclina|cdk|dogma|adn|dna|arn|rna|transcrip|tradu|replic|mutacion|aneuploid|cromatina|cariotipo|gen\b)/;
+  const strongKeywords=/(cromosoma|cromatida|centrom|cinetocor|homolog|meiosis|mitosis|sinapsis|entrecruz|crossing|checkpoint|ciclina|cdk|dogma|adn|dna|arn|rna|transcrip|tradu|replic|mutacion|aneuploid|cromatina|cariotipo|gen\b)/;
   if(isGenericEvidenceReply(apiText)) return true;
   if(isLikelyTooDeep(apiText)) return true;
   if(strongKeywords.test(c) && isGenericEvidenceReply(apiText)) return true;
@@ -507,25 +514,40 @@ function sanitizeApiReply(apiReply, localText){
   if(isLikelyTooDeep(apiReply)) return cat4Redirect();
   return apiReply.replace(/\bVeo\b/gi,'Podría estar relacionado con').replace(/\bAnalicé\b/gi,'Miré');
 }
+function sleep(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
+function responseDelay(text='', stuck=false){
+  const base = stuck ? 1250 : 1550;
+  const extra = Math.min(900, Math.max(250, text.length * 9));
+  return base + extra;
+}
 async function ask(message, stuck=false){
   studentTurnCount += 1;
   addMsg('user',message);
   updateGravityFromText(message);
   ensureContextFromMessage(message);
   const local = localReply(message,stuck);
+  const thinking = addMsg('guide','Pensando desde tu evidencia…');
   if(lastFactoClave){ lastFactoClave.student_last_keywords=currentKeywords; persistFactoClave({...lastFactoClave,timestamp:new Date().toISOString(),event:'student_turn'}); }
+
+  const startedAt = Date.now();
+  let finalReply = local;
   try{
     const res=await fetch('/api/vane',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,stuck,context:currentContext.name,keywords:currentKeywords,ceiling:CAT4_CEILING,guardrails:VISUAL_GUARDRAILS})});
     if(!res.ok)throw new Error('api');
     const data=await res.json();
     const apiReply=data.reply||'';
-    const reply = shouldPreferLocal(message, local, apiReply) ? local : sanitizeApiReply(apiReply, local);
-    addMsg('guide',reply);
+    finalReply = shouldPreferLocal(message, local, apiReply) ? local : sanitizeApiReply(apiReply, local);
   }catch(e){
-    addMsg('guide',local);
+    finalReply = local;
   }
+
+  const wait = Math.max(0, responseDelay(finalReply, stuck) - (Date.now() - startedAt));
+  await sleep(wait);
+  thinking.textContent = finalReply;
+  setTimeout(()=>{ thinking.scrollIntoView({behavior:'smooth', block:'end'}); },40);
+
   // Micro-respiración posterior al turno: no inmediata, no invasiva.
-  setTimeout(()=>{cycleFact()},1200);
+  setTimeout(()=>{cycleFact()},1800);
 }
 $('startConversationBtn').addEventListener('click',()=>{const note=$('topicNote').value.trim();$('chatCard').classList.add('show');$('composer').style.display='block';$('chatTitle').textContent='Seguimos desde tu evidencia';if(!$('chat').children.length){addMsg('system','Perfecto. Sigamos desde lo que trajiste. No busquemos una respuesta perfecta todavía: construyamos la idea paso a paso.'); evidenceOpeningShown=true;} if(note)ask(note);$('chatCard').scrollIntoView({behavior:'smooth',block:'start'})});
 $('sendBtn').addEventListener('click',()=>{const m=$('messageInput').value.trim();if(!m)return;$('messageInput').value='';ask(m)});$('messageInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('sendBtn').click()}});
