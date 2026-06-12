@@ -24,7 +24,7 @@
     body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at 20% -10%,rgba(56,189,248,.25),transparent 38%),radial-gradient(circle at 85% 20%,rgba(236,72,153,.17),transparent 40%),linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);min-height:100dvh;font-size:16px;}
     body.light{background:radial-gradient(circle at 10% -10%,rgba(56,189,248,.17),transparent 36%),radial-gradient(circle at 92% 20%,rgba(236,72,153,.12),transparent 42%),linear-gradient(180deg,#f8fafc,#eef2ff)}
     button,input,textarea{font:inherit} button{cursor:pointer;border:0} .hidden{display:none!important}
-    .app{width:min(760px,100%);margin:0 auto;min-height:100dvh;padding:14px 14px 112px}
+    .app{width:min(760px,100%);margin:0 auto;min-height:100dvh;padding:14px 14px 190px}
     .top{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;background:linear-gradient(180deg,rgba(7,17,31,.96),rgba(7,17,31,.78),transparent);backdrop-filter:blur(14px)}
     body.light .top{background:linear-gradient(180deg,rgba(248,250,252,.96),rgba(248,250,252,.78),transparent)}
     .brand{display:flex;align-items:center;gap:12px;min-width:0}.logo{width:58px;height:58px;border-radius:50%;background:radial-gradient(circle at 32% 32%,#fff 0 10%,#22d3ee 11% 29%,#7c3aed 30% 58%,#ec4899 59% 100%);box-shadow:0 0 28px rgba(56,189,248,.45),0 0 52px rgba(236,72,153,.25)}
@@ -41,8 +41,8 @@
     .section-title{font-size:38px;line-height:1.05;letter-spacing:-.045em;margin:0 0 18px;font-weight:950}.hint{font-size:21px;line-height:1.5;color:var(--muted);margin:0 0 20px}.evidence-actions{display:grid;grid-template-columns:1fr;gap:14px}.big-action{border:1.5px dashed rgba(56,189,248,.55);border-radius:24px;background:rgba(56,189,248,.07);color:var(--blue);font-size:24px;font-weight:950;text-align:center;padding:26px 18px;display:block}.big-action small{display:block;color:var(--muted);font-size:17px;margin-top:10px;font-weight:800}.file-input{display:none}
     .evidence-loaded{display:none;grid-template-columns:138px 1fr;gap:22px;align-items:center;text-align:left;background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:26px;padding:18px}.evidence-loaded.show-grid{display:grid}.thumb{width:138px;height:108px;border-radius:18px;object-fit:cover;border:1px solid var(--line);box-shadow:0 12px 28px rgba(0,0,0,.2)}.evidence-loaded h3{font-size:30px;margin:0 0 8px;font-weight:950;letter-spacing:-.03em}.evidence-loaded p{font-size:18px;color:var(--muted);line-height:1.3;margin:0 0 14px}.mini-actions{display:flex;flex-wrap:wrap;gap:10px}.pill-btn{border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);border-radius:999px;padding:12px 16px;font-weight:950;font-size:16px}.observe-card{display:none;border-color:rgba(56,189,248,.32)}.observe-card.show{display:block}.observe-card h2{font-size:32px;line-height:1.08;margin:0 0 12px;font-weight:950;letter-spacing:-.03em}.spinner{display:inline-block;width:15px;height:15px;border-radius:50%;border:2px solid rgba(56,189,248,.22);border-top-color:var(--blue);animation:spin .9s linear infinite;margin-right:8px}@keyframes spin{to{transform:rotate(360deg)}}
     .context-card{display:none}.context-card.show{display:block}.context-card h3{font-size:30px;line-height:1.12;margin:0 0 12px;font-weight:950;letter-spacing:-.03em}.context-card p{font-size:19px;line-height:1.45;color:var(--muted);margin:0 0 14px}.prompt-list{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:10px}.prompt-list li{padding:13px 14px;border-radius:18px;background:rgba(255,255,255,.055);border:1px solid var(--line);font-size:17px;color:var(--text);font-weight:750}.conversation-start{display:none}.conversation-start.show{display:block}.conversation-start h3{font-size:31px;line-height:1.12;letter-spacing:-.035em;margin:0 0 16px;font-weight:950}textarea{width:100%;min-height:132px;border-radius:26px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);padding:18px 20px;font-size:20px;line-height:1.38;outline:none;resize:vertical}body.light textarea{background:#fff}textarea:focus{border-color:rgba(56,189,248,.7);box-shadow:0 0 0 4px rgba(56,189,248,.12)}.primary{width:100%;border-radius:24px;padding:18px;background:linear-gradient(100deg,#38bdf8,#8b5cf6,#ec4899);color:#fff;font-weight:950;font-size:21px;margin-top:14px;box-shadow:0 18px 34px rgba(56,189,248,.24)}
-    .chat-card{display:none}.chat-card.show{display:block}.chat{display:flex;flex-direction:column;gap:12px;max-height:48dvh;overflow:auto}.msg{padding:14px 16px;border-radius:20px;font-size:18px;line-height:1.43}.msg.system,.msg.guide{align-self:flex-start;background:rgba(255,255,255,.07);border:1px solid var(--line);border-bottom-left-radius:7px;max-width:94%}.msg.user{align-self:flex-end;background:rgba(56,189,248,.18);border:1px solid rgba(56,189,248,.22);border-bottom-right-radius:7px;max-width:90%}.composer{display:none;position:fixed;z-index:28;left:0;right:0;bottom:0;padding:18px 14px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,rgba(7,17,31,.90) 22%,rgba(7,17,31,.99))}body.light .composer{background:linear-gradient(180deg,transparent,rgba(248,250,252,.90) 22%,rgba(248,250,252,.99))}.composer-inner{width:min(760px,100%);margin:0 auto;display:grid;grid-template-columns:1fr 56px;gap:10px;align-items:end}.composer textarea{min-height:56px;max-height:126px;border-radius:20px}.send{width:56px;height:56px;border-radius:20px;background:var(--blue);color:#04111f;font-weight:950;font-size:22px}.stuck{position:fixed;z-index:29;right:18px;bottom:92px;width:102px;height:102px;border-radius:50%;background:rgba(236,72,153,.17);border:1px solid rgba(236,72,153,.62);color:var(--text);font-weight:950;box-shadow:0 0 28px rgba(236,72,153,.25);font-size:15px;line-height:1.1}.footer{font-size:14px;color:var(--muted);text-align:center;line-height:1.5;margin:26px 6px}
-    @media (max-width:560px){.app{padding-inline:12px}.brand h1{font-size:23px}.brand p{font-size:15px}.logo{width:54px;height:54px}.theme-toggle{width:102px;height:54px}.hero h2{font-size:36px}.lead{font-size:18px}.card{padding:18px;border-radius:26px}.fact-inner{grid-template-columns:1fr}.dna-badge{display:none}.fact-title{font-size:24px}.section-title{font-size:34px}.hint{font-size:19px}.evidence-loaded{grid-template-columns:1fr;text-align:center}.thumb{margin:auto;width:168px;height:128px}.observe-card h2,.context-card h3,.conversation-start h3{font-size:28px}.stuck{right:12px;bottom:88px;width:92px;height:92px;font-size:14px}.msg{font-size:17px}}
+    .chat-card{display:none}.chat-card.show{display:block}.chat{display:flex;flex-direction:column;gap:12px;max-height:none;overflow:visible;scroll-behavior:smooth}.msg{padding:14px 16px;border-radius:20px;font-size:18px;line-height:1.43}.msg.system,.msg.guide{align-self:flex-start;background:rgba(255,255,255,.07);border:1px solid var(--line);border-bottom-left-radius:7px;max-width:94%}.msg.user{align-self:flex-end;background:rgba(56,189,248,.18);border:1px solid rgba(56,189,248,.22);border-bottom-right-radius:7px;max-width:90%}.composer{display:none;position:fixed;z-index:28;left:0;right:0;bottom:0;padding:18px 14px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,rgba(7,17,31,.90) 22%,rgba(7,17,31,.99))}body.light .composer{background:linear-gradient(180deg,transparent,rgba(248,250,252,.90) 22%,rgba(248,250,252,.99))}.composer-inner{width:min(760px,100%);margin:0 auto;display:grid;grid-template-columns:1fr 56px;gap:10px;align-items:end}.composer textarea{min-height:56px;max-height:126px;border-radius:20px}.send{width:56px;height:56px;border-radius:20px;background:var(--blue);color:#04111f;font-weight:950;font-size:22px}.stuck{position:fixed;z-index:29;right:14px;bottom:122px;width:86px;height:86px;border-radius:50%;background:rgba(236,72,153,.17);border:1px solid rgba(236,72,153,.62);color:var(--text);font-weight:950;box-shadow:0 0 28px rgba(236,72,153,.25);font-size:13px;line-height:1.05}.footer{font-size:14px;color:var(--muted);text-align:center;line-height:1.5;margin:26px 6px}
+    @media (max-width:560px){.app{padding-inline:12px;padding-bottom:210px}.brand h1{font-size:23px}.brand p{font-size:15px}.logo{width:54px;height:54px}.theme-toggle{width:102px;height:54px}.hero h2{font-size:36px}.lead{font-size:18px}.card{padding:18px;border-radius:26px}.fact-inner{grid-template-columns:1fr}.dna-badge{display:none}.fact-title{font-size:24px}.section-title{font-size:34px}.hint{font-size:19px}.evidence-loaded{grid-template-columns:1fr;text-align:center}.thumb{margin:auto;width:168px;height:128px}.observe-card h2,.context-card h3,.conversation-start h3{font-size:28px}.stuck{right:10px;bottom:118px;width:78px;height:78px;font-size:12px}.msg{font-size:17px}}
   </style>
 </head>
 <body>
@@ -132,7 +132,7 @@
   - La interfaz NO promete reconocimiento perfecto de imágenes.
   - V.A.N.E. no afirma lo que ve: formula hipótesis como preguntas.
   - FACTObox no es repositorio ni premio: respira ECOS con gravedad contextual determinista.
-  - FACTOClave es interno: se registra localmente como evidencia de diseño/investigación, pero no se muestra al estudiante.
+  - FACTOClave es interno: se intenta persistir vía endpoint servidor/Supabase; no se muestra al estudiante.
 */
 const FACTOS_BASE = [
   {id:'FCL-DOGMA-001', type:'FACTOClase', icon:'🧬', title:'Toda proteína comenzó siendo información genética.', sub:'No memorices nombres: sigue qué ocurre con la información.', tags:['dogma','dna','adn','rna','arn','proteina','proteína','traduccion','traducción','transcripcion','transcripción','gen','genes','funcion','función']},
@@ -193,7 +193,17 @@ const CONTEXTS = {
     ]
   }
 };
-const VISUAL_GUARDRAILS = `Regla de V.A.N.E. invisible: no afirmes con certeza lo que ves en una imagen. Devuelve cualquier hipótesis visual como pregunta tentativa. No entregues respuestas cerradas. No evalúes. No digas correcto/incorrecto. Si el estudiante dice “me quedé pegado”, baja un nivel, cambia analogía o pide mirar una parte de la evidencia; no resuelvas.`;
+const CAT4_CEILING = {
+  scope: 'CBI111 CAT4 · Unidad 4: ciclo celular y regulación de la expresión génica',
+  allowed: [
+    'organización del material genético','ácidos nucleicos','ADN','gen','genoma','núcleo','cromatina','eucromatina','heterocromatina','tipos de cromosomas','cariotipo','cariograma',
+    'dogma central','replicación de ADN','transcripción','maduración del ARNm','traducción','código genético','ARNm','ARNr','ARNt','aminoácidos','proteína','función',
+    'ciclo celular','G1','S','G2','M','puntos de control','checkpoints','ciclinas','CDK','mitosis','meiosis','cromosomas homólogos','cromátidas hermanas','sinapsis','entrecruzamiento','gametos','variabilidad','aneuploidía'
+  ],
+  shallowOnly: ['proofreading','mismatch repair','mutaciones','errores replicativos','aneuploidías','ciclinas/CDK'],
+  forbiddenDepth: ['termodinámica avanzada','estructura molecular fina de CDK','p53 en detalle','splicing avanzado','enhancers/silencers en profundidad','reparación por escisión','recombinación homóloga avanzada','cinetocoro/microtúbulos en detalle','mecanismos bioquímicos de reparación del ADN']
+};
+const VISUAL_GUARDRAILS = `Regla de V.A.N.E. invisible: no afirmes con certeza lo que ves en una imagen. Devuelve cualquier hipótesis visual como pregunta tentativa. No digas “veo X” como certeza: pregunta “¿esto representa X u otra cosa?”. No digas “analicé la imagen”. No evalúes con correcto/incorrecto. No cierres la respuesta si puedes abrir una comparación. Techo conceptual: preparación CAT4 CBI111, Unidad 4: organización/regulación del material genético, dogma central, replicación, transcripción, traducción, ciclo celular, checkpoints, ciclinas/CDK funcionales, mitosis y meiosis. Si el estudiante pide profundidad fuera de clase, valida y vuelve: “para CAT4 basta con entender que…”. Si dice “me quedé pegado”, baja un prerequisito real, cambia analogía o pide mirar una parte de la evidencia; no resuelvas como Wikipedia.`;
 let factPool = [...FACTOS_BASE];
 let factIndex = 0;
 let currentContext = CONTEXTS.general;
@@ -202,6 +212,8 @@ let recentFactIds = [];
 let evidenceData = null;
 let currentEvidenceId = null;
 let lastFactoClave = null;
+let evidenceOpeningShown = false;
+let studentTurnCount = 0;
 const $ = id => document.getElementById(id);
 const norm = s => (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 
@@ -313,7 +325,7 @@ function openSituatedChat(reply){
   $('chatCard').classList.add('show');
   $('composer').style.display='block';
   $('chatTitle').textContent='Seguimos desde tu evidencia';
-  if(!$('chat').children.length) addMsg('guide',reply);
+  if(!$('chat').children.length){ addMsg('guide',reply); evidenceOpeningShown = true; }
   $('chatCard').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function handleEvidence(file){
@@ -334,6 +346,8 @@ function handleEvidence(file){
     $('chatCard').classList.remove('show');
     $('composer').style.display='none';
     $('chat').innerHTML='';
+    evidenceOpeningShown = false;
+    studentTurnCount = 0;
     const result = await analyzeEvidenceWithApi(file);
     setAmbientContext(result.ctx, result.visualHypothesis);
     renderContextCard(result.ctx);
@@ -347,35 +361,173 @@ function handleEvidence(file){
   r.readAsDataURL(file);
 }
 $('galleryInput').addEventListener('change',e=>handleEvidence(e.target.files[0]));$('cameraInput').addEventListener('change',e=>handleEvidence(e.target.files[0]));$('cameraBtn').addEventListener('click',()=>$('cameraInput').click());$('cameraBtn2').addEventListener('click',()=>$('cameraInput').click());
-function addMsg(type,text){const d=document.createElement('div');d.className='msg '+type;d.textContent=text;$('chat').appendChild(d);$('chat').scrollTop=$('chat').scrollHeight}
+function addMsg(type,text){
+  const d=document.createElement('div');
+  d.className='msg '+type;
+  d.textContent=text;
+  $('chat').appendChild(d);
+  // Evita el doble scroll en celular: la página, no el chat interno, lleva la conversación.
+  setTimeout(()=>{
+    d.scrollIntoView({behavior:'smooth', block:'end'});
+  },40);
+}
+function ensureContextFromMessage(message){
+  const inferred = inferContextFromText(message);
+  if(inferred.name !== 'general' && currentContext.name !== inferred.name){
+    setAmbientContext(inferred, currentKeywords);
+  }
+}
+function mentionsAny(c, arr){ return arr.some(x=>c.includes(norm(x))); }
+function replyOpeningOnlyIfNeeded(){
+  if(!evidenceOpeningShown && studentTurnCount===0){
+    evidenceOpeningShown = true;
+    return 'Tomemos tu evidencia como punto de partida. No necesito adivinarla perfecto: cuéntame qué intentabas representar o qué parte quieres seguir pensando.';
+  }
+  return null;
+}
+function isGenericEvidenceReply(text=''){
+  const c=norm(text);
+  const genericBits=[
+    'sigamos desde tu evidencia',
+    'dime que palabra flecha o zona',
+    'no necesito adivinarla perfecto',
+    'que intentabas representar',
+    'que parte quieres seguir pensando',
+    'la usamos como punto de partida'
+  ];
+  return genericBits.some(x=>c.includes(x));
+}
+function isLikelyTooDeep(text=''){
+  const c=norm(text);
+  return /(p53|atm|atr|chks?1|chks?2|cohesina|separasa|topoisomerasa|helicasa en detalle|excision|nucleotide excision|base excision|enhancer|silencer|spliceosoma|microtubulo cinetocorico|cinetocoro externo)/.test(c);
+}
+function cat4Redirect(){
+  return 'Buena curiosidad, pero para CAT4 no necesitamos entrar a ese nivel molecular. Quedémonos con la idea funcional: ¿qué información se copia, se revisa, se reparte o se expresa?';
+}
 function localReply(message, stuck=false){
   updateGravityFromText(message);
+  ensureContextFromMessage(message);
   const ctx=currentContext.name;
+  const c=norm(message);
+
+  if(isLikelyTooDeep(message)) return cat4Redirect();
+
   if(stuck){
-    if(ctx==='cromosomas')return 'Volvamos un paso atrás sin resolverlo de golpe. En tu evidencia, apunta solo a dos elementos: ¿crees que son copias del mismo cromosoma o cromosomas equivalentes?';
-    if(ctx==='ciclo celular')return 'Bajemos un nivel. Antes de hablar de nombres de fases: ¿la célula está preparándose, revisando algo o dividiéndose?';
-    if(ctx==='dogma central')return 'Bajemos un nivel. Elige una flecha: ¿estás pasando de DNA a RNA, de RNA a proteína, o de proteína a función?';
-    return 'Bajemos un nivel. Antes de nombrar el proceso, mira solo una marca de tu evidencia: ¿es una cosa, una flecha, una comparación o un cambio entre dos momentos? Partamos por ahí.';
+    if(ctx==='cromosomas')return 'Bajemos un nivel. Mira tu dibujo sin nombrar todavía el proceso: ¿estás comparando dos copias del mismo cromosoma, o un par equivalente —uno materno y uno paterno—? Esa diferencia destraba casi todo.';
+    if(ctx==='ciclo celular')return 'Bajemos un nivel. Antes de decir G1, S, G2 o M: ¿la célula está creciendo, copiando información, revisando si puede avanzar, o repartiendo cromosomas?';
+    if(ctx==='dogma central')return 'Bajemos un nivel. Elige una flecha: ¿la información pasa de ADN a ARN, de ARN a proteína, o desde proteína hacia función?';
+    return 'Bajemos un nivel. Mira solo una marca de tu evidencia: ¿representa una estructura, una flecha, una comparación o un cambio entre dos momentos? Partamos por ahí.';
   }
-  if(ctx==='cromosomas')return 'Bien. No necesito ponerle nombre todavía. Primero confirma la relación: ¿estás mirando copias del mismo cromosoma, cromosomas homólogos, o una mezcla de ambos?';
-  if(ctx==='ciclo celular')return 'Pensemos el ciclo como decisiones. Según tu evidencia, ¿qué debería revisar la célula antes de avanzar?';
-  if(ctx==='dogma central')return 'Sigamos la información sin apurarnos: ¿en qué punto se transforma el mensaje, y en qué punto aparece la función?';
-  return 'Perfecto. Sigamos desde tu evidencia. Dime qué palabra, flecha o zona quieres entender primero, y la usamos como punto de partida.'
+
+  // CAT4: organización del material genético
+  if(mentionsAny(c,['cromatina','eucromatina','heterocromatina'])){
+    return 'Buen foco. Piensa la cromatina como ADN organizado en el núcleo. Si está más abierta, la información puede usarse con más facilidad; si está más compacta, queda menos disponible. En tu apunte, ¿estás trabajando organización del ADN o regulación de qué genes se expresan?';
+  }
+  if(mentionsAny(c,['cariotipo','cariograma','genoma','tipo de cromosoma','tipos de cromosomas'])){
+    return 'Sigamos desde ahí. Un cariotipo/cariograma ayuda a mirar el conjunto de cromosomas, no un gen aislado. ¿Tu duda va por reconocer pares, tamaño/forma, o alteraciones en el número de cromosomas?';
+  }
+
+  // CAT4: cromosomas, mitosis, meiosis
+  if(mentionsAny(c,['cromosomas duplicados','duplicados','duplicado'])){
+    return 'Bien: “duplicado” significa que el cromosoma ya copió su ADN y por eso queda formado por dos cromátidas hermanas unidas. La idea clave para CAT4 es esta: duplicado no significa “dos cromosomas distintos”, sino un cromosoma con dos copias. En tu dibujo, ¿dónde estaría la unión entre esas cromátidas?';
+  }
+  if(mentionsAny(c,['cromatidas hermanas','cromáticas hermanas','cromatica hermana','cromatida hermana','cromátidas hermanas'])){
+    if(mentionsAny(c,['recombinan','recombinacion','recombinación','entrecruzamiento','crossing'])){
+      return 'Ahí está la distinción importante. Las cromátidas hermanas son copias muy parecidas del mismo cromosoma. El entrecruzamiento que genera variabilidad ocurre entre cromátidas no hermanas de cromosomas homólogos. En tu dibujo, ¿cuál sería el homólogo materno y cuál el paterno?';
+    }
+    return 'Las cromátidas hermanas son las dos copias de un cromosoma duplicado. No las confundamos con cromosomas homólogos, que forman un par equivalente. ¿Tu duda es distinguir “copias” versus “par homólogo”?';
+  }
+  if(mentionsAny(c,['homologos','homólogos','homologo','homólogo'])){
+    return 'Bien. Los cromosomas homólogos forman un par equivalente: uno viene de la madre y otro del padre. Tienen información para los mismos tipos de rasgos, pero no necesariamente versiones idénticas. ¿En tu dibujo están emparejados, separándose o intercambiando segmentos?';
+  }
+  if(mentionsAny(c,['sinapsis','entrecruzamiento','crossing','recombinacion','recombinación','quiasma'])){
+    return 'Sigamos por ahí. La sinapsis junta cromosomas homólogos; el entrecruzamiento intercambia segmentos entre cromátidas no hermanas. Para CAT4, quédate con la consecuencia: aumenta la variabilidad de los gametos. ¿Tu dibujo muestra el emparejamiento o el intercambio?';
+  }
+  if(mentionsAny(c,['meiosis','gametos','reduccional','reduccion cromosomica','reducción cromosómica'])){
+    return 'En meiosis la pregunta central no es memorizar fases: es entender cómo se reduce la dotación cromosómica y cómo aparece variabilidad. ¿Tu duda está en la separación de homólogos, la separación de cromátidas o el entrecruzamiento?';
+  }
+  if(mentionsAny(c,['mitosis'])){
+    return 'En mitosis la idea central es conservar la información: una célula reparte cromátidas hermanas para formar células con la misma dotación genética. ¿Quieres compararla con meiosis o entender una etapa puntual?';
+  }
+  if(mentionsAny(c,['aneuploidia','aneuploidía','no disyuncion','no disyunción'])){
+    return 'Para CAT4, aneuploidía puede pensarse como un error de reparto: una célula queda con cromosomas de más o de menos. ¿Tu duda está en si el error ocurre al separar homólogos o cromátidas?';
+  }
+
+  // CAT4: ciclo celular
+  if(mentionsAny(c,['checkpoint','checkpoints','punto de control','puntos de control'])){
+    return 'Pensemos el checkpoint como una decisión de seguridad. No es una fase decorativa: pregunta si la célula está lista para avanzar. ¿Qué debería revisar en tu ejemplo: tamaño/condiciones, ADN copiado, daño en el ADN o reparto correcto?';
+  }
+  if(mentionsAny(c,['cdk','ciclina','ciclinas'])){
+    return 'Para CAT4 basta con el nivel funcional: ciclinas y CDK ayudan a ordenar el avance del ciclo celular. No necesitamos el detalle molecular fino. ¿Tu duda es quién permite avanzar o qué se revisa antes de avanzar?';
+  }
+  if(mentionsAny(c,['fase s','fase de sintesis','g1','g2','interfase','ciclo celular'])){
+    return 'Pensemos el ciclo como una secuencia de preparación y reparto. G1 prepara, S copia el ADN, G2 revisa/prepara, M reparte. ¿En qué punto de esa secuencia ubicarías tu evidencia?';
+  }
+
+  // CAT4: dogma central y expresión génica
+  if(mentionsAny(c,['dogma','adn a arn','dna a rna','adn arn proteina','dna rna protein'])){
+    return 'Perfecto: el techo CAT4 aquí es seguir el flujo ADN → ARN → proteína → función. ¿Tu duda está en la flecha de transcripción, en la traducción o en cómo una proteína termina generando función?';
+  }
+  if(mentionsAny(c,['replicacion','replicación','duplicacion del adn','duplicación del adn'])){
+    return 'Replicación significa copiar ADN antes de dividirse. Para CAT4, con eso basta como idea central: copiar información para poder repartirla. ¿Quieres conectarlo con cromosomas duplicados o con fase S?';
+  }
+  if(mentionsAny(c,['transcripcion','transcripción','arnm','mrna','maduracion','maduración'])){
+    return 'Transcripción es pasar información desde ADN hacia ARN. Si aparece ARNm, piensa en un mensaje que luego podrá traducirse. ¿Tu duda es de dónde sale el ARNm o qué ocurre antes de llegar a proteína?';
+  }
+  if(mentionsAny(c,['traduccion','traducción','codigo genetico','código genético','codon','codón','aminoacido','aminoácido','arnt','trna','arnr','rrna','ribosoma'])){
+    return 'En traducción, el mensaje del ARNm se lee para ordenar aminoácidos y formar una proteína. Para CAT4, piensa: ARNm trae el mensaje, ARNt ayuda a traer aminoácidos y el ribosoma participa en la síntesis. ¿Qué parte de esa relación te complica?';
+  }
+  if(mentionsAny(c,['gen','genes','expresion genica','expresión génica','regulacion genica','regulación génica'])){
+    return 'Un gen puede pensarse como información que puede usarse para producir un producto funcional. Regular expresión génica es decidir cuándo y cuánto se usa esa información. ¿Tu duda está en activar un gen, transcribirlo o traducirlo?';
+  }
+  if(mentionsAny(c,['mutacion','mutación','mutaciones','proofreading','mismatch','error replicativo','errores replicativos'])){
+    return 'Para CAT4 lo vemos suave: un error al copiar ADN puede transformarse en mutación si no se corrige. Proofreading y mismatch repair son ideas de revisión/corrección, no necesitamos el mecanismo molecular fino. ¿Quieres conectarlo con replicación o con estabilidad genética?';
+  }
+
+  if(ctx==='cromosomas')return 'Sigamos con cromosomas, pero sin volver al inicio. ¿Tu duda está en cromátidas hermanas, cromosomas homólogos, mitosis, meiosis o entrecruzamiento?';
+  if(ctx==='ciclo celular')return 'Sigamos con ciclo celular. Ubica tu duda en una de estas decisiones: copiar ADN, revisar condiciones, reparar/evitar errores o repartir cromosomas.';
+  if(ctx==='dogma central')return 'Sigamos el flujo de información: ADN, ARN, proteína o función. ¿En cuál de esos pasos se te corta la película?';
+
+  const opening = replyOpeningOnlyIfNeeded();
+  if(opening) return opening;
+  return 'Te sigo. Para construirlo sin inventar sobre tu evidencia, nómbrame una pieza concreta: cromosoma, cromátida, homólogo, ADN, ARN, proteína, checkpoint, mitosis o meiosis.';
+}
+function shouldPreferLocal(message, localText, apiText){
+  const c=norm(message);
+  const strongKeywords=/(cromosoma|cromatida|homolog|meiosis|mitosis|sinapsis|entrecruz|crossing|checkpoint|ciclina|cdk|dogma|adn|dna|arn|rna|transcrip|tradu|replic|mutacion|aneuploid|cromatina|cariotipo|gen\b)/;
+  if(isGenericEvidenceReply(apiText)) return true;
+  if(isLikelyTooDeep(apiText)) return true;
+  if(strongKeywords.test(c) && isGenericEvidenceReply(apiText)) return true;
+  if(strongKeywords.test(c) && localText && !isGenericEvidenceReply(localText)) return true;
+  return false;
+}
+function sanitizeApiReply(apiReply, localText){
+  if(!apiReply) return localText;
+  if(shouldPreferLocal('', localText, apiReply)) return localText;
+  if(isLikelyTooDeep(apiReply)) return cat4Redirect();
+  return apiReply.replace(/\bVeo\b/gi,'Podría estar relacionado con').replace(/\bAnalicé\b/gi,'Miré');
 }
 async function ask(message, stuck=false){
+  studentTurnCount += 1;
   addMsg('user',message);
   updateGravityFromText(message);
+  ensureContextFromMessage(message);
+  const local = localReply(message,stuck);
   if(lastFactoClave){ lastFactoClave.student_last_keywords=currentKeywords; persistFactoClave({...lastFactoClave,timestamp:new Date().toISOString(),event:'student_turn'}); }
   try{
-    const res=await fetch('/api/vane',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,stuck,context:currentContext.name,keywords:currentKeywords,guardrails:VISUAL_GUARDRAILS})});
+    const res=await fetch('/api/vane',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,stuck,context:currentContext.name,keywords:currentKeywords,ceiling:CAT4_CEILING,guardrails:VISUAL_GUARDRAILS})});
     if(!res.ok)throw new Error('api');
     const data=await res.json();
-    addMsg('guide',data.reply||localReply(message,stuck));
-  }catch(e){addMsg('guide',localReply(message,stuck))}
+    const apiReply=data.reply||'';
+    const reply = shouldPreferLocal(message, local, apiReply) ? local : sanitizeApiReply(apiReply, local);
+    addMsg('guide',reply);
+  }catch(e){
+    addMsg('guide',local);
+  }
   // Micro-respiración posterior al turno: no inmediata, no invasiva.
   setTimeout(()=>{cycleFact()},1200);
 }
-$('startConversationBtn').addEventListener('click',()=>{const note=$('topicNote').value.trim();$('chatCard').classList.add('show');$('composer').style.display='block';$('chatTitle').textContent='Seguimos desde tu evidencia';if(!$('chat').children.length)addMsg('system','Perfecto. Sigamos desde lo que trajiste. No busquemos una respuesta perfecta todavía: construyamos la idea paso a paso.');if(note)ask(note);$('chatCard').scrollIntoView({behavior:'smooth',block:'start'})});
+$('startConversationBtn').addEventListener('click',()=>{const note=$('topicNote').value.trim();$('chatCard').classList.add('show');$('composer').style.display='block';$('chatTitle').textContent='Seguimos desde tu evidencia';if(!$('chat').children.length){addMsg('system','Perfecto. Sigamos desde lo que trajiste. No busquemos una respuesta perfecta todavía: construyamos la idea paso a paso.'); evidenceOpeningShown=true;} if(note)ask(note);$('chatCard').scrollIntoView({behavior:'smooth',block:'start'})});
 $('sendBtn').addEventListener('click',()=>{const m=$('messageInput').value.trim();if(!m)return;$('messageInput').value='';ask(m)});$('messageInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('sendBtn').click()}});
 $('stuckBtn').addEventListener('click',()=>{$('chatCard').classList.add('show');$('composer').style.display='block';if(!$('chat').children.length)addMsg('system','Estoy aquí para destrabar, no para darte una respuesta cerrada. Volvamos un paso atrás.');ask('Me quedé pegado.',true);$('chatCard').scrollIntoView({behavior:'smooth',block:'start'})});
 $('factobox').addEventListener('click',()=>{$('chatCard').classList.add('show');$('composer').style.display='block';addMsg('system','Sigamos desde este ECO. ¿Cómo lo conectarías con tu evidencia o con tu apunte?');$('chatCard').scrollIntoView({behavior:'smooth',block:'start'})});
