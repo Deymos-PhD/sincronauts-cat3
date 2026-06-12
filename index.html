@@ -3,557 +3,339 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>pSINCRO · Biología Celular CBI111</title>
-  <meta name="theme-color" content="#07111f" />
+  <title>pSINCRO CAT4 · Preparación guiada</title>
+  <meta name="theme-color" content="#0f172a" />
   <style>
     :root{
-      color-scheme:dark;
-      --bg:#07111f; --bg2:#0b1024; --surface:rgba(20,31,55,.78); --surface2:rgba(26,38,67,.92);
-      --text:#f8fafc; --muted:#b8c4d8; --line:rgba(255,255,255,.14);
-      --blue:#38bdf8; --violet:#a78bfa; --pink:#ec4899; --cyan:#22d3ee; --amber:#fde68a;
-      --shadow:0 22px 58px rgba(0,0,0,.38); --r:28px;
+      --bg:#07111f; --card:#0f1b2d; --card2:#13243a; --text:#eef6ff; --muted:#a9bad1;
+      --line:rgba(255,255,255,.10); --accent:#7dd3fc; --accent2:#c4b5fd; --ok:#86efac; --warn:#fde68a;
+      --shadow:0 18px 50px rgba(0,0,0,.35); --r:22px;
     }
-    body.light{
-      color-scheme:light;
-      --bg:#f8fafc; --bg2:#eff6ff; --surface:rgba(255,255,255,.86); --surface2:rgba(255,255,255,.95);
-      --text:#111827; --muted:#58677d; --line:rgba(15,23,42,.13);
-      --shadow:0 18px 42px rgba(15,23,42,.10);
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at 20% -10%,rgba(56,189,248,.25),transparent 38%),radial-gradient(circle at 85% 20%,rgba(236,72,153,.17),transparent 40%),linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);min-height:100dvh;font-size:16px;}
-    body.light{background:radial-gradient(circle at 10% -10%,rgba(56,189,248,.17),transparent 36%),radial-gradient(circle at 92% 20%,rgba(236,72,153,.12),transparent 42%),linear-gradient(180deg,#f8fafc,#eef2ff)}
-    button,input,textarea{font:inherit} button{cursor:pointer;border:0} .hidden{display:none!important}
-    .app{width:min(760px,100%);margin:0 auto;min-height:100dvh;padding:14px 14px 190px}
-    .top{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;background:linear-gradient(180deg,rgba(7,17,31,.96),rgba(7,17,31,.78),transparent);backdrop-filter:blur(14px)}
-    body.light .top{background:linear-gradient(180deg,rgba(248,250,252,.96),rgba(248,250,252,.78),transparent)}
-    .brand{display:flex;align-items:center;gap:12px;min-width:0}.logo{width:58px;height:58px;border-radius:50%;background:radial-gradient(circle at 32% 32%,#fff 0 10%,#22d3ee 11% 29%,#7c3aed 30% 58%,#ec4899 59% 100%);box-shadow:0 0 28px rgba(56,189,248,.45),0 0 52px rgba(236,72,153,.25)}
-    .brand h1{font-size:25px;line-height:1;margin:0;font-weight:950;letter-spacing:-.03em}.brand h1 span{color:var(--violet)}.brand p{font-size:16px;line-height:1.16;margin:5px 0 0;color:var(--muted)}
-    .theme-toggle{width:110px;height:58px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid var(--line);display:flex;align-items:center;justify-content:space-around;box-shadow:inset 0 0 18px rgba(56,189,248,.12),0 10px 24px rgba(0,0,0,.18)}
-    body.light .theme-toggle{background:#fff}.theme-toggle span{font-size:28px}.theme-toggle .moon{background:linear-gradient(135deg,var(--blue),var(--pink));border-radius:999px;padding:8px;box-shadow:0 0 18px rgba(56,189,248,.35)}
-    body.light .theme-toggle .sun{background:linear-gradient(135deg,#fde68a,#fb923c);border-radius:999px;padding:8px;box-shadow:0 0 18px rgba(251,146,60,.3)} body.light .theme-toggle .moon{background:transparent;box-shadow:none}
-    .hero{padding:14px 2px 8px}.date-pill{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(236,72,153,.35);background:rgba(236,72,153,.08);border-radius:999px;padding:8px 12px;font-weight:800;color:var(--text)}
-    .hero h2{font-size:44px;line-height:1.02;letter-spacing:-.055em;margin:14px 0 12px;font-weight:950}.grad{background:linear-gradient(90deg,var(--blue),var(--violet),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}.lead{font-size:20px;line-height:1.42;color:var(--muted);margin:0}
-    .card{background:linear-gradient(180deg,var(--surface),rgba(16,27,50,.58));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:22px;margin:18px 0;position:relative;overflow:hidden} body.light .card{background:linear-gradient(180deg,var(--surface),rgba(255,255,255,.72))}
-    .factobox{min-height:178px;border-color:rgba(56,189,248,.42);box-shadow:0 0 0 1px rgba(56,189,248,.08),0 0 38px rgba(56,189,248,.18),0 0 46px rgba(236,72,153,.11);cursor:pointer}.factobox:after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(110deg,transparent,rgba(56,189,248,.12),transparent 58%,rgba(236,72,153,.13));opacity:.9;pointer-events:none}.factobox.pulse{animation:pulseGlow 900ms ease-out}.orbit{position:absolute;right:-80px;top:-80px;width:270px;height:270px;border:1px solid rgba(167,139,250,.18);border-radius:50%;transform:rotate(-22deg)}.orbit:before,.orbit:after{content:"";position:absolute;border:1px solid rgba(56,189,248,.13);border-radius:50%;inset:32px}.orbit:after{inset:70px;border-color:rgba(236,72,153,.14)}
-    @keyframes pulseGlow{0%{box-shadow:0 0 0 rgba(56,189,248,0)}45%{box-shadow:0 0 0 4px rgba(56,189,248,.16),0 0 45px rgba(56,189,248,.32),0 0 60px rgba(236,72,153,.22)}100%{box-shadow:var(--shadow)}}
-    .fact-inner{display:grid;grid-template-columns:82px 1fr;gap:18px;align-items:center;position:relative;z-index:1}.dna-badge{width:82px;height:82px;border-radius:50%;display:grid;place-items:center;font-size:40px;background:radial-gradient(circle,rgba(56,189,248,.2),rgba(236,72,153,.12));border:1px solid rgba(56,189,248,.38);box-shadow:0 0 24px rgba(56,189,248,.25)}.fact-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.fact-label{font-size:14px;text-transform:uppercase;font-weight:950;color:var(--cyan)}.fact-type{font-size:14px;color:var(--violet);font-weight:850}.fact-title{font-size:27px;line-height:1.1;margin:0 0 10px;font-weight:950;letter-spacing:-.025em}.fact-sub{font-size:17px;line-height:1.4;color:var(--muted);margin:0}.fact-cta{display:inline-block;margin-top:14px;color:var(--blue);font-weight:950;font-size:17px}.fade{opacity:.12;transform:translateY(4px);transition:.7s ease}.fact-content{transition:.7s ease}
-    .section-title{font-size:38px;line-height:1.05;letter-spacing:-.045em;margin:0 0 18px;font-weight:950}.hint{font-size:21px;line-height:1.5;color:var(--muted);margin:0 0 20px}.evidence-actions{display:grid;grid-template-columns:1fr;gap:14px}.big-action{border:1.5px dashed rgba(56,189,248,.55);border-radius:24px;background:rgba(56,189,248,.07);color:var(--blue);font-size:24px;font-weight:950;text-align:center;padding:26px 18px;display:block}.big-action small{display:block;color:var(--muted);font-size:17px;margin-top:10px;font-weight:800}.file-input{display:none}
-    .evidence-loaded{display:none;grid-template-columns:138px 1fr;gap:22px;align-items:center;text-align:left;background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:26px;padding:18px}.evidence-loaded.show-grid{display:grid}.thumb{width:138px;height:108px;border-radius:18px;object-fit:cover;border:1px solid var(--line);box-shadow:0 12px 28px rgba(0,0,0,.2)}.evidence-loaded h3{font-size:30px;margin:0 0 8px;font-weight:950;letter-spacing:-.03em}.evidence-loaded p{font-size:18px;color:var(--muted);line-height:1.3;margin:0 0 14px}.mini-actions{display:flex;flex-wrap:wrap;gap:10px}.pill-btn{border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);border-radius:999px;padding:12px 16px;font-weight:950;font-size:16px}.observe-card{display:none;border-color:rgba(56,189,248,.32)}.observe-card.show{display:block}.observe-card h2{font-size:32px;line-height:1.08;margin:0 0 12px;font-weight:950;letter-spacing:-.03em}.spinner{display:inline-block;width:15px;height:15px;border-radius:50%;border:2px solid rgba(56,189,248,.22);border-top-color:var(--blue);animation:spin .9s linear infinite;margin-right:8px}@keyframes spin{to{transform:rotate(360deg)}}
-    .context-card{display:none}.context-card.show{display:block}.context-card h3{font-size:30px;line-height:1.12;margin:0 0 12px;font-weight:950;letter-spacing:-.03em}.context-card p{font-size:19px;line-height:1.45;color:var(--muted);margin:0 0 14px}.prompt-list{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:10px}.prompt-list li{padding:13px 14px;border-radius:18px;background:rgba(255,255,255,.055);border:1px solid var(--line);font-size:17px;color:var(--text);font-weight:750}.conversation-start{display:none}.conversation-start.show{display:block}.conversation-start h3{font-size:31px;line-height:1.12;letter-spacing:-.035em;margin:0 0 16px;font-weight:950}textarea{width:100%;min-height:132px;border-radius:26px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);padding:18px 20px;font-size:20px;line-height:1.38;outline:none;resize:vertical}body.light textarea{background:#fff}textarea:focus{border-color:rgba(56,189,248,.7);box-shadow:0 0 0 4px rgba(56,189,248,.12)}.primary{width:100%;border-radius:24px;padding:18px;background:linear-gradient(100deg,#38bdf8,#8b5cf6,#ec4899);color:#fff;font-weight:950;font-size:21px;margin-top:14px;box-shadow:0 18px 34px rgba(56,189,248,.24)}
-    .chat-card{display:none}.chat-card.show{display:block}.chat{display:flex;flex-direction:column;gap:12px;max-height:none;overflow:visible;scroll-behavior:smooth}.msg{padding:14px 16px;border-radius:20px;font-size:18px;line-height:1.43}.msg.system,.msg.guide{align-self:flex-start;background:rgba(255,255,255,.07);border:1px solid var(--line);border-bottom-left-radius:7px;max-width:94%}.msg.user{align-self:flex-end;background:rgba(56,189,248,.18);border:1px solid rgba(56,189,248,.22);border-bottom-right-radius:7px;max-width:90%}.composer{display:none;position:fixed;z-index:28;left:0;right:0;bottom:0;padding:18px 14px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,rgba(7,17,31,.90) 22%,rgba(7,17,31,.99))}body.light .composer{background:linear-gradient(180deg,transparent,rgba(248,250,252,.90) 22%,rgba(248,250,252,.99))}.composer-inner{width:min(760px,100%);margin:0 auto;display:grid;grid-template-columns:1fr 56px;gap:10px;align-items:end}.composer textarea{min-height:56px;max-height:126px;border-radius:20px}.send{width:56px;height:56px;border-radius:20px;background:var(--blue);color:#04111f;font-weight:950;font-size:22px}.stuck{position:fixed;z-index:29;right:14px;bottom:122px;width:86px;height:86px;border-radius:50%;background:rgba(236,72,153,.17);border:1px solid rgba(236,72,153,.62);color:var(--text);font-weight:950;box-shadow:0 0 28px rgba(236,72,153,.25);font-size:13px;line-height:1.05}.footer{font-size:14px;color:var(--muted);text-align:center;line-height:1.5;margin:26px 6px}
-    @media (max-width:560px){.app{padding-inline:12px;padding-bottom:210px}.brand h1{font-size:23px}.brand p{font-size:15px}.logo{width:54px;height:54px}.theme-toggle{width:102px;height:54px}.hero h2{font-size:36px}.lead{font-size:18px}.card{padding:18px;border-radius:26px}.fact-inner{grid-template-columns:1fr}.dna-badge{display:none}.fact-title{font-size:24px}.section-title{font-size:34px}.hint{font-size:19px}.evidence-loaded{grid-template-columns:1fr;text-align:center}.thumb{margin:auto;width:168px;height:128px}.observe-card h2,.context-card h3,.conversation-start h3{font-size:28px}.stuck{right:10px;bottom:118px;width:78px;height:78px;font-size:12px}.msg{font-size:17px}}
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:radial-gradient(circle at 30% -10%,#1d3a5c 0,#07111f 42%,#050a12 100%);color:var(--text);}
+    button,input,textarea,select{font:inherit} button{cursor:pointer;border:0}.app{width:min(760px,100%);margin:0 auto;min-height:100dvh;padding:14px 14px 168px}.top{position:sticky;top:0;z-index:10;padding:10px 0 12px;background:linear-gradient(180deg,rgba(7,17,31,.98),rgba(7,17,31,.68),transparent);backdrop-filter:blur(12px)}
+    .brand{display:flex;align-items:center;gap:10px}.logo{width:38px;height:38px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 8px 30px rgba(125,211,252,.25)}
+    .brand h1{font-size:16px;margin:0}.brand p{font-size:12px;color:var(--muted);margin:2px 0 0}.hero{padding:22px 0 12px}.eyebrow{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:#cfe9ff;background:rgba(255,255,255,.05);font-size:13px}.hero h2{font-size:36px;line-height:1.02;letter-spacing:-1px;margin:14px 0 10px}.hero .lead{font-size:16px;line-height:1.48;color:var(--muted);margin:0}.card{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px;margin:14px 0}.factobox{position:relative;overflow:hidden}.factobox:before{content:"";position:absolute;inset:-40% -20% auto auto;width:170px;height:170px;border-radius:50%;background:rgba(125,211,252,.16);filter:blur(12px)}
+    .fact-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.tag{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#07111f;background:var(--warn);padding:6px 9px;border-radius:999px}.fact-type{font-size:12px;color:var(--muted)}.fact-text{font-size:21px;line-height:1.25;margin:0 0 10px}.fact-sub{font-size:13px;color:var(--muted);margin:0}.primary{width:100%;border-radius:18px;padding:15px 16px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#06111f;font-weight:800;box-shadow:0 14px 30px rgba(125,211,252,.25)}.secondary{width:100%;border-radius:18px;padding:14px 16px;background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--line);font-weight:700}.ghost{background:transparent;color:var(--accent);padding:8px 4px;font-weight:700}.grid{display:grid;grid-template-columns:1fr;gap:10px}.section-title{font-size:17px;margin:0 0 8px}.hint{font-size:13px;color:var(--muted);line-height:1.4;margin:0 0 12px}.upload{border:1.5px dashed rgba(125,211,252,.45);border-radius:20px;padding:16px;text-align:center;background:rgba(125,211,252,.06)}.upload input{display:none}.preview{display:none;margin-top:12px;border-radius:18px;overflow:hidden;border:1px solid var(--line)}.preview img{display:block;width:100%;max-height:330px;object-fit:cover}.chips{display:flex;gap:8px;overflow:auto;padding-bottom:6px}.chip{white-space:nowrap;border:1px solid var(--line);background:rgba(255,255,255,.07);color:var(--text);border-radius:999px;padding:9px 11px;font-size:13px}.chip.active{background:rgba(125,211,252,.18);border-color:rgba(125,211,252,.55)}textarea{width:100%;min-height:112px;resize:vertical;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.06);color:var(--text);padding:14px;outline:none}textarea:focus{border-color:rgba(125,211,252,.7);box-shadow:0 0 0 4px rgba(125,211,252,.10)}.chat{display:flex;flex-direction:column;gap:10px;max-height:none;overflow:visible;padding-right:2px}.msg{padding:12px 13px;border-radius:18px;line-height:1.45;font-size:15px}.msg.user{background:rgba(125,211,252,.16);align-self:flex-end;border-bottom-right-radius:6px;max-width:88%}.msg.vane{background:rgba(255,255,255,.075);align-self:flex-start;border-bottom-left-radius:6px;max-width:92%;border:1px solid var(--line)}.composer{position:fixed;left:0;right:0;bottom:0;z-index:20;background:linear-gradient(180deg,transparent,rgba(5,10,18,.93) 22%,rgba(5,10,18,.99));padding:18px 14px calc(14px + env(safe-area-inset-bottom))}.composer-inner{width:min(760px,100%);margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}.composer textarea{min-height:48px;max-height:120px;border-radius:18px}.send{width:52px;height:52px;border-radius:18px;background:var(--accent);font-weight:900;color:#06111f}.stuck{background:rgba(253,230,138,.14);border:1px solid rgba(253,230,138,.34)}.footer-note{font-size:11px;color:rgba(238,246,255,.55);text-align:center;line-height:1.4;margin:18px 10px}.hidden{display:none!important}.minirow{display:flex;gap:8px;align-items:center;justify-content:space-between}.status{font-size:12px;color:var(--muted)}@media (min-width:640px){.hero h2{font-size:48px}.grid.two{grid-template-columns:1fr 1fr}.app{padding-inline:22px}.card{padding:20px}}
   </style>
 </head>
 <body>
   <main class="app">
     <header class="top">
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div><h1>pSINCRO <span>CAT4</span></h1><p>Preparación guiada · Biología Celular CBI111</p></div>
-      </div>
-      <button class="theme-toggle" id="themeToggle" aria-label="Cambiar modo claro u oscuro"><span class="moon">🌙</span><span class="sun">☀️</span></button>
+      <div class="brand"><div class="logo"></div><div><h1>pSINCRO CAT4</h1><p>Preparación guiada · Biología Celular CBI111</p></div></div>
     </header>
-
-    <section class="hero" id="hero">
-      <span class="date-pill">📍 Lunes 15 · CAT4</span>
-      <h2>La conversación no <span class="grad">termina</span> cuando termina la clase.</h2>
-      <p class="lead">Trae una foto de tu pizarra, tu cuaderno, un esquema o una idea a medio construir. Construimos desde ahí.</p>
+    <section class="hero">
+      <span class="eyebrow">📍 Lunes 15 · CAT4</span>
+      <h2>La conversación no termina cuando termina la clase.</h2>
+      <p class="lead">Trae una foto de tus apuntes, una pizarra, un esquema o una idea incompleta. Seguimos conversando desde ahí.</p>
     </section>
-
-    <section class="card factobox" id="factobox" role="button" tabindex="0" aria-label="Seguir conversación desde este FACTO">
-      <div class="orbit" aria-hidden="true"></div>
-      <div class="fact-inner">
-        <div class="dna-badge" id="factIcon">🧬</div>
-        <div class="fact-content" id="factContent">
-          <div class="fact-row"><span class="fact-label">FACTObox</span><span class="fact-type" id="factType">FACTOClase</span></div>
-          <h3 class="fact-title" id="factTitle">Toda proteína comenzó siendo información genética.</h3>
-          <p class="fact-sub" id="factSub">No memorices nombres: sigue qué ocurre con la información.</p>
-          <span class="fact-cta">👉 Seguimos desde esta idea</span>
-        </div>
-      </div>
+    <section class="card factobox" id="factobox">
+      <div class="fact-head"><span class="tag">FACTObox</span><span class="fact-type" id="factType">FACTOClase</span></div>
+      <p class="fact-text" id="factText">Toda proteína comenzó siendo información genética.</p>
+      <p class="fact-sub" id="factSub">No memorices nombres: sigue qué ocurre con la información.</p>
     </section>
-
-    <section class="card" id="evidenceCard">
-      <h2 class="section-title">📷 Traigo mis apuntes</h2>
-      <p class="hint">Trae una evidencia de cómo estás pensando este tema. Puede ser pizarra, cuaderno, esquema, dibujo o una idea a medio construir.</p>
-      <div class="evidence-actions" id="initialEvidenceActions">
-        <label class="big-action" for="galleryInput">🖼️ Elegir de galería<small>pizarra · cuaderno · esquema · dibujo</small></label>
-        <button class="big-action" id="cameraBtn" type="button">📷 Sacar foto<small>abrir cámara</small></button>
-      </div>
-      <input class="file-input" id="galleryInput" type="file" accept="image/*">
-      <input class="file-input" id="cameraInput" type="file" accept="image/*" capture="environment">
-      <div class="evidence-loaded" id="evidenceLoaded">
-        <img class="thumb" id="thumb" alt="Tu evidencia">
-        <div>
-          <h3>Tu evidencia</h3>
-          <p>No buscamos respuestas todavía. Buscamos un punto de partida.</p>
-          <div class="mini-actions">
-            <label class="pill-btn" for="galleryInput">Cambiar desde galería</label>
-            <button class="pill-btn" id="cameraBtn2" type="button">Sacar otra foto</button>
-          </div>
-        </div>
-      </div>
+    <section class="card" id="startCard">
+      <h3 class="section-title">📷 Traigo mis apuntes</h3>
+      <p class="hint">Sube una imagen o escribe qué aparece en ella. La imagen no es una tarea: es el punto de partida de la conversación.</p>
+      <label class="upload" for="imageInput"><strong>Tocar para elegir foto</strong><br><span class="hint">pizarra · cuaderno · esquema · dibujo</span><input id="imageInput" type="file" accept="image/*" capture="environment"></label>
+      <div class="preview" id="preview"><img id="previewImg" alt="Vista previa de apuntes"></div>
+      <div style="height:12px"></div>
+      <textarea id="imageNote" placeholder="¿Qué parte de la foto quieres seguir conversando? Ej: dogma central, replicación, mitosis vs meiosis..."></textarea>
+      <div style="height:10px"></div>
+      <div class="chips" id="chips"></div>
+      <button class="primary" id="beginBtn">Seguimos conversando</button>
     </section>
-
-    <section class="card observe-card" id="observeCard">
-      <p class="hint" id="observeThinking"><span class="spinner"></span>Mirando tu evidencia...</p>
-      <h2 id="observeTitle">Perfecto. Tomemos esto como punto de partida.</h2>
-      <p class="hint" id="observeText">Voy a preparar una conversación desde lo que trajiste.</p>
-    </section>
-
-    <section class="card context-card" id="contextCard">
-      <h3 id="contextTitle">Sigamos desde tu evidencia.</h3>
-      <p id="contextText">Voy a usar lo que trajiste como punto de partida, sin convertirlo en una tarea ni en una respuesta correcta.</p>
-      <ul class="prompt-list" id="promptList"></ul>
-    </section>
-
-    <section class="card conversation-start" id="conversationStart">
-      <h3 id="questionTitle">¿Qué parte de esta evidencia quieres seguir conversando?</h3>
-      <textarea id="topicNote" placeholder="Ej: ¿qué está cambiando aquí?, ¿qué parte no entiendo?, ¿qué significa esta flecha?"></textarea>
-      <button class="primary" id="startConversationBtn">➡️ Construimos desde aquí</button>
-    </section>
-
-    <section class="card chat-card" id="chatCard">
-      <h2 class="section-title" id="chatTitle">Seguimos desde aquí</h2>
+    <section class="card hidden" id="conversationCard">
+      <div class="minirow"><h3 class="section-title">Construimos desde tus apuntes</h3><span class="status" id="status">listo</span></div>
       <div class="chat" id="chat"></div>
+      <div style="height:10px"></div>
+      <button class="secondary stuck" id="stuckBtn">🆘 Me quedé pegado</button>
+      <button class="ghost" id="newStartBtn">Traer otros apuntes</button>
     </section>
-
-    <p class="footer"><strong>La conversación no termina cuando termina la clase.</strong><br>Entorno voluntario de preparación guiada para Biología Celular CBI111.<br>Diseñado por Dr. Alex Elías · Instituto de Ciencias Naturales · UDLA · Piloto 2026.</p>
+    <p class="footer-note">Recurso voluntario de preparación. No reemplaza la clase ni modifica la evaluación oficial. Diseñado por Dr. Alex Elías · Instituto de Ciencias Naturales · UDLA · Piloto 2026.</p>
   </main>
-
-  <button class="stuck" id="stuckBtn">🆘<br>Me quedé<br>pegado</button>
-  <div class="composer" id="composer"><div class="composer-inner"><textarea id="messageInput" placeholder="¿Qué parte seguimos conversando?"></textarea><button class="send" id="sendBtn">↗</button></div></div>
-
+  <div class="composer hidden" id="composer"><div class="composer-inner"><textarea id="messageInput" placeholder="¿Qué parte seguimos conversando?"></textarea><button class="send" id="sendBtn">↗</button></div></div>
 <script>
-/*
-  pSINCRO CAT4 · MVP seguro
-  Premisa operativa:
-  - La interfaz NO promete reconocimiento perfecto de imágenes.
-  - V.A.N.E. no afirma lo que ve: formula hipótesis como preguntas.
-  - FACTObox no es repositorio ni premio: respira ECOS con gravedad contextual determinista.
-  - FACTOClave es interno: se intenta persistir vía endpoint servidor/Supabase; no se muestra al estudiante.
-*/
-const FACTOS_BASE = [
-  {id:'FCL-DOGMA-001', type:'FACTOClase', icon:'🧬', title:'Toda proteína comenzó siendo información genética.', sub:'No memorices nombres: sigue qué ocurre con la información.', tags:['dogma','dna','adn','rna','arn','proteina','proteína','traduccion','traducción','transcripcion','transcripción','gen','genes','funcion','función']},
-  {id:'FPR-GEN-001', type:'FACTOProfe', icon:'✏️', title:'Si puedes dibujarlo, probablemente ya empezaste a entenderlo.', sub:'Ahora conversemos qué representa cada flecha.', tags:['dibujo','dibujado','esquema','pizarra','cuaderno','evidencia','flecha','apunte','apuntes']},
-  {id:'FPR-GEN-002', type:'FACTOProfe', icon:'💡', title:'No memorices nombres.', sub:'Pregunta qué información se mantiene, cuál cambia y para qué sirve.', tags:['general','informacion','información','cambia','mantiene','relacion','relación','cromosoma','meiosis','mitosis']},
-  {id:'FCL-EXP-001', type:'FACTOClase', icon:'🧵', title:'No todos los genes están activos al mismo tiempo.', sub:'Regular expresión génica es decidir qué información se usa.', tags:['cromatina','eucromatina','heterocromatina','gen','genes','expresion','expresión','regulacion','regulación']},
-  {id:'FCL-CICLO-001', type:'FACTOClase', icon:'🛑', title:'Un punto de control es una decisión.', sub:'La célula no avanza sólo porque sí: primero revisa condiciones.', tags:['checkpoint','checkpoints','punto de control','ciclina','ciclinas','cdk','ciclo','g1','s','g2','mitosis','division','división']},
-  {id:'FCL-MUT-001', type:'FACTOClase', icon:'⚡', title:'Una mutación no es automáticamente una enfermedad.', sub:'Primero pregunta qué cambió, dónde cambió y si afecta una función.', tags:['mutacion','mutación','mutaciones','proofreading','mismatch','reparacion','reparación','error','errores']}
+const FACTOS=[
+ {type:'FACTOClase',text:'Toda proteína comenzó siendo información genética.',sub:'Sigue el flujo: DNA → RNA → proteína → función.',tags:['dna','adn','arn','rna','proteína','proteina','dogma','traducción','traduccion','transcripción','transcripcion','gen']},
+ {type:'FACTOProfe',text:'La meiosis NO es una mitosis con pasos extra.',sub:'Pregunta qué cambia con la información genética.',tags:['meiosis','mitosis','cromosoma','gameto','reducción','reduccion','homólogo','homologo','entrecruzamiento']},
+ {type:'FACTOClase',text:'La replicación ocurre antes de la división celular.',sub:'Antes de repartir información, la célula debe copiarla.',tags:['replicación','replicacion','adn','dna','ciclo','fase s','duplicado','cromátida','cromatida']},
+ {type:'FACTOClase',text:'No todos los genes están activos al mismo tiempo.',sub:'Regular expresión génica es decidir qué información se usa.',tags:['gen','expresión','expresion','cromatina','eucromatina','heterocromatina']},
+ {type:'FACTOProfe',text:'Si puedes dibujarlo, probablemente ya empezaste a entenderlo.',sub:'Ahora conversemos qué representa cada flecha.',tags:['esquema','dibujo','flecha','pizarra','apunte','centrómero','centromero','cinetocoro','conetocoro']},
+ {type:'FACTOClase',text:'Los puntos de control no “decoran” el ciclo celular: deciden si la célula puede seguir.',sub:'Ciclinas y CDK ayudan a ordenar ese avance.',tags:['checkpoint','punto de control','ciclina','cdk','ciclo celular','g1','g2']},
+ {type:'FACTOClase',text:'Una mutación no es automáticamente una enfermedad.',sub:'Primero pregunta qué cambió, dónde cambió y si afecta una función.',tags:['mutación','mutacion','proofreading','mismatch','reparación','reparacion']}
 ];
-const CONTEXTS = {
-  chromosomes:{
-    key:'chromosomes', name:'cromosomas',
-    title:'Podría estar relacionado con cromosomas.',
-    text:'Para no asumir de más, partimos preguntando qué estabas intentando representar.',
-    prompts:['¿Eso que aparece en tu evidencia son cromosomas, cromátidas u otra cosa?','¿Estás comparando copias o cromosomas homólogos?','¿Qué información crees que se mantiene o se reorganiza?'],
-    placeholder:'Ej: son cromosomas homólogos, creo que hay crossing over, no entiendo qué cambia aquí...',
-    facts:[
-      {id:'FPR-CROM-001', type:'FACTOProfe', icon:'💡', title:'No memorices estructuras.', sub:'Pregunta qué información se mantiene y cuál cambia.', tags:['cromosoma','cromosomas','cromatida','cromátida','cromatidas','cromátidas','homologo','homólogo','homologos','homólogos','informacion','información']},
-      {id:'FCL-MEIO-001', type:'FACTOClase', icon:'🔀', title:'La meiosis NO es una mitosis con pasos extra.', sub:'Su propósito cambia: reduce y recombina información.', tags:['meiosis','meiotica','meiótica','gameto','gametos','reduccion','reducción','reduccional','recombinacion','recombinación','entrecruzamiento','crossing','crossing over','variabilidad']},
-      {id:'FPR-CROM-002', type:'FACTOProfe', icon:'✏️', title:'Si puedes dibujar cromosomas, ya tienes un punto de partida.', sub:'Ahora falta decir qué representa cada parte del dibujo.', tags:['dibujo','dibujar','cromosoma','cromosomas','centromero','centrómero','flecha','sinapsis','tetrada','tétrada']},
-      {id:'FCL-MEIO-002', type:'FACTOClase', icon:'🧬', title:'El entrecruzamiento cambia combinaciones.', sub:'No elimina genes: reorganiza versiones de información.', tags:['entrecruzamiento','crossing','crossing over','quiasma','quiasmas','recombinacion','recombinación','alelo','alelos','variabilidad']}
-    ]
-  },
-  cellcycle:{
-    key:'cellcycle', name:'ciclo celular',
-    title:'Podría estar relacionado con ciclo celular.',
-    text:'Antes de nombrar fases, conviene preguntar qué decisión está tomando la célula.',
-    prompts:['¿Qué tendría que revisar la célula antes de avanzar?','¿Esto representa una fase, un checkpoint o una transición?','¿Qué información debe estar lista antes de dividirse?'],
-    placeholder:'Ej: creo que es G1/S, no entiendo checkpoint, no sé qué hacen ciclinas/CDK...',
-    facts:[
-      {id:'FCL-CICLO-002', type:'FACTOClase', icon:'🛑', title:'Un checkpoint no es una etapa decorativa.', sub:'Es una pregunta de seguridad antes de avanzar.', tags:['checkpoint','checkpoints','punto de control','control','g1','g2','s','m','avance','detencion','detención']},
-      {id:'FCL-CICLO-003', type:'FACTOClase', icon:'⚙️', title:'Ciclinas y CDK ayudan a ordenar el avance.', sub:'No memorices nombres: pregunta quién permite pasar al siguiente momento.', tags:['ciclina','ciclinas','cdk','ciclo','avance','progresion','progresión','fase']},
-      {id:'FPR-CICLO-001', type:'FACTOProfe', icon:'💡', title:'Antes de repartir información, la célula debe tenerla lista.', sub:'Esa idea ayuda a entender por qué existe la fase S.', tags:['fase s','s','replicacion','replicación','dna','adn','division','división','mitosis']}
-    ]
-  },
-  dogma:{
-    key:'dogma', name:'dogma central',
-    title:'Podría estar relacionado con flujo de información.',
-    text:'Podemos seguir la ruta DNA → RNA → proteína → función, sin memorizar nombres sueltos.',
-    prompts:['¿Dónde aparece el RNA en la historia?','¿Qué cambia al pasar de RNA a proteína?','¿Cómo se llega desde información genética a función?'],
-    placeholder:'Ej: no entiendo para qué sirve RNA, no sé cómo se pasa de DNA a proteína...',
-    facts:[
-      {id:'FCL-DOGMA-002', type:'FACTOClase', icon:'🧬', title:'Toda proteína comenzó siendo información genética.', sub:'Sigue el flujo: DNA → RNA → proteína → función.', tags:['dna','adn','rna','arn','proteina','proteína','funcion','función','dogma','flujo']},
-      {id:'FPR-DOGMA-001', type:'FACTOProfe', icon:'💡', title:'No memorices nombres.', sub:'Pregunta qué le pasa a la información en cada flecha.', tags:['transcripcion','transcripción','traduccion','traducción','rna','arn','ribosoma','codon','codón','aminoacido','aminoácido']},
-      {id:'FCL-EXP-002', type:'FACTOClase', icon:'🧵', title:'No todos los genes están activos al mismo tiempo.', sub:'Regular expresión es decidir qué información se usa.', tags:['gen','genes','expresion','expresión','regulacion','regulación','cromatina','eucromatina','heterocromatina']}
-    ]
-  },
-  general:{
-    key:'general', name:'evidencia',
-    title:'Sigamos desde tu evidencia.',
-    text:'No voy a convertirla en una tarea. La usamos como punto de partida para conversar.',
-    prompts:['¿Qué parte de tu dibujo o apunte quieres entender primero?','¿Qué flecha, palabra o zona te genera duda?','¿Qué crees que está cambiando en esta idea?'],
-    placeholder:'Ej: esta flecha no la entiendo, no sé qué significa esta palabra, no sé qué cambia aquí...',
-    facts:[
-      {id:'FPR-GEN-003', type:'FACTOProfe', icon:'✏️', title:'Si puedes dibujarlo, probablemente ya empezaste a entenderlo.', sub:'Ahora conversemos qué representa cada flecha.', tags:['dibujo','esquema','flecha','cuaderno','pizarra','evidencia']},
-      {id:'FPR-GEN-004', type:'FACTOProfe', icon:'💡', title:'No busques la definición perfecta primero.', sub:'Parte diciendo qué crees que está pasando.', tags:['duda','pregunta','definicion','definición','entiendo','entender']},
-      {id:'FCL-GEN-001', type:'FACTOClase', icon:'🧬', title:'Los nombres sirven cuando entiendes la relación.', sub:'Primero mira qué cambia y qué se mantiene.', tags:['nombre','nombres','relacion','relación','cambia','mantiene','informacion','información']}
-    ]
-  }
-};
-const CAT4_CEILING = {
-  scope: 'CBI111 CAT4 · Unidad 4: ciclo celular y regulación de la expresión génica',
-  allowed: [
-    'organización del material genético','ácidos nucleicos','ADN','gen','genoma','núcleo','cromatina','eucromatina','heterocromatina','tipos de cromosomas','cariotipo','cariograma',
-    'dogma central','replicación de ADN','transcripción','maduración del ARNm','traducción','código genético','ARNm','ARNr','ARNt','aminoácidos','proteína','función',
-    'ciclo celular','G1','S','G2','M','puntos de control','checkpoints','ciclinas','CDK','mitosis','meiosis','cromosomas homólogos','cromátidas hermanas','sinapsis','entrecruzamiento','gametos','variabilidad','aneuploidía'
-  ],
-  shallowOnly: ['proofreading','mismatch repair','mutaciones','errores replicativos','aneuploidías','ciclinas/CDK'],
-  forbiddenDepth: ['termodinámica avanzada','estructura molecular fina de CDK','p53 en detalle','splicing avanzado','enhancers/silencers en profundidad','reparación por escisión','recombinación homóloga avanzada','cinetocoro/microtúbulos en detalle','mecanismos bioquímicos de reparación del ADN']
-};
-const VISUAL_GUARDRAILS = `Regla de V.A.N.E. invisible: no afirmes con certeza lo que ves en una imagen. Devuelve cualquier hipótesis visual como pregunta tentativa. No digas “veo X” como certeza: pregunta “¿esto representa X u otra cosa?”. No digas “analicé la imagen”. No evalúes con correcto/incorrecto. No cierres la respuesta si puedes abrir una comparación. Techo conceptual: preparación CAT4 CBI111, Unidad 4: organización/regulación del material genético, dogma central, replicación, transcripción, traducción, ciclo celular, checkpoints, ciclinas/CDK funcionales, mitosis y meiosis. Si el estudiante pide profundidad fuera de clase, valida y vuelve: “para CAT4 basta con entender que…”. Si dice “me quedé pegado”, baja un prerequisito real, cambia analogía o pide mirar una parte de la evidencia; no resuelvas como Wikipedia.`;
-let factPool = [...FACTOS_BASE];
-let factIndex = 0;
-let currentContext = CONTEXTS.general;
-let currentKeywords = ['general','evidencia'];
-let recentFactIds = [];
-let evidenceData = null;
-let currentEvidenceId = null;
-let lastFactoClave = null;
-let evidenceOpeningShown = false;
-let studentTurnCount = 0;
-const $ = id => document.getElementById(id);
-const norm = s => (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 
-function setTheme(light){document.body.classList.toggle('light', light);localStorage.setItem('psincro-theme', light?'light':'dark');document.querySelector('meta[name="theme-color"]').setAttribute('content', light?'#f8fafc':'#07111f')}
-(function(){const saved=localStorage.getItem('psincro-theme');setTheme(saved?saved==='light':window.matchMedia('(prefers-color-scheme: light)').matches)})();
-$('themeToggle').addEventListener('click',()=>setTheme(!document.body.classList.contains('light')));
+const ACTIVE_TOPICS=['Dogma central','Replicación','Transcripción','Traducción','Cromatina','Mutaciones','Ciclo celular','Mitosis','Meiosis','Checkpoints','Ciclinas/CDK'];
+const CAT4_CEILING={
+ scope:'CBI111 CAT4',
+ rule:'Responder a nivel de clase: dogma central, replicación, transcripción, traducción, cromatina, ciclo celular, mitosis, meiosis, checkpoints, ciclinas/CDK funcionales, mutaciones suaves. No entrar en detalle molecular fino.'
+};
 
-function setFact(f, pulse=true){
-  const c=$('factContent');
-  c.classList.add('fade');
-  setTimeout(()=>{
-    $('factIcon').textContent=f.icon||'💡';
-    $('factType').textContent=f.type||'FACTOProfe';
-    $('factTitle').textContent=f.title||'';
-    $('factSub').textContent=f.sub||'';
-    c.classList.remove('fade');
-    if(pulse){
-      $('factobox').classList.remove('pulse');
-      void $('factobox').offsetWidth;
-      $('factobox').classList.add('pulse')
-    }
-  },700)
+let imageData=null, currentTopic='', recentFacts=[];
+let state={
+ activeTopic:null,
+ activeSubtopic:null,
+ lastStudent:'',
+ lastAssistant:'',
+ expected:[],
+ turn:0
+};
+
+const $=id=>document.getElementById(id);
+function norm(s){return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function has(c,arr){return arr.some(x=>c.includes(norm(x)))}
+function setFocus(topic=null,subtopic=null,expected=[]){
+ if(topic) state.activeTopic=topic;
+ if(subtopic) state.activeSubtopic=subtopic;
+ if(expected && expected.length) state.expected=expected;
 }
-function factScore(f){
-  const hay = (f.tags||[]).map(norm);
-  let score = 1;
-  for(const k of currentKeywords.map(norm)){ if(k && hay.some(t => t.includes(k) || k.includes(t))) score += 3; }
-  if(f.type==='FACTOProfe') score += .35;
-  return score + Math.random()*0.85;
+function detectConcepts(message){
+ const c=norm(message), out=[];
+ const add=x=>{if(!out.includes(x))out.push(x)};
+ if(has(c,['mitosis'])) add('mitosis');
+ if(has(c,['meiosis'])) add('meiosis');
+ if(has(c,['replicacion','replicación','duplicacion del adn','duplicación del adn'])) add('replicación');
+ if(has(c,['cromosoma duplicado','cromosomas duplicados','duplicado','duplicados'])) add('cromosoma duplicado');
+ if(has(c,['cromatida','cromátida','cromatidas','cromátidas','cromatica','cromática','cromaticas','cromáticas'])) add('cromátidas');
+ if(has(c,['cromatidas hermanas','cromátidas hermanas','cromaticas hermanas','cromáticas hermanas'])) add('cromátidas hermanas');
+ if(has(c,['centromero','centrómero'])) add('centrómero');
+ if(has(c,['cinetocoro','cinetocoros','conetocoro','conetocoros'])) add('cinetocoro');
+ if(has(c,['huso','huso mitotico','huso mitótico','microtubulo','microtúbulo'])) add('huso');
+ if(has(c,['homologo','homólogo','homologos','homólogos'])) add('homólogos');
+ if(has(c,['entrecruzamiento','crossing','recombinacion','recombinación','sinapsis','quiasma'])) add('entrecruzamiento');
+ if(has(c,['checkpoint','checkpoints','punto de control','puntos de control'])) add('checkpoint');
+ if(has(c,['ciclina','ciclinas','cdk'])) add('ciclinas/CDK');
+ if(has(c,['dogma','adn a arn','dna a rna','adn arn proteina','dna rna protein'])) add('dogma');
+ if(has(c,['transcripcion','transcripción','arnm','mrna'])) add('transcripción');
+ if(has(c,['traduccion','traducción','codigo genetico','código genético','codon','codón','aminoacido','aminoácido','arnt','trna','arnr','rrna','ribosoma'])) add('traducción');
+ if(has(c,['mutacion','mutación','mutaciones','proofreading','mismatch'])) add('mutación');
+ return out;
 }
-function selectNextFact(){
-  let refractoryWindow = 2;
-  let candidates = factPool.filter(f=>!recentFactIds.slice(-refractoryWindow).includes(f.id));
-  if(candidates.length < 2){ refractoryWindow = 1; candidates = factPool.filter(f=>!recentFactIds.slice(-refractoryWindow).includes(f.id)); }
-  if(!candidates.length) candidates = [...factPool];
-  candidates.sort((a,b)=>factScore(b)-factScore(a));
-  const top = candidates.slice(0, Math.min(3,candidates.length));
-  return top[Math.floor(Math.random()*top.length)];
+function updateState(message){
+ const concepts=detectConcepts(message);
+ state.turn += 1;
+ state.lastStudent=message;
+ if(concepts.includes('mitosis')) setFocus('mitosis',state.activeSubtopic,['cromosoma duplicado','cromátidas hermanas','centrómero','cinetocoro','huso']);
+ if(concepts.includes('meiosis')) setFocus('meiosis',state.activeSubtopic,['homólogos','cromátidas no hermanas','sinapsis','entrecruzamiento']);
+ if(concepts.includes('cromosoma duplicado')) setFocus('cromosoma duplicado','cromátidas hermanas',['centrómero','cinetocoro','huso','mitosis']);
+ if(concepts.includes('cromátidas hermanas')) setFocus(state.activeTopic||'cromosoma duplicado','cromátidas hermanas',['centrómero','cinetocoro','homólogos']);
+ if(concepts.includes('centrómero')) setFocus(state.activeTopic||'cromosoma duplicado','centrómero',['cinetocoro','huso','separación de cromátidas']);
+ if(concepts.includes('cinetocoro')) setFocus(state.activeTopic||'mitosis','cinetocoro',['huso','separación de cromátidas','checkpoint']);
+ if(concepts.includes('huso')) setFocus(state.activeTopic||'mitosis','huso',['cinetocoro','separación de cromátidas']);
+ if(concepts.includes('homólogos')) setFocus('meiosis','homólogos',['sinapsis','entrecruzamiento','cromátidas no hermanas']);
+ if(concepts.includes('entrecruzamiento')) setFocus('meiosis','entrecruzamiento',['homólogos','cromátidas no hermanas','variabilidad']);
+ if(concepts.includes('checkpoint')) setFocus('ciclo celular','checkpoint',['G1/S','G2/M','ADN copiado','daño en ADN']);
+ if(concepts.includes('dogma')) setFocus('dogma central',null,['ADN','ARN','proteína','función']);
+ return concepts;
 }
-function cycleFact(pulse=true){const next=selectNextFact();factIndex=Math.max(0,factPool.findIndex(f=>f.id===next.id));recentFactIds.push(next.id);recentFactIds=recentFactIds.slice(-4);setFact(next,pulse)}
-setFact(factPool[0],false);recentFactIds=[factPool[0].id];setInterval(()=>cycleFact(true),110000);
-function setAmbientContext(ctx, keywords=[]){
-  currentContext=ctx;
-  currentKeywords=[ctx.name, ctx.key||'', ...keywords].filter(Boolean);
-  const seen = new Set();
-  factPool=[...ctx.facts,...FACTOS_BASE].filter(f=>{if(seen.has(f.id)) return false; seen.add(f.id); return true;});
-  recentFactIds=[];
-  const first=selectNextFact();
-  factIndex=Math.max(0,factPool.findIndex(f=>f.id===first.id));
-  recentFactIds.push(first.id);
-  setFact(first,true);
+function updateTopicFromMessage(message){
+ const c=norm(message);
+ if(has(c,['cromosoma','cromatida','cromática','centromero','centrómero','cinetocoro','conetocoro','huso','homologo','homólogo','meiosis','mitosis','entrecruzamiento','crossing','sinapsis'])) currentTopic='Mitosis';
+ if(has(c,['meiosis','homologo','homólogo','gameto','entrecruzamiento','crossing','sinapsis'])) currentTopic='Meiosis';
+ if(has(c,['checkpoint','ciclina','cdk','g1','g2','fase s','ciclo'])) currentTopic='Ciclo celular';
+ if(has(c,['dogma','adn','dna','arn','rna','proteina','proteína','transcripcion','transcripción','traduccion','traducción'])) currentTopic='Dogma central';
 }
-function updateGravityFromText(text){
-  const c=norm(text);
-  const additions=[];
-  const lex = ['meiosis','mitosis','cromosoma','cromosomas','cromatida','cromatidas','homologo','homologos','gameto','gametos','entrecruzamiento','crossing','sinapsis','recombinacion','variabilidad','ciclo','checkpoint','ciclina','cdk','g1','g2','fase s','dna','adn','rna','arn','proteina','proteina','gen','genes','cromatina','mutacion','proofreading','mismatch'];
-  for(const k of lex){ if(c.includes(norm(k))) additions.push(k); }
-  currentKeywords=[...new Set([...currentKeywords, ...additions])].slice(-24);
+function factScore(f,context){
+ const c=norm(context+' '+currentTopic+' '+state.activeTopic+' '+state.activeSubtopic+' '+state.expected.join(' '));
+ let score=1+Math.random()*0.4;
+ for(const t of f.tags){ if(c.includes(norm(t))) score+=3; }
+ if(recentFacts.includes(f.text)) score-=4;
+ return score;
 }
-function inferContextFromText(text){const c=norm(text); if(/cromos|cromatid|centrom|cinetocor|homolog|meiosis|gameto|entrecruz|crossing|sinapsis|recombin/.test(c)) return CONTEXTS.chromosomes; if(/ciclo|ciclina|cdk|checkpoint|interfase|mitosis|fase s|g1|g2/.test(c)) return CONTEXTS.cellcycle; if(/dna|adn|rna|arn|prote|dogma|transcrip|tradu|gen\b/.test(c)) return CONTEXTS.dogma; return CONTEXTS.general;}
-function inferContextFromImageName(file){return inferContextFromText((file&&file.name)||'');}
-function renderContextCard(ctx){
-  $('contextTitle').textContent=ctx.title;
-  $('contextText').textContent=ctx.text;
-  $('promptList').innerHTML=ctx.prompts.map(p=>`<li>${p}</li>`).join('');
-  $('questionTitle').textContent='¿Qué parte de esta evidencia quieres seguir conversando?';
-  $('topicNote').placeholder=ctx.placeholder;
+function pickFact(context){
+ const sorted=[...FACTOS].sort((a,b)=>factScore(b,context)-factScore(a,context));
+ const best=sorted[0]||FACTOS[0];
+ recentFacts.push(best.text); recentFacts=recentFacts.slice(-2);
+ return best;
 }
-function openingForContext(ctx){
-  if(ctx.name==='cromosomas') return 'Tomemos tu evidencia como punto de partida. Para no asumir de más: ¿eso que aparece ahí son cromosomas, cromátidas u otra cosa? Cuando lo confirmes, seguimos con qué información cambia y cuál se mantiene.';
-  if(ctx.name==='ciclo celular') return 'Tomemos tu evidencia como punto de partida. Para no asumir de más: ¿estás intentando representar una fase del ciclo celular, un checkpoint o una transición entre momentos?';
-  if(ctx.name==='dogma central') return 'Tomemos tu evidencia como punto de partida. Para no asumir de más: ¿estás trabajando el flujo DNA → RNA → proteína → función, u otra relación?';
-  return 'Tomemos tu evidencia como punto de partida. No necesito adivinarla perfecto: cuéntame qué intentabas representar o qué parte quieres seguir pensando.';
+function showFact(context){
+ const f=pickFact(context);
+ $('factType').textContent=f.type;
+ $('factText').textContent=f.text;
+ $('factSub').textContent=f.sub;
 }
-function safeOpening(reply, ctx){
-  if(!reply) return openingForContext(ctx);
-  let r = reply.replace(/\bVeo\b/gi,'Podría haber').replace(/\bAnalicé\b/gi,'Miré').replace(/\bIdentifiqué\b/gi,'Podría estar relacionado con');
-  if(!/[¿?]/.test(r)) r += ' ¿Es eso lo que estabas intentando representar?';
-  return r;
+function addMsg(role,text){
+ const d=document.createElement('div');
+ d.className='msg '+role;
+ d.textContent=text;
+ $('chat').appendChild(d);
+ setTimeout(()=>d.scrollIntoView({behavior:'smooth',block:'end'}),40);
+ return d;
 }
-async function persistFactoClave(record){
-  // Registro de investigación: debe ir al servidor/Supabase, no quedar atrapado en el dispositivo.
-  // Para el MVP, si el endpoint aún no existe, la experiencia del estudiante no se interrumpe.
-  try{
-    await fetch('/api/factoclave-log',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(record)
-    });
-  }catch(e){
-    console.warn('FACTOClave no persistido: endpoint servidor pendiente.', e);
-  }
-}
-async function analyzeEvidenceWithApi(file){
-  try{
-    const res=await fetch('/api/vane',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'evidence_opening',filename:file?.name||'',imageData:evidenceData,guardrails:VISUAL_GUARDRAILS})});
-    if(!res.ok) throw new Error('api');
-    const data=await res.json();
-    const key = norm(data.context||data.contextKey||'');
-    const ctx = key.includes('chrom')||key.includes('crom')||key.includes('meiosis') ? CONTEXTS.chromosomes : key.includes('cycle')||key.includes('ciclo')||key.includes('checkpoint') ? CONTEXTS.cellcycle : key.includes('dogma')||key.includes('dna')||key.includes('adn') ? CONTEXTS.dogma : inferContextFromImageName(file);
-    const visualHypothesis = Array.isArray(data.visual_hypothesis) ? data.visual_hypothesis : [ctx.name];
-    return {ctx, reply:safeOpening(data.reply,ctx), visualHypothesis};
-  }catch(e){
-    const ctx=inferContextFromImageName(file);
-    return {ctx, reply:openingForContext(ctx), visualHypothesis:[ctx.name]};
-  }
-}
-function openSituatedChat(reply){
-  $('chatCard').classList.add('show');
-  $('composer').style.display='block';
-  $('chatTitle').textContent='Seguimos desde tu evidencia';
-  if(!$('chat').children.length){ addMsg('guide',reply); evidenceOpeningShown = true; }
-  $('chatCard').scrollIntoView({behavior:'smooth',block:'start'});
-}
-function handleEvidence(file){
-  if(!file)return;
-  const r=new FileReader();
-  r.onload=async()=>{
-    evidenceData=r.result;
-    currentEvidenceId='ev_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7);
-    $('thumb').src=evidenceData;
-    $('initialEvidenceActions').classList.add('hidden');
-    $('evidenceLoaded').classList.add('show-grid');
-    $('observeCard').classList.add('show');
-    $('observeThinking').classList.remove('hidden');
-    $('observeTitle').textContent='Mirando tu evidencia…';
-    $('observeText').textContent='La usaré como punto de partida para abrir una conversación situada.';
-    $('contextCard').classList.remove('show');
-    $('conversationStart').classList.remove('show');
-    $('chatCard').classList.remove('show');
-    $('composer').style.display='none';
-    $('chat').innerHTML='';
-    evidenceOpeningShown = false;
-    studentTurnCount = 0;
-    const result = await analyzeEvidenceWithApi(file);
-    setAmbientContext(result.ctx, result.visualHypothesis);
-    renderContextCard(result.ctx);
-    lastFactoClave = {evidence_id:currentEvidenceId,timestamp:new Date().toISOString(),filename:file?.name||'',visual_hypothesis:result.visualHypothesis,confidence_mode:'tentative',context_key:result.ctx.key,active_echo_keywords:currentKeywords,first_chat_move:'clarifying_question'};
-    persistFactoClave(lastFactoClave);
-    $('observeThinking').classList.add('hidden');
-    $('observeTitle').textContent='Miré tu evidencia.';
-    $('observeText').textContent='Abrí una conversación sin asumir de más.';
-    setTimeout(()=>openSituatedChat(result.reply),450);
-  };
-  r.readAsDataURL(file);
-}
-$('galleryInput').addEventListener('change',e=>handleEvidence(e.target.files[0]));$('cameraInput').addEventListener('change',e=>handleEvidence(e.target.files[0]));$('cameraBtn').addEventListener('click',()=>$('cameraInput').click());$('cameraBtn2').addEventListener('click',()=>$('cameraInput').click());
-function addMsg(type,text){
-  const d=document.createElement('div');
-  d.className='msg '+type;
-  d.textContent=text;
-  $('chat').appendChild(d);
-  // Evita el doble scroll en celular: la página, no el chat interno, lleva la conversación.
-  setTimeout(()=>{
-    d.scrollIntoView({behavior:'smooth', block:'end'});
-  },40);
-  return d;
-}
-function ensureContextFromMessage(message){
-  const inferred = inferContextFromText(message);
-  if(inferred.name !== 'general' && currentContext.name !== inferred.name){
-    setAmbientContext(inferred, currentKeywords);
-  }
-}
-function mentionsAny(c, arr){ return arr.some(x=>c.includes(norm(x))); }
-function replyOpeningOnlyIfNeeded(){
-  if(!evidenceOpeningShown && studentTurnCount===0){
-    evidenceOpeningShown = true;
-    return 'Tomemos tu evidencia como punto de partida. No necesito adivinarla perfecto: cuéntame qué intentabas representar o qué parte quieres seguir pensando.';
-  }
-  return null;
-}
-function isGenericEvidenceReply(text=''){
-  const c=norm(text);
-  const genericBits=[
-    'sigamos desde tu evidencia',
-    'dime que palabra flecha o zona',
-    'no necesito adivinarla perfecto',
-    'que intentabas representar',
-    'que parte quieres seguir pensando',
-    'la usamos como punto de partida'
-  ];
-  return genericBits.some(x=>c.includes(x));
-}
-function isLikelyTooDeep(text=''){
-  const c=norm(text);
-  return /(p53|atm|atr|chks?1|chks?2|cohesina|separasa|topoisomerasa|helicasa en detalle|excision|nucleotide excision|base excision|enhancer|silencer|spliceosoma|microtubulo cinetocorico|cinetocoro externo)/.test(c);
+function isTooDeep(message){
+ const c=norm(message);
+ return /(p53|atm|atr|chk1|chk2|cohesina|separasa|topoisomerasa|helicasa en detalle|excision|spliceosoma|enhancer|silencer|cinetocoro externo|microtubulo cinetocorico)/.test(c);
 }
 function cat4Redirect(){
-  return 'Buena curiosidad, pero para CAT4 no necesitamos entrar a ese nivel molecular. Quedémonos con la idea funcional: ¿qué información se copia, se revisa, se reparte o se expresa?';
+ return 'Buena curiosidad, pero para CAT4 no necesitamos entrar a ese nivel molecular. Quedémonos con la idea funcional: ¿qué información se copia, se revisa, se reparte o se expresa?';
 }
-function localReply(message, stuck=false){
-  updateGravityFromText(message);
-  ensureContextFromMessage(message);
-  const ctx=currentContext.name;
-  const c=norm(message);
-
-  if(isLikelyTooDeep(message)) return cat4Redirect();
-
-  if(stuck){
-    if(ctx==='cromosomas')return 'Bajemos un nivel. Mira tu dibujo sin nombrar todavía el proceso: ¿estás comparando dos copias del mismo cromosoma, o un par equivalente —uno materno y uno paterno—? Esa diferencia destraba casi todo.';
-    if(ctx==='ciclo celular')return 'Bajemos un nivel. Antes de decir G1, S, G2 o M: ¿la célula está creciendo, copiando información, revisando si puede avanzar, o repartiendo cromosomas?';
-    if(ctx==='dogma central')return 'Bajemos un nivel. Elige una flecha: ¿la información pasa de ADN a ARN, de ARN a proteína, o desde proteína hacia función?';
-    return 'Bajemos un nivel. Mira solo una marca de tu evidencia: ¿representa una estructura, una flecha, una comparación o un cambio entre dos momentos? Partamos por ahí.';
-  }
-
-  // CAT4: organización del material genético
-  if(mentionsAny(c,['cromatina','eucromatina','heterocromatina'])){
-    return 'Buen foco. Piensa la cromatina como ADN organizado en el núcleo. Si está más abierta, la información puede usarse con más facilidad; si está más compacta, queda menos disponible. En tu apunte, ¿estás trabajando organización del ADN o regulación de qué genes se expresan?';
-  }
-  if(mentionsAny(c,['cariotipo','cariograma','genoma','tipo de cromosoma','tipos de cromosomas'])){
-    return 'Sigamos desde ahí. Un cariotipo/cariograma ayuda a mirar el conjunto de cromosomas, no un gen aislado. ¿Tu duda va por reconocer pares, tamaño/forma, o alteraciones en el número de cromosomas?';
-  }
-
-  // CAT4: cromosomas, mitosis, meiosis
-  if(mentionsAny(c,['centromero','centrómero','cinetocoro','cinetocoros'])){
-    if(mentionsAny(c,['cinetocoro','cinetocoros'])){
-      return 'Buen punto, pero mantengámoslo en techo CAT4. El cinetocoro puede pensarse como la zona funcional asociada al centrómero que permite enganchar y separar cromosomas durante la división. No necesitamos detalle molecular: la pregunta clave es si ayuda a repartir cromátidas u homólogos correctamente. En tu dibujo, ¿lo estás usando para explicar unión o separación?';
-    }
-    return 'Bien: el centrómero es la región que mantiene unidas a las cromátidas hermanas en un cromosoma duplicado. Para CAT4, úsalo como pista visual para distinguir “un cromosoma duplicado” de “dos cromosomas distintos”. En tu dibujo, ¿el centrómero une copias o marca dónde se separarán?';
-  }
-  if(mentionsAny(c,['cromosomas duplicados','duplicados','duplicado'])){
-    return 'Bien: “duplicado” significa que el cromosoma ya copió su ADN y por eso queda formado por dos cromátidas hermanas unidas. La idea clave para CAT4 es esta: duplicado no significa “dos cromosomas distintos”, sino un cromosoma con dos copias. En tu dibujo, ¿dónde estaría la unión entre esas cromátidas?';
-  }
-  if(mentionsAny(c,['cromatidas hermanas','cromáticas hermanas','cromatica hermana','cromatida hermana','cromátidas hermanas'])){
-    if(mentionsAny(c,['recombinan','recombinacion','recombinación','entrecruzamiento','crossing'])){
-      return 'Ahí está la distinción importante. Las cromátidas hermanas son copias muy parecidas del mismo cromosoma. El entrecruzamiento que genera variabilidad ocurre entre cromátidas no hermanas de cromosomas homólogos. En tu dibujo, ¿cuál sería el homólogo materno y cuál el paterno?';
-    }
-    return 'Las cromátidas hermanas son las dos copias de un cromosoma duplicado. No las confundamos con cromosomas homólogos, que forman un par equivalente. ¿Tu duda es distinguir “copias” versus “par homólogo”?';
-  }
-  if(mentionsAny(c,['homologos','homólogos','homologo','homólogo'])){
-    return 'Bien. Los cromosomas homólogos forman un par equivalente: uno viene de la madre y otro del padre. Tienen información para los mismos tipos de rasgos, pero no necesariamente versiones idénticas. ¿En tu dibujo están emparejados, separándose o intercambiando segmentos?';
-  }
-  if(mentionsAny(c,['sinapsis','entrecruzamiento','crossing','recombinacion','recombinación','quiasma'])){
-    return 'Sigamos por ahí. La sinapsis junta cromosomas homólogos; el entrecruzamiento intercambia segmentos entre cromátidas no hermanas. Para CAT4, quédate con la consecuencia: aumenta la variabilidad de los gametos. ¿Tu dibujo muestra el emparejamiento o el intercambio?';
-  }
-  if(mentionsAny(c,['meiosis','gametos','reduccional','reduccion cromosomica','reducción cromosómica'])){
-    return 'En meiosis la pregunta central no es memorizar fases: es entender cómo se reduce la dotación cromosómica y cómo aparece variabilidad. ¿Tu duda está en la separación de homólogos, la separación de cromátidas o el entrecruzamiento?';
-  }
-  if(mentionsAny(c,['mitosis'])){
-    return 'En mitosis la idea central es conservar la información: una célula reparte cromátidas hermanas para formar células con la misma dotación genética. ¿Quieres compararla con meiosis o entender una etapa puntual?';
-  }
-  if(mentionsAny(c,['aneuploidia','aneuploidía','no disyuncion','no disyunción'])){
-    return 'Para CAT4, aneuploidía puede pensarse como un error de reparto: una célula queda con cromosomas de más o de menos. ¿Tu duda está en si el error ocurre al separar homólogos o cromátidas?';
-  }
-
-  // CAT4: ciclo celular
-  if(mentionsAny(c,['checkpoint','checkpoints','punto de control','puntos de control'])){
-    return 'Pensemos el checkpoint como una decisión de seguridad. No es una fase decorativa: pregunta si la célula está lista para avanzar. ¿Qué debería revisar en tu ejemplo: tamaño/condiciones, ADN copiado, daño en el ADN o reparto correcto?';
-  }
-  if(mentionsAny(c,['cdk','ciclina','ciclinas'])){
-    return 'Para CAT4 basta con el nivel funcional: ciclinas y CDK ayudan a ordenar el avance del ciclo celular. No necesitamos el detalle molecular fino. ¿Tu duda es quién permite avanzar o qué se revisa antes de avanzar?';
-  }
-  if(mentionsAny(c,['fase s','fase de sintesis','g1','g2','interfase','ciclo celular'])){
-    return 'Pensemos el ciclo como una secuencia de preparación y reparto. G1 prepara, S copia el ADN, G2 revisa/prepara, M reparte. ¿En qué punto de esa secuencia ubicarías tu evidencia?';
-  }
-
-  // CAT4: dogma central y expresión génica
-  if(mentionsAny(c,['dogma','adn a arn','dna a rna','adn arn proteina','dna rna protein'])){
-    return 'Perfecto: el techo CAT4 aquí es seguir el flujo ADN → ARN → proteína → función. ¿Tu duda está en la flecha de transcripción, en la traducción o en cómo una proteína termina generando función?';
-  }
-  if(mentionsAny(c,['replicacion','replicación','duplicacion del adn','duplicación del adn'])){
-    return 'Replicación significa copiar ADN antes de dividirse. Para CAT4, con eso basta como idea central: copiar información para poder repartirla. ¿Quieres conectarlo con cromosomas duplicados o con fase S?';
-  }
-  if(mentionsAny(c,['transcripcion','transcripción','arnm','mrna','maduracion','maduración'])){
-    return 'Transcripción es pasar información desde ADN hacia ARN. Si aparece ARNm, piensa en un mensaje que luego podrá traducirse. ¿Tu duda es de dónde sale el ARNm o qué ocurre antes de llegar a proteína?';
-  }
-  if(mentionsAny(c,['traduccion','traducción','codigo genetico','código genético','codon','codón','aminoacido','aminoácido','arnt','trna','arnr','rrna','ribosoma'])){
-    return 'En traducción, el mensaje del ARNm se lee para ordenar aminoácidos y formar una proteína. Para CAT4, piensa: ARNm trae el mensaje, ARNt ayuda a traer aminoácidos y el ribosoma participa en la síntesis. ¿Qué parte de esa relación te complica?';
-  }
-  if(mentionsAny(c,['gen','genes','expresion genica','expresión génica','regulacion genica','regulación génica'])){
-    return 'Un gen puede pensarse como información que puede usarse para producir un producto funcional. Regular expresión génica es decidir cuándo y cuánto se usa esa información. ¿Tu duda está en activar un gen, transcribirlo o traducirlo?';
-  }
-  if(mentionsAny(c,['mutacion','mutación','mutaciones','proofreading','mismatch','error replicativo','errores replicativos'])){
-    return 'Para CAT4 lo vemos suave: un error al copiar ADN puede transformarse en mutación si no se corrige. Proofreading y mismatch repair son ideas de revisión/corrección, no necesitamos el mecanismo molecular fino. ¿Quieres conectarlo con replicación o con estabilidad genética?';
-  }
-
-  if(ctx==='cromosomas')return 'Sigamos con cromosomas, pero sin volver al inicio. ¿Tu duda está en cromátidas hermanas, cromosomas homólogos, mitosis, meiosis o entrecruzamiento?';
-  if(ctx==='ciclo celular')return 'Sigamos con ciclo celular. Ubica tu duda en una de estas decisiones: copiar ADN, revisar condiciones, reparar/evitar errores o repartir cromosomas.';
-  if(ctx==='dogma central')return 'Sigamos el flujo de información: ADN, ARN, proteína o función. ¿En cuál de esos pasos se te corta la película?';
-
-  const opening = replyOpeningOnlyIfNeeded();
-  if(opening) return opening;
-  return 'Te sigo. Para construirlo sin inventar sobre tu evidencia, nómbrame una pieza concreta: cromosoma, cromátida, homólogo, ADN, ARN, proteína, checkpoint, mitosis o meiosis.';
+function stuckReply(){
+ if(state.activeSubtopic==='cinetocoro') return 'Bajemos un nivel. Primero ubica el centrómero: es la zona de unión. Luego piensa el cinetocoro como la zona funcional asociada que permite el enganche para separar. ¿En tu dibujo estás mirando unión o separación?';
+ if(state.activeSubtopic==='centrómero') return 'Bajemos un nivel. El centrómero te dice dónde están unidas las cromátidas hermanas. Desde ahí, la siguiente pregunta es cómo se separan. ¿Quieres seguir unión o separación?';
+ if(state.activeTopic==='cromosoma duplicado') return 'Bajemos un nivel. Un cromosoma duplicado no son dos cromosomas distintos: es un cromosoma con dos copias. ¿Puedes marcar las dos cromátidas hermanas y el punto donde se unen?';
+ if(state.activeTopic==='mitosis') return 'Bajemos un nivel. En mitosis la película es conservar información: copiar antes y repartir después. ¿Tu duda está en copiar, unir o separar?';
+ if(state.activeTopic==='meiosis') return 'Bajemos un nivel. En meiosis la película cambia: separar homólogos, luego cromátidas, y generar variabilidad. ¿Tu duda está en homólogos o cromátidas?';
+ if(state.activeTopic==='ciclo celular') return 'Bajemos un nivel. Antes de nombrar fases: ¿la célula está creciendo, copiando ADN, revisando condiciones o repartiendo cromosomas?';
+ return 'Vamos a destrabarlo sin saltar a la respuesta. Elige una flecha o una palabra de tu esquema y dime: ¿representa copiar, revisar, repartir o expresar información?';
 }
-function shouldPreferLocal(message, localText, apiText){
-  const c=norm(message);
-  const strongKeywords=/(cromosoma|cromatida|centrom|cinetocor|homolog|meiosis|mitosis|sinapsis|entrecruz|crossing|checkpoint|ciclina|cdk|dogma|adn|dna|arn|rna|transcrip|tradu|replic|mutacion|aneuploid|cromatina|cariotipo|gen\b)/;
-  if(isGenericEvidenceReply(apiText)) return true;
-  if(isLikelyTooDeep(apiText)) return true;
-  if(strongKeywords.test(c) && isGenericEvidenceReply(apiText)) return true;
-  if(strongKeywords.test(c) && localText && !isGenericEvidenceReply(localText)) return true;
-  return false;
-}
-function sanitizeApiReply(apiReply, localText){
-  if(!apiReply) return localText;
-  if(shouldPreferLocal('', localText, apiReply)) return localText;
-  if(isLikelyTooDeep(apiReply)) return cat4Redirect();
-  return apiReply.replace(/\bVeo\b/gi,'Podría estar relacionado con').replace(/\bAnalicé\b/gi,'Miré');
-}
-function sleep(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
-function responseDelay(text='', stuck=false){
-  const base = stuck ? 1250 : 1550;
-  const extra = Math.min(900, Math.max(250, text.length * 9));
-  return base + extra;
-}
-async function ask(message, stuck=false){
-  studentTurnCount += 1;
-  addMsg('user',message);
-  updateGravityFromText(message);
-  ensureContextFromMessage(message);
-  const local = localReply(message,stuck);
-  const thinking = addMsg('guide','Pensando desde tu evidencia…');
-  if(lastFactoClave){ lastFactoClave.student_last_keywords=currentKeywords; persistFactoClave({...lastFactoClave,timestamp:new Date().toISOString(),event:'student_turn'}); }
+function localReply(message,stuck=false){
+ const c=norm(message+' '+currentTopic);
+ const concepts=updateState(message);
+ updateTopicFromMessage(message);
+ showFact(message+' '+currentTopic+' '+state.activeTopic+' '+state.activeSubtopic);
+ if(isTooDeep(message)) return cat4Redirect();
+ if(stuck) return stuckReply();
 
-  const startedAt = Date.now();
-  let finalReply = local;
-  try{
-    const res=await fetch('/api/vane',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,stuck,context:currentContext.name,keywords:currentKeywords,ceiling:CAT4_CEILING,guardrails:VISUAL_GUARDRAILS})});
-    if(!res.ok)throw new Error('api');
-    const data=await res.json();
-    const apiReply=data.reply||'';
-    finalReply = shouldPreferLocal(message, local, apiReply) ? local : sanitizeApiReply(apiReply, local);
-  }catch(e){
-    finalReply = local;
-  }
+ // Continuidad centrómero → cinetocoro → huso
+ if(concepts.includes('cinetocoro')){
+   if(state.activeTopic==='cromosoma duplicado' || state.activeTopic==='mitosis' || state.activeSubtopic==='cinetocoro'){
+     return 'Sí, sigamos el hilo desde el centrómero. Para CAT4: el centrómero es la región donde las cromátidas hermanas permanecen unidas; el cinetocoro es la zona funcional asociada que permite que el huso se enganche para separarlas durante la división. No necesitamos detalle molecular. En tu dibujo, ¿el cinetocoro te sirve para explicar “enganche” o “separación”?';
+   }
+   return 'Buen punto. A nivel CAT4, piensa el cinetocoro como la zona funcional asociada al centrómero que permite enganchar y separar cromosomas durante la división. ¿Lo estás conectando con mitosis o con meiosis?';
+ }
+ if(concepts.includes('centrómero')){
+   setFocus(state.activeTopic||'cromosoma duplicado','centrómero',['cinetocoro','huso','separación de cromátidas']);
+   return 'Exacto: si está justo al medio como punto de unión, estás apuntando al centrómero. Para CAT4, úsalo como pista visual: un cromosoma duplicado tiene dos cromátidas hermanas unidas en esa región. El siguiente paso natural es preguntar cómo se enganchan y separan; ahí aparece el cinetocoro. ¿Quieres seguir por unión o por separación?';
+ }
+ if(concepts.includes('huso')){
+   setFocus(state.activeTopic||'mitosis','huso',['cinetocoro','separación de cromátidas']);
+   return 'Para CAT4 pensemos el huso de forma funcional: ayuda a mover y separar cromosomas durante la división. Conecta con el cinetocoro porque ahí ocurre el enganche funcional. En tu dibujo, ¿el huso aparece como estructura que tira/separa, o como línea que conecta con el cromosoma?';
+ }
+ if(concepts.includes('cromosoma duplicado')){
+   setFocus('cromosoma duplicado','cromátidas hermanas',['centrómero','cinetocoro','huso','mitosis']);
+   if(has(c,['copia','copio','copió','se copia'])){
+     return 'Vas bien, pero afinemos la frase: no es que “una cromátida se copia”; lo que se copia es el ADN del cromosoma. Después de esa copia, el cromosoma queda duplicado y se ve como dos cromátidas hermanas unidas. En tu dibujo, ¿dónde está esa unión?';
+   }
+   return 'Bien: “duplicado” significa que el cromosoma ya copió su ADN y por eso queda formado por dos cromátidas hermanas unidas. La idea clave para CAT4 es esta: duplicado no significa “dos cromosomas distintos”, sino un cromosoma con dos copias. En tu dibujo, ¿dónde estaría la unión entre esas cromátidas?';
+ }
+ if(concepts.includes('cromátidas hermanas')){
+   if(has(c,['recombinan','recombinacion','recombinación','entrecruzamiento','crossing'])){
+     setFocus('meiosis','entrecruzamiento',['homólogos','cromátidas no hermanas','variabilidad']);
+     return 'Ahí está la distinción importante. Las cromátidas hermanas son copias muy parecidas del mismo cromosoma. El entrecruzamiento que genera variabilidad ocurre entre cromátidas no hermanas de cromosomas homólogos. En tu dibujo, ¿cuál sería el homólogo materno y cuál el paterno?';
+   }
+   return 'Las cromátidas hermanas son las dos copias de un cromosoma duplicado. No las confundamos con cromosomas homólogos, que forman un par equivalente. ¿Tu duda es distinguir “copias” versus “par homólogo”?';
+ }
+ if(concepts.includes('mitosis')){
+   setFocus('mitosis',state.activeSubtopic,['cromosoma duplicado','cromátidas hermanas','centrómero','cinetocoro','huso']);
+   return 'En mitosis la idea central es conservar la información: una célula reparte cromátidas hermanas para formar células con la misma dotación genética. Si tu dibujo muestra un cromosoma duplicado, la ruta natural es: cromátidas hermanas → centrómero → cinetocoro/huso → separación. ¿En cuál de esas piezas quieres detenerte?';
+ }
+ if(concepts.includes('homólogos')){
+   return 'Bien. Los cromosomas homólogos forman un par equivalente: uno viene de la madre y otro del padre. Tienen información para los mismos tipos de rasgos, pero no necesariamente versiones idénticas. ¿En tu dibujo están emparejados, separándose o intercambiando segmentos?';
+ }
+ if(concepts.includes('entrecruzamiento')){
+   return 'Sigamos por ahí. La sinapsis junta cromosomas homólogos; el entrecruzamiento intercambia segmentos entre cromátidas no hermanas. Para CAT4, quédate con la consecuencia: aumenta la variabilidad de los gametos. ¿Tu dibujo muestra el emparejamiento o el intercambio?';
+ }
+ if(concepts.includes('meiosis')){
+   return 'En meiosis la pregunta central no es memorizar fases: es entender cómo se reduce la dotación cromosómica y cómo aparece variabilidad. ¿Tu duda está en la separación de homólogos, la separación de cromátidas o el entrecruzamiento?';
+ }
+ if(concepts.includes('checkpoint')){
+   return 'Pensemos el checkpoint como una decisión de seguridad. No es una fase decorativa: pregunta si la célula está lista para avanzar. ¿Qué debería revisar en tu ejemplo: tamaño/condiciones, ADN copiado, daño en el ADN o reparto correcto?';
+ }
+ if(concepts.includes('ciclinas/CDK')){
+   return 'Para CAT4 basta con el nivel funcional: ciclinas y CDK ayudan a ordenar el avance del ciclo celular. No necesitamos el detalle molecular fino. ¿Tu duda es quién permite avanzar o qué se revisa antes de avanzar?';
+ }
+ if(concepts.includes('replicación')){
+   return 'Replicación significa copiar ADN antes de dividirse. Para CAT4, con eso basta como idea central: copiar información para poder repartirla. ¿Quieres conectarlo con cromosomas duplicados o con fase S?';
+ }
+ if(concepts.includes('dogma')){
+   return 'Perfecto: el techo CAT4 aquí es seguir el flujo ADN → ARN → proteína → función. ¿Tu duda está en la flecha de transcripción, en la traducción o en cómo una proteína termina generando función?';
+ }
+ if(concepts.includes('transcripción')){
+   return 'Transcripción es pasar información desde ADN hacia ARN. Si aparece ARNm, piensa en un mensaje que luego podrá traducirse. ¿Tu duda es de dónde sale el ARNm o qué ocurre antes de llegar a proteína?';
+ }
+ if(concepts.includes('traducción')){
+   return 'En traducción, el mensaje del ARNm se lee para ordenar aminoácidos y formar una proteína. Para CAT4, piensa: ARNm trae el mensaje, ARNt ayuda a traer aminoácidos y el ribosoma participa en la síntesis. ¿Qué parte de esa relación te complica?';
+ }
+ if(concepts.includes('mutación')){
+   return 'Para CAT4 lo vemos suave: un error al copiar ADN puede transformarse en mutación si no se corrige. Proofreading y mismatch repair son ideas de revisión/corrección, no necesitamos el mecanismo molecular fino. ¿Quieres conectarlo con replicación o con estabilidad genética?';
+ }
 
-  const wait = Math.max(0, responseDelay(finalReply, stuck) - (Date.now() - startedAt));
-  await sleep(wait);
-  thinking.textContent = finalReply;
-  setTimeout(()=>{ thinking.scrollIntoView({behavior:'smooth', block:'end'}); },40);
+ // Fallback con memoria de hilo corto
+ if(state.activeSubtopic==='cinetocoro') return 'Sigamos desde el cinetocoro sin volver al inicio: conecta centrómero, enganche del huso y separación de cromátidas. ¿Tu duda es dónde está, para qué sirve o cómo se relaciona con el centrómero?';
+ if(state.activeSubtopic==='centrómero') return 'Sigamos desde el centrómero. Ya ubicamos la unión; ahora la pregunta siguiente es funcional: ¿esa zona te ayuda a entender cómo se mantienen juntas las cromátidas o cómo se separan después?';
+ if(state.activeTopic==='cromosoma duplicado') return 'Sigamos desde el cromosoma duplicado: dos cromátidas hermanas unidas, usualmente representadas por el centrómero. ¿La parte que falta es distinguir cromátida, centrómero, cinetocoro o separación?';
+ if(state.activeTopic==='mitosis') return 'Sigamos con mitosis sin reiniciar: la película es conservar y repartir información. ¿Quieres ubicar cromátidas hermanas, centrómero, cinetocoro/huso o la separación final?';
+ if(state.activeTopic==='meiosis') return 'Sigamos con meiosis sin reiniciar: homólogos, cromátidas no hermanas, entrecruzamiento y variabilidad. ¿Cuál de esas piezas estás mirando?';
 
-  // Micro-respiración posterior al turno: no inmediata, no invasiva.
-  setTimeout(()=>{cycleFact()},1800);
+ return 'Tomemos tu apunte como punto de partida. Dime qué flecha, palabra o zona de la imagen te genera más duda, y la seguimos paso a paso.';
 }
-$('startConversationBtn').addEventListener('click',()=>{const note=$('topicNote').value.trim();$('chatCard').classList.add('show');$('composer').style.display='block';$('chatTitle').textContent='Seguimos desde tu evidencia';if(!$('chat').children.length){addMsg('system','Perfecto. Sigamos desde lo que trajiste. No busquemos una respuesta perfecta todavía: construyamos la idea paso a paso.'); evidenceOpeningShown=true;} if(note)ask(note);$('chatCard').scrollIntoView({behavior:'smooth',block:'start'})});
-$('sendBtn').addEventListener('click',()=>{const m=$('messageInput').value.trim();if(!m)return;$('messageInput').value='';ask(m)});$('messageInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('sendBtn').click()}});
-$('stuckBtn').addEventListener('click',()=>{$('chatCard').classList.add('show');$('composer').style.display='block';if(!$('chat').children.length)addMsg('system','Estoy aquí para destrabar, no para darte una respuesta cerrada. Volvamos un paso atrás.');ask('Me quedé pegado.',true);$('chatCard').scrollIntoView({behavior:'smooth',block:'start'})});
-$('factobox').addEventListener('click',()=>{$('chatCard').classList.add('show');$('composer').style.display='block';addMsg('system','Sigamos desde este ECO. ¿Cómo lo conectarías con tu evidencia o con tu apunte?');$('chatCard').scrollIntoView({behavior:'smooth',block:'start'})});
-$('factobox').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('factobox').click()}});
+function isGenericReply(text=''){
+ const c=norm(text);
+ return c.includes('tomemos tu apunte como punto de partida') || c.includes('que parte de la clase quieres seguir conversando') || c.includes('dime que flecha palabra o zona');
+}
+function shouldPreferLocal(message,local,api){
+ const c=norm(message);
+ const strong=/(cromosoma|cromatida|cromatica|centrom|cinetocor|conetocor|huso|homolog|meiosis|mitosis|sinapsis|entrecruz|crossing|checkpoint|ciclina|cdk|dogma|adn|dna|arn|rna|transcrip|tradu|replic|mutacion)/;
+ if(!api) return true;
+ if(isGenericReply(api)) return true;
+ if(strong.test(c) && local && !isGenericReply(local)) return true;
+ return false;
+}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+function delayFor(text,stuck=false){return (stuck?900:1150)+Math.min(900,Math.max(250,(text||'').length*7))}
+async function askVane(message,stuck=false){
+ $('status').textContent='pensando…';
+ const local=localReply(message,stuck);
+ const thinking=addMsg('vane','Pensando desde tu evidencia…');
+ const started=Date.now();
+ let finalReply=local;
+ try{
+   const res=await fetch('/api/vane',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,stuck,topic:currentTopic,imageData,state,ceiling:CAT4_CEILING})});
+   if(!res.ok) throw new Error('api');
+   const data=await res.json();
+   const api=data.reply||'';
+   finalReply=shouldPreferLocal(message,local,api)?local:api.replace(/\bVeo\b/gi,'Podría estar relacionado con').replace(/\bAnalicé\b/gi,'Miré');
+ }catch(e){ finalReply=local; }
+ const wait=Math.max(0,delayFor(finalReply,stuck)-(Date.now()-started));
+ await sleep(wait);
+ thinking.textContent=finalReply;
+ state.lastAssistant=finalReply;
+ $('status').textContent='listo';
+ setTimeout(()=>thinking.scrollIntoView({behavior:'smooth',block:'end'}),40);
+}
+
+$('chips').innerHTML=ACTIVE_TOPICS.map((t,i)=>`<button class="chip${i==0?' active':''}" data-topic="${t}">${t}</button>`).join('');
+currentTopic=ACTIVE_TOPICS[0];
+showFact(currentTopic);
+setInterval(()=>showFact(currentTopic+' '+state.activeTopic+' '+state.activeSubtopic+' '+state.expected.join(' ')),110000);
+
+$('chips').addEventListener('click',e=>{
+ if(!e.target.matches('.chip'))return;
+ document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+ e.target.classList.add('active');
+ currentTopic=e.target.dataset.topic;
+ showFact(currentTopic+' '+$('imageNote').value);
+});
+$('imageInput').addEventListener('change',e=>{
+ const file=e.target.files[0]; if(!file)return;
+ const r=new FileReader();
+ r.onload=()=>{
+   imageData=r.result;
+   $('previewImg').src=imageData;
+   $('preview').style.display='block';
+   showFact($('imageNote').value+' esquema pizarra '+currentTopic);
+ };
+ r.readAsDataURL(file);
+});
+$('imageNote').addEventListener('input',e=>showFact(e.target.value+' '+currentTopic));
+$('beginBtn').addEventListener('click',async()=>{
+ const note=$('imageNote').value.trim();
+ $('startCard').classList.add('hidden');
+ $('conversationCard').classList.remove('hidden');
+ $('composer').classList.remove('hidden');
+ addMsg('vane','Trajiste tus apuntes. No necesito adivinar la imagen perfecto: úsala como punto de partida. ¿Qué intentabas representar o qué parte quieres seguir pensando?');
+ if(note){addMsg('user',note); await askVane(note,false)}
+ $('conversationCard').scrollIntoView({behavior:'smooth',block:'start'});
+});
+$('sendBtn').addEventListener('click',async()=>{
+ const m=$('messageInput').value.trim(); if(!m)return;
+ $('messageInput').value='';
+ addMsg('user',m);
+ await askVane(m,false);
+});
+$('messageInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('sendBtn').click()}});
+$('stuckBtn').addEventListener('click',async()=>{addMsg('user','Me quedé pegado.'); await askVane('Me quedé pegado',true)});
+$('newStartBtn').addEventListener('click',()=>{location.reload()});
 </script>
 </body>
 </html>
