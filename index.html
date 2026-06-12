@@ -127,68 +127,82 @@
   <div class="composer" id="composer"><div class="composer-inner"><textarea id="messageInput" placeholder="¿Qué parte seguimos conversando?"></textarea><button class="send" id="sendBtn">↗</button></div></div>
 
 <script>
+/*
+  pSINCRO CAT4 · MVP seguro
+  Premisa operativa:
+  - La interfaz NO promete reconocimiento perfecto de imágenes.
+  - V.A.N.E. no afirma lo que ve: formula hipótesis como preguntas.
+  - FACTObox no es repositorio ni premio: respira ECOS con gravedad contextual determinista.
+  - FACTOClave es interno: se registra localmente como evidencia de diseño/investigación, pero no se muestra al estudiante.
+*/
 const FACTOS_BASE = [
-  {type:'FACTOClase', icon:'🧬', title:'Toda proteína comenzó siendo información genética.', sub:'No memorices nombres: sigue qué ocurre con la información.', tags:['dogma','dna','rna','proteina','proteína','traduccion','transcripcion']},
-  {type:'FACTOProfe', icon:'✏️', title:'Si puedes dibujarlo, probablemente ya empezaste a entenderlo.', sub:'Ahora conversemos qué representa cada flecha.', tags:['dibujo','esquema','pizarra','cuaderno','evidencia']},
-  {type:'FACTOProfe', icon:'💡', title:'No memorices nombres.', sub:'Pregunta qué información se mantiene, cuál cambia y para qué sirve.', tags:['general','cromosoma','meiosis','mitosis']},
-  {type:'FACTOClase', icon:'🧵', title:'No todos los genes están activos al mismo tiempo.', sub:'Regular expresión génica es decidir qué información se usa.', tags:['cromatina','gen','expresion','expresión']},
-  {type:'FACTOClase', icon:'🛑', title:'Un punto de control es una decisión.', sub:'La célula no avanza sólo porque sí: primero revisa condiciones.', tags:['checkpoint','checkpoints','ciclina','cdk','ciclo']},
-  {type:'FACTOClase', icon:'⚡', title:'Una mutación no es automáticamente una enfermedad.', sub:'Primero pregunta qué cambió, dónde cambió y si afecta una función.', tags:['mutacion','mutación','proofreading','mismatch']}
+  {id:'FCL-DOGMA-001', type:'FACTOClase', icon:'🧬', title:'Toda proteína comenzó siendo información genética.', sub:'No memorices nombres: sigue qué ocurre con la información.', tags:['dogma','dna','adn','rna','arn','proteina','proteína','traduccion','traducción','transcripcion','transcripción','gen','genes','funcion','función']},
+  {id:'FPR-GEN-001', type:'FACTOProfe', icon:'✏️', title:'Si puedes dibujarlo, probablemente ya empezaste a entenderlo.', sub:'Ahora conversemos qué representa cada flecha.', tags:['dibujo','dibujado','esquema','pizarra','cuaderno','evidencia','flecha','apunte','apuntes']},
+  {id:'FPR-GEN-002', type:'FACTOProfe', icon:'💡', title:'No memorices nombres.', sub:'Pregunta qué información se mantiene, cuál cambia y para qué sirve.', tags:['general','informacion','información','cambia','mantiene','relacion','relación','cromosoma','meiosis','mitosis']},
+  {id:'FCL-EXP-001', type:'FACTOClase', icon:'🧵', title:'No todos los genes están activos al mismo tiempo.', sub:'Regular expresión génica es decidir qué información se usa.', tags:['cromatina','eucromatina','heterocromatina','gen','genes','expresion','expresión','regulacion','regulación']},
+  {id:'FCL-CICLO-001', type:'FACTOClase', icon:'🛑', title:'Un punto de control es una decisión.', sub:'La célula no avanza sólo porque sí: primero revisa condiciones.', tags:['checkpoint','checkpoints','punto de control','ciclina','ciclinas','cdk','ciclo','g1','s','g2','mitosis','division','división']},
+  {id:'FCL-MUT-001', type:'FACTOClase', icon:'⚡', title:'Una mutación no es automáticamente una enfermedad.', sub:'Primero pregunta qué cambió, dónde cambió y si afecta una función.', tags:['mutacion','mutación','mutaciones','proofreading','mismatch','reparacion','reparación','error','errores']}
 ];
 const CONTEXTS = {
   chromosomes:{
-    name:'cromosomas',
-    title:'Veo una idea relacionada con cromosomas.',
-    text:'Podemos pensar juntos qué información se mantiene, cuál cambia y cómo se organizan esas estructuras.',
-    prompts:['¿Qué información se mantiene igual?','¿Qué información cambia o se reorganiza?','¿Qué diferencia hay entre cromátidas y cromosomas homólogos?'],
-    placeholder:'Ej: ¿qué diferencia hay entre cromátidas y homólogos?, ¿qué cambia en meiosis?, ¿qué se conserva en mitosis?',
+    key:'chromosomes', name:'cromosomas',
+    title:'Podría estar relacionado con cromosomas.',
+    text:'Para no asumir de más, partimos preguntando qué estabas intentando representar.',
+    prompts:['¿Eso que aparece en tu evidencia son cromosomas, cromátidas u otra cosa?','¿Estás comparando copias o cromosomas homólogos?','¿Qué información crees que se mantiene o se reorganiza?'],
+    placeholder:'Ej: son cromosomas homólogos, creo que hay crossing over, no entiendo qué cambia aquí...',
     facts:[
-      {type:'FACTOProfe', icon:'💡', title:'No memorices estructuras.', sub:'Pregunta qué información se mantiene y cuál cambia.'},
-      {type:'FACTOClase', icon:'🔀', title:'La meiosis NO es una mitosis con pasos extra.', sub:'Su propósito cambia: reduce y recombina información.'},
-      {type:'FACTOProfe', icon:'✏️', title:'Si puedes dibujar cromosomas, ya tienes un punto de partida.', sub:'Ahora falta decir qué representa cada parte del dibujo.'}
+      {id:'FPR-CROM-001', type:'FACTOProfe', icon:'💡', title:'No memorices estructuras.', sub:'Pregunta qué información se mantiene y cuál cambia.', tags:['cromosoma','cromosomas','cromatida','cromátida','cromatidas','cromátidas','homologo','homólogo','homologos','homólogos','informacion','información']},
+      {id:'FCL-MEIO-001', type:'FACTOClase', icon:'🔀', title:'La meiosis NO es una mitosis con pasos extra.', sub:'Su propósito cambia: reduce y recombina información.', tags:['meiosis','meiotica','meiótica','gameto','gametos','reduccion','reducción','reduccional','recombinacion','recombinación','entrecruzamiento','crossing','crossing over','variabilidad']},
+      {id:'FPR-CROM-002', type:'FACTOProfe', icon:'✏️', title:'Si puedes dibujar cromosomas, ya tienes un punto de partida.', sub:'Ahora falta decir qué representa cada parte del dibujo.', tags:['dibujo','dibujar','cromosoma','cromosomas','centromero','centrómero','flecha','sinapsis','tetrada','tétrada']},
+      {id:'FCL-MEIO-002', type:'FACTOClase', icon:'🧬', title:'El entrecruzamiento cambia combinaciones.', sub:'No elimina genes: reorganiza versiones de información.', tags:['entrecruzamiento','crossing','crossing over','quiasma','quiasmas','recombinacion','recombinación','alelo','alelos','variabilidad']}
     ]
   },
   cellcycle:{
-    name:'ciclo celular',
-    title:'Veo una idea relacionada con ciclo celular.',
-    text:'Podemos pensar juntos cómo la célula decide avanzar, detenerse o dividirse.',
-    prompts:['¿Qué pasa antes de dividir la célula?','¿Qué revisa un checkpoint?','¿Cómo ayudan ciclinas y CDK a ordenar el avance?'],
-    placeholder:'Ej: ¿qué revisa la célula antes de avanzar?, ¿qué hacen las ciclinas y CDK?, ¿para qué sirven los checkpoints?',
+    key:'cellcycle', name:'ciclo celular',
+    title:'Podría estar relacionado con ciclo celular.',
+    text:'Antes de nombrar fases, conviene preguntar qué decisión está tomando la célula.',
+    prompts:['¿Qué tendría que revisar la célula antes de avanzar?','¿Esto representa una fase, un checkpoint o una transición?','¿Qué información debe estar lista antes de dividirse?'],
+    placeholder:'Ej: creo que es G1/S, no entiendo checkpoint, no sé qué hacen ciclinas/CDK...',
     facts:[
-      {type:'FACTOClase', icon:'🛑', title:'Un checkpoint no es una etapa decorativa.', sub:'Es una pregunta de seguridad antes de avanzar.'},
-      {type:'FACTOClase', icon:'⚙️', title:'Ciclinas y CDK ayudan a ordenar el avance.', sub:'No memorices nombres: pregunta quién permite pasar al siguiente momento.'},
-      {type:'FACTOProfe', icon:'💡', title:'Antes de repartir información, la célula debe tenerla lista.', sub:'Esa idea ayuda a entender por qué existe la fase S.'}
+      {id:'FCL-CICLO-002', type:'FACTOClase', icon:'🛑', title:'Un checkpoint no es una etapa decorativa.', sub:'Es una pregunta de seguridad antes de avanzar.', tags:['checkpoint','checkpoints','punto de control','control','g1','g2','s','m','avance','detencion','detención']},
+      {id:'FCL-CICLO-003', type:'FACTOClase', icon:'⚙️', title:'Ciclinas y CDK ayudan a ordenar el avance.', sub:'No memorices nombres: pregunta quién permite pasar al siguiente momento.', tags:['ciclina','ciclinas','cdk','ciclo','avance','progresion','progresión','fase']},
+      {id:'FPR-CICLO-001', type:'FACTOProfe', icon:'💡', title:'Antes de repartir información, la célula debe tenerla lista.', sub:'Esa idea ayuda a entender por qué existe la fase S.', tags:['fase s','s','replicacion','replicación','dna','adn','division','división','mitosis']}
     ]
   },
   dogma:{
-    name:'dogma central',
-    title:'Veo una idea relacionada con flujo de información.',
+    key:'dogma', name:'dogma central',
+    title:'Podría estar relacionado con flujo de información.',
     text:'Podemos seguir la ruta DNA → RNA → proteína → función, sin memorizar nombres sueltos.',
     prompts:['¿Dónde aparece el RNA en la historia?','¿Qué cambia al pasar de RNA a proteína?','¿Cómo se llega desde información genética a función?'],
-    placeholder:'Ej: ¿por qué aparece RNA?, ¿qué cambia entre DNA y proteína?, ¿cómo se llega a función?',
+    placeholder:'Ej: no entiendo para qué sirve RNA, no sé cómo se pasa de DNA a proteína...',
     facts:[
-      {type:'FACTOClase', icon:'🧬', title:'Toda proteína comenzó siendo información genética.', sub:'Sigue el flujo: DNA → RNA → proteína → función.'},
-      {type:'FACTOProfe', icon:'💡', title:'No memorices nombres.', sub:'Pregunta qué le pasa a la información en cada flecha.'},
-      {type:'FACTOClase', icon:'🧵', title:'No todos los genes están activos al mismo tiempo.', sub:'Regular expresión es decidir qué información se usa.'}
+      {id:'FCL-DOGMA-002', type:'FACTOClase', icon:'🧬', title:'Toda proteína comenzó siendo información genética.', sub:'Sigue el flujo: DNA → RNA → proteína → función.', tags:['dna','adn','rna','arn','proteina','proteína','funcion','función','dogma','flujo']},
+      {id:'FPR-DOGMA-001', type:'FACTOProfe', icon:'💡', title:'No memorices nombres.', sub:'Pregunta qué le pasa a la información en cada flecha.', tags:['transcripcion','transcripción','traduccion','traducción','rna','arn','ribosoma','codon','codón','aminoacido','aminoácido']},
+      {id:'FCL-EXP-002', type:'FACTOClase', icon:'🧵', title:'No todos los genes están activos al mismo tiempo.', sub:'Regular expresión es decidir qué información se usa.', tags:['gen','genes','expresion','expresión','regulacion','regulación','cromatina','eucromatina','heterocromatina']}
     ]
   },
   general:{
-    name:'evidencia',
+    key:'general', name:'evidencia',
     title:'Sigamos desde tu evidencia.',
     text:'No voy a convertirla en una tarea. La usamos como punto de partida para conversar.',
     prompts:['¿Qué parte de tu dibujo o apunte quieres entender primero?','¿Qué flecha, palabra o zona te genera duda?','¿Qué crees que está cambiando en esta idea?'],
     placeholder:'Ej: esta flecha no la entiendo, no sé qué significa esta palabra, no sé qué cambia aquí...',
     facts:[
-      {type:'FACTOProfe', icon:'✏️', title:'Si puedes dibujarlo, probablemente ya empezaste a entenderlo.', sub:'Ahora conversemos qué representa cada flecha.'},
-      {type:'FACTOProfe', icon:'💡', title:'No busques la definición perfecta primero.', sub:'Parte diciendo qué crees que está pasando.'},
-      {type:'FACTOClase', icon:'🧬', title:'Los nombres sirven cuando entiendes la relación.', sub:'Primero mira qué cambia y qué se mantiene.'}
+      {id:'FPR-GEN-003', type:'FACTOProfe', icon:'✏️', title:'Si puedes dibujarlo, probablemente ya empezaste a entenderlo.', sub:'Ahora conversemos qué representa cada flecha.', tags:['dibujo','esquema','flecha','cuaderno','pizarra','evidencia']},
+      {id:'FPR-GEN-004', type:'FACTOProfe', icon:'💡', title:'No busques la definición perfecta primero.', sub:'Parte diciendo qué crees que está pasando.', tags:['duda','pregunta','definicion','definición','entiendo','entender']},
+      {id:'FCL-GEN-001', type:'FACTOClase', icon:'🧬', title:'Los nombres sirven cuando entiendes la relación.', sub:'Primero mira qué cambia y qué se mantiene.', tags:['nombre','nombres','relacion','relación','cambia','mantiene','informacion','información']}
     ]
   }
 };
+const VISUAL_GUARDRAILS = `Regla de V.A.N.E. invisible: no afirmes con certeza lo que ves en una imagen. Devuelve cualquier hipótesis visual como pregunta tentativa. No entregues respuestas cerradas. No evalúes. No digas correcto/incorrecto. Si el estudiante dice “me quedé pegado”, baja un nivel, cambia analogía o pide mirar una parte de la evidencia; no resuelvas.`;
 let factPool = [...FACTOS_BASE];
 let factIndex = 0;
 let currentContext = CONTEXTS.general;
+let currentKeywords = ['general','evidencia'];
+let recentFactIds = [];
 let evidenceData = null;
+let currentEvidenceId = null;
+let lastFactoClave = null;
 const $ = id => document.getElementById(id);
 const norm = s => (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 
@@ -198,13 +212,45 @@ $('themeToggle').addEventListener('click',()=>setTheme(!document.body.classList.
 
 function renderDots(){ $('factDots').innerHTML = factPool.map((_,i)=>`<span class="dot ${i===factIndex?'active':''}"></span>`).join(''); }
 function setFact(f, pulse=true){const c=$('factContent');c.classList.add('fade');setTimeout(()=>{$('factIcon').textContent=f.icon||'💡';$('factType').textContent=f.type||'FACTOProfe';$('factTitle').textContent=f.title||'';$('factSub').textContent=f.sub||'';c.classList.remove('fade');if(pulse){$('factobox').classList.remove('pulse');void $('factobox').offsetWidth;$('factobox').classList.add('pulse')}renderDots()},220)}
-function cycleFact(){factIndex=(factIndex+1)%factPool.length;setFact(factPool[factIndex],false)}
-renderDots();setFact(factPool[0],false);setInterval(cycleFact,24000);
-function setAmbientContext(ctx){currentContext=ctx;factPool=[...ctx.facts,...FACTOS_BASE.filter(f=>!ctx.facts.some(g=>g.title===f.title))];factIndex=0;setFact(factPool[0],true)}
-function inferContextFromText(text){const c=norm(text); if(/cromos|cromatid|centrom|homolog|homologos|meiosis/.test(c)) return CONTEXTS.chromosomes; if(/ciclo|ciclina|cdk|checkpoint|interfase|mitosis|fase s|g1|g2/.test(c)) return CONTEXTS.cellcycle; if(/dna|adn|rna|arn|prote|dogma|transcrip|tradu/.test(c)) return CONTEXTS.dogma; return CONTEXTS.general;}
+function factScore(f){
+  const hay = (f.tags||[]).map(norm);
+  let score = 1;
+  for(const k of currentKeywords.map(norm)){ if(k && hay.some(t => t.includes(k) || k.includes(t))) score += 3; }
+  if(f.type==='FACTOProfe') score += .35;
+  return score + Math.random()*0.85;
+}
+function selectNextFact(){
+  let refractoryWindow = 2;
+  let candidates = factPool.filter(f=>!recentFactIds.slice(-refractoryWindow).includes(f.id));
+  if(candidates.length < 2){ refractoryWindow = 1; candidates = factPool.filter(f=>!recentFactIds.slice(-refractoryWindow).includes(f.id)); }
+  if(!candidates.length) candidates = [...factPool];
+  candidates.sort((a,b)=>factScore(b)-factScore(a));
+  const top = candidates.slice(0, Math.min(3,candidates.length));
+  return top[Math.floor(Math.random()*top.length)];
+}
+function cycleFact(){const next=selectNextFact();factIndex=Math.max(0,factPool.findIndex(f=>f.id===next.id));recentFactIds.push(next.id);recentFactIds=recentFactIds.slice(-4);setFact(next,false)}
+renderDots();setFact(factPool[0],false);recentFactIds=[factPool[0].id];setInterval(cycleFact,38000);
+function setAmbientContext(ctx, keywords=[]){
+  currentContext=ctx;
+  currentKeywords=[ctx.name, ctx.key||'', ...keywords].filter(Boolean);
+  const seen = new Set();
+  factPool=[...ctx.facts,...FACTOS_BASE].filter(f=>{if(seen.has(f.id)) return false; seen.add(f.id); return true;});
+  recentFactIds=[];
+  const first=selectNextFact();
+  factIndex=Math.max(0,factPool.findIndex(f=>f.id===first.id));
+  recentFactIds.push(first.id);
+  setFact(first,true);
+}
+function updateGravityFromText(text){
+  const c=norm(text);
+  const additions=[];
+  const lex = ['meiosis','mitosis','cromosoma','cromosomas','cromatida','cromatidas','homologo','homologos','gameto','gametos','entrecruzamiento','crossing','sinapsis','recombinacion','variabilidad','ciclo','checkpoint','ciclina','cdk','g1','g2','fase s','dna','adn','rna','arn','proteina','proteina','gen','genes','cromatina','mutacion','proofreading','mismatch'];
+  for(const k of lex){ if(c.includes(norm(k))) additions.push(k); }
+  currentKeywords=[...new Set([...currentKeywords, ...additions])].slice(-24);
+}
+function inferContextFromText(text){const c=norm(text); if(/cromos|cromatid|centrom|homolog|meiosis|gameto|entrecruz|crossing|sinapsis|recombin/.test(c)) return CONTEXTS.chromosomes; if(/ciclo|ciclina|cdk|checkpoint|interfase|mitosis|fase s|g1|g2/.test(c)) return CONTEXTS.cellcycle; if(/dna|adn|rna|arn|prote|dogma|transcrip|tradu|gen\b/.test(c)) return CONTEXTS.dogma; return CONTEXTS.general;}
 function inferContextFromImageName(file){return inferContextFromText((file&&file.name)||'');}
 function renderContextCard(ctx){
-  // Conservamos esta función para futuras versiones, pero en el MVP actual NO mostramos menú de temas.
   $('contextTitle').textContent=ctx.title;
   $('contextText').textContent=ctx.text;
   $('promptList').innerHTML=ctx.prompts.map(p=>`<li>${p}</li>`).join('');
@@ -212,24 +258,37 @@ function renderContextCard(ctx){
   $('topicNote').placeholder=ctx.placeholder;
 }
 function openingForContext(ctx){
-  if(ctx.name==='cromosomas') return 'Miré tu evidencia como punto de partida. Veo una idea relacionada con cromosomas. Antes de seguir, pensemos juntos: ¿estás comparando copias del mismo cromosoma o cromosomas homólogos?';
-  if(ctx.name==='ciclo celular') return 'Miré tu evidencia como punto de partida. Veo una idea relacionada con ciclo celular. Antes de memorizar fases, pensemos: ¿qué tendría que revisar una célula antes de avanzar?';
-  if(ctx.name==='dogma central') return 'Miré tu evidencia como punto de partida. Veo una idea relacionada con flujo de información. Antes de memorizar nombres, sigamos la ruta: ¿dónde se te corta la historia entre DNA, RNA, proteína y función?';
-  return 'Miré tu evidencia como punto de partida. No busquemos una respuesta perfecta todavía. Partamos por algo simple: ¿qué crees que cambia y qué se mantiene en lo que trajiste?';
+  if(ctx.name==='cromosomas') return 'Tomemos tu evidencia como punto de partida. Para no asumir de más: ¿eso que aparece ahí son cromosomas, cromátidas u otra cosa? Cuando lo confirmes, seguimos con qué información cambia y cuál se mantiene.';
+  if(ctx.name==='ciclo celular') return 'Tomemos tu evidencia como punto de partida. Para no asumir de más: ¿estás intentando representar una fase del ciclo celular, un checkpoint o una transición entre momentos?';
+  if(ctx.name==='dogma central') return 'Tomemos tu evidencia como punto de partida. Para no asumir de más: ¿estás trabajando el flujo DNA → RNA → proteína → función, u otra relación?';
+  return 'Tomemos tu evidencia como punto de partida. No necesito adivinarla perfecto: cuéntame qué intentabas representar o qué parte quieres seguir pensando.';
+}
+function safeOpening(reply, ctx){
+  if(!reply) return openingForContext(ctx);
+  let r = reply.replace(/\bVeo\b/gi,'Podría haber').replace(/\bAnalicé\b/gi,'Miré').replace(/\bIdentifiqué\b/gi,'Podría estar relacionado con');
+  if(!/[¿?]/.test(r)) r += ' ¿Es eso lo que estabas intentando representar?';
+  return r;
+}
+function persistFactoClave(record){
+  try{
+    const key='psincro_factoclave_log_cat4_mvp';
+    const prev=JSON.parse(localStorage.getItem(key)||'[]');
+    prev.push(record);
+    localStorage.setItem(key, JSON.stringify(prev.slice(-80)));
+  }catch(e){}
 }
 async function analyzeEvidenceWithApi(file){
-  // Si existe una función Netlify conectada a Vision, puede devolver {context:"chromosomes|cellcycle|dogma|general", reply:"..."}.
-  // Si no existe, usamos un fallback local que NO promete reconocimiento perfecto.
   try{
-    const res=await fetch('/api/vane',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'evidence_opening',filename:file?.name||'',imageData:evidenceData})});
+    const res=await fetch('/api/vane',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'evidence_opening',filename:file?.name||'',imageData:evidenceData,guardrails:VISUAL_GUARDRAILS})});
     if(!res.ok) throw new Error('api');
     const data=await res.json();
-    const key = (data.context||data.contextKey||'').toLowerCase();
-    const ctx = key.includes('chrom')||key.includes('meiosis') ? CONTEXTS.chromosomes : key.includes('cycle')||key.includes('ciclo')||key.includes('checkpoint') ? CONTEXTS.cellcycle : key.includes('dogma')||key.includes('dna')||key.includes('adn') ? CONTEXTS.dogma : inferContextFromImageName(file);
-    return {ctx, reply:data.reply||openingForContext(ctx)};
+    const key = norm(data.context||data.contextKey||'');
+    const ctx = key.includes('chrom')||key.includes('crom')||key.includes('meiosis') ? CONTEXTS.chromosomes : key.includes('cycle')||key.includes('ciclo')||key.includes('checkpoint') ? CONTEXTS.cellcycle : key.includes('dogma')||key.includes('dna')||key.includes('adn') ? CONTEXTS.dogma : inferContextFromImageName(file);
+    const visualHypothesis = Array.isArray(data.visual_hypothesis) ? data.visual_hypothesis : [ctx.name];
+    return {ctx, reply:safeOpening(data.reply,ctx), visualHypothesis};
   }catch(e){
     const ctx=inferContextFromImageName(file);
-    return {ctx, reply:openingForContext(ctx)};
+    return {ctx, reply:openingForContext(ctx), visualHypothesis:[ctx.name]};
   }
 }
 function openSituatedChat(reply){
@@ -244,6 +303,7 @@ function handleEvidence(file){
   const r=new FileReader();
   r.onload=async()=>{
     evidenceData=r.result;
+    currentEvidenceId='ev_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7);
     $('thumb').src=evidenceData;
     $('initialEvidenceActions').classList.add('hidden');
     $('evidenceLoaded').classList.add('show-grid');
@@ -257,24 +317,50 @@ function handleEvidence(file){
     $('composer').style.display='none';
     $('chat').innerHTML='';
     const result = await analyzeEvidenceWithApi(file);
-    setAmbientContext(result.ctx);
+    setAmbientContext(result.ctx, result.visualHypothesis);
     renderContextCard(result.ctx);
+    lastFactoClave = {evidence_id:currentEvidenceId,timestamp:new Date().toISOString(),filename:file?.name||'',visual_hypothesis:result.visualHypothesis,confidence_mode:'tentative',context_key:result.ctx.key,active_echo_keywords:currentKeywords,first_chat_move:'clarifying_question'};
+    persistFactoClave(lastFactoClave);
     $('observeThinking').classList.add('hidden');
     $('observeTitle').textContent='Miré tu evidencia.';
-    $('observeText').textContent='Abrí una conversación desde lo que trajiste. FACTObox queda respirando como eco conceptual de fondo.';
-    // Importante: no mostramos menú genérico de temas. La evidencia abre directamente el chatbox situado.
+    $('observeText').textContent='Abrí una conversación sin asumir de más. FACTObox queda respirando como eco conceptual de fondo.';
     setTimeout(()=>openSituatedChat(result.reply),450);
   };
   r.readAsDataURL(file);
 }
 $('galleryInput').addEventListener('change',e=>handleEvidence(e.target.files[0]));$('cameraInput').addEventListener('change',e=>handleEvidence(e.target.files[0]));$('cameraBtn').addEventListener('click',()=>$('cameraInput').click());$('cameraBtn2').addEventListener('click',()=>$('cameraInput').click());
 function addMsg(type,text){const d=document.createElement('div');d.className='msg '+type;d.textContent=text;$('chat').appendChild(d);$('chat').scrollTop=$('chat').scrollHeight}
-function localReply(message, stuck=false){const ctx=currentContext.name;if(stuck)return 'Vamos a destrabarlo sin saltar a la respuesta. Mira tu evidencia y elige una palabra, flecha o dibujo. ¿Qué cambia antes y después de esa parte?';if(ctx==='cromosomas')return 'Partamos por la relación, no por el nombre. En tu dibujo, ¿qué partes parecen copias del mismo cromosoma y qué partes parecen venir de orígenes distintos?';if(ctx==='ciclo celular')return 'Pensemos el ciclo como decisiones. Antes de avanzar, ¿qué tendría que revisar la célula para no repartir información con errores?';if(ctx==='dogma central')return 'Sigamos la información: DNA → RNA → proteína → función. ¿En qué flecha se te corta la historia?';return 'Perfecto. Sigamos desde tu evidencia. Dime qué palabra, flecha o zona quieres entender primero.'}
-async function ask(message, stuck=false){addMsg('user',message);try{const res=await fetch('/api/vane',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,stuck,context:currentContext.name})});if(!res.ok)throw new Error('api');const data=await res.json();addMsg('guide',data.reply||localReply(message,stuck))}catch(e){addMsg('guide',localReply(message,stuck))}}
+function localReply(message, stuck=false){
+  updateGravityFromText(message);
+  const ctx=currentContext.name;
+  if(stuck){
+    if(ctx==='cromosomas')return 'Volvamos un paso atrás sin resolverlo de golpe. En tu evidencia, apunta solo a dos elementos: ¿crees que son copias del mismo cromosoma o cromosomas equivalentes?';
+    if(ctx==='ciclo celular')return 'Bajemos un nivel. Antes de hablar de nombres de fases: ¿la célula está preparándose, revisando algo o dividiéndose?';
+    if(ctx==='dogma central')return 'Bajemos un nivel. Elige una flecha: ¿estás pasando de DNA a RNA, de RNA a proteína, o de proteína a función?';
+    return 'Vamos a destrabarlo sin saltar a la respuesta. Mira tu evidencia y elige una palabra, flecha o dibujo: ¿qué crees que cambia antes y después de esa parte?';
+  }
+  if(ctx==='cromosomas')return 'Bien. No necesito ponerle nombre todavía. Primero confirma la relación: ¿estás mirando copias del mismo cromosoma, cromosomas homólogos, o una mezcla de ambos?';
+  if(ctx==='ciclo celular')return 'Pensemos el ciclo como decisiones. Según tu evidencia, ¿qué debería revisar la célula antes de avanzar?';
+  if(ctx==='dogma central')return 'Sigamos la información sin apurarnos: ¿en qué punto se transforma el mensaje, y en qué punto aparece la función?';
+  return 'Perfecto. Sigamos desde tu evidencia. Dime qué palabra, flecha o zona quieres entender primero, y la usamos como punto de partida.'
+}
+async function ask(message, stuck=false){
+  addMsg('user',message);
+  updateGravityFromText(message);
+  if(lastFactoClave){ lastFactoClave.student_last_keywords=currentKeywords; persistFactoClave({...lastFactoClave,timestamp:new Date().toISOString(),event:'student_turn'}); }
+  try{
+    const res=await fetch('/api/vane',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,stuck,context:currentContext.name,keywords:currentKeywords,guardrails:VISUAL_GUARDRAILS})});
+    if(!res.ok)throw new Error('api');
+    const data=await res.json();
+    addMsg('guide',data.reply||localReply(message,stuck));
+  }catch(e){addMsg('guide',localReply(message,stuck))}
+  // Micro-respiración posterior al turno: no inmediata, no invasiva.
+  setTimeout(()=>{cycleFact()},1200);
+}
 $('startConversationBtn').addEventListener('click',()=>{const note=$('topicNote').value.trim();$('chatCard').classList.add('show');$('composer').style.display='block';$('chatTitle').textContent='Seguimos desde tu evidencia';if(!$('chat').children.length)addMsg('system','Perfecto. Sigamos desde lo que trajiste. No busquemos una respuesta perfecta todavía: construyamos la idea paso a paso.');if(note)ask(note);$('chatCard').scrollIntoView({behavior:'smooth',block:'start'})});
 $('sendBtn').addEventListener('click',()=>{const m=$('messageInput').value.trim();if(!m)return;$('messageInput').value='';ask(m)});$('messageInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('sendBtn').click()}});
 $('stuckBtn').addEventListener('click',()=>{$('chatCard').classList.add('show');$('composer').style.display='block';if(!$('chat').children.length)addMsg('system','Estoy aquí para destrabar, no para darte una respuesta cerrada. Volvamos un paso atrás.');ask('Me quedé pegado.',true);$('chatCard').scrollIntoView({behavior:'smooth',block:'start'})});
-$('factobox').addEventListener('click',()=>{$('chatCard').classList.add('show');$('composer').style.display='block';addMsg('system','Perfecto. Sigamos desde esta idea del FACTObox. ¿Cómo la conectarías con tu evidencia?');$('chatCard').scrollIntoView({behavior:'smooth',block:'start'})});
+$('factobox').addEventListener('click',()=>{$('chatCard').classList.add('show');$('composer').style.display='block';addMsg('system','Sigamos desde este ECO. ¿Cómo lo conectarías con tu evidencia o con tu apunte?');$('chatCard').scrollIntoView({behavior:'smooth',block:'start'})});
 $('factobox').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('factobox').click()}});
 </script>
 </body>
